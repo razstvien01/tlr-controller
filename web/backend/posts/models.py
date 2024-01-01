@@ -7,4 +7,4 @@ class Post(models.Model):
   body = models.TextField()
   
   def __str__(self):
-    return f"Post {self.title}"
+    return f"Post: {self.title}"
