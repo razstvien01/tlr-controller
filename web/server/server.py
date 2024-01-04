@@ -1,15 +1,14 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
-
-# Member API route
+CORS(app)  # Enable CORS for all routes
 
 @app.route("/api/home", methods=['GET'])
-
 def return_home():
-  return jsonify({
+     return jsonify({
     'message': 'Hello World'
   })
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
