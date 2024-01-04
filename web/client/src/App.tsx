@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 import "./App.css";
 
@@ -7,20 +8,17 @@ function App() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/home")  // Update the URL
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        setData(data);
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-      });
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/home"); // Update the URL
+        setData(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Axios error:', error);
+      }
+    };
+
+    fetchData();
   }, []);
   
   
