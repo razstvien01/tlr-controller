@@ -7,7 +7,8 @@ CORS(app)  # Enable CORS for all routes
 @app.route("/api/home", methods=['GET'])
 def return_home():
      return jsonify({
-    'message': 'Hello World'
+    'message': 'Hello World',
+    'animal': ['goat', 'lion', 'chicken']
   })
 
 if __name__ == "__main__":
