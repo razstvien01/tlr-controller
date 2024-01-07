@@ -23,12 +23,16 @@ The Telepresence Robot Controller is a comprehensive solution for controlling a 
 
 Follow these steps to set up the Telepresence Robot Software:
 
-1. Clone the repository: 
+1. Clone the repository: `https://github.com/razstvien01/tlr_controller.git`
 ```bash
 git clone https://github.com/razstvien01/tlr_controller.git
 ```
-2. Navigate to the project directory: `cd telepresence-robot`
+2. Navigate to the project directory: `tlr_controller`
+```bash
+cd tlr_controller
+```
 3. Install backend dependencies: `pip install -r requirements.txt`
+
 4. Install frontend dependencies: `cd frontend && npm install`
 
 ## Usage
