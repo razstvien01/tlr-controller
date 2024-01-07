@@ -17,14 +17,16 @@ The Telepresence Robot Controller is a comprehensive solution for controlling a 
 
 - **Real-time Communication:** Utilizes Firebase for seamless real-time communication between the robot and the user interface.
 - **Remote Control:** Allows users to remotely control the telepresence robot using an intuitive and user-friendly frontend.
-- **Video Streaming:** Incorporates live video streaming capabilities to provide a real-time visual experience.
 - **Responsive Interface:** The frontend, built with ReactJS, ensures a responsive and interactive user interface.
 
 ## Installation
 
 Follow these steps to set up the Telepresence Robot Software:
 
-1. Clone the repository: `git clone https://github.com/your-username/telepresence-robot.git`
+1. Clone the repository: 
+```bash
+git clone https://github.com/razstvien01/tlr_controller.git
+```
 2. Navigate to the project directory: `cd telepresence-robot`
 3. Install backend dependencies: `pip install -r requirements.txt`
 4. Install frontend dependencies: `cd frontend && npm install`
