@@ -19,3 +19,11 @@ def create():
     return f"An error Occured: {e}"
   
   
+@user_api.route('/list', methods=['GET'])
+def read():
+  try:
+    all_users = [doc.to_dict() for doc in user_ref.stream()]
+    
+    return jsonify(all_users), 200
+  except Exception as e:
+    return f"An Error Occured: {e}"
