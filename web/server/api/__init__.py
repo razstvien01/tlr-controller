@@ -9,6 +9,8 @@ def create_app():
   
   app.config['SECRET_KEY'] = 'qwerty12345'
   
-  from .user import user
+  from .user_api import user_api
   
-  app.register_blueprint(user, url_prefix='/user')
+  app.register_blueprint(user_api, url_prefix='/user')
+  
+  return app
