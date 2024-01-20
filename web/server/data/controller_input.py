@@ -1,15 +1,12 @@
 class ControllerInput:
-	def __init__(self):
-		self.Left = False
-		self.Right = False
-		self.Top = False
-		self.Bottom = False
+	def __init__(self, assignedUser):
+		self.Steer = 0
+		self.Drive = 0
+		self.AssignedUser = assignedUser
 
 	def serializable(self):
 		return {
-			'Left': self.Left,
-			'Right': self.Right,
-			'Top': self.Top,
-			'Bottom': self.Bottom,
+			'Steer': self.Steer,
+			'Drive': self.Drive,
 		}
 		
