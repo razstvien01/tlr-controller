@@ -5,16 +5,12 @@ async function turnOn(idInput: string) {
   const response = await axios.post("http://localhost:5000/controller/TurnOnRobot", {
     id: idInput
   });
-
-  console.log('Turn on pressed ', idInput);
 }
 
 async function turnOff(idInput: string) {
   const response = await axios.post("http://localhost:5000/controller/TurnOffRobot", {
     id: idInput
   });
-
-  console.log('Turn off pressed', idInput)
 }
 
 async function useRobot(userInput: string, idInput: string, toUse: boolean) {

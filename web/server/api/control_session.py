@@ -32,15 +32,11 @@ def useRobot():
 	userId = request.json['userId']
 	toUse = request.json['toUse']
 
-	print('data test ', request.json)
-
 	if(userId == ''):
 		abort(404)
 
 	if(id not in control_sessions):
 		abort(404)
-	
-	print('val is null test ', control_sessions[id].AssignedUser == None, toUse)
 
 	if(control_sessions[id].AssignedUser != None and toUse):
 		abort(404)
@@ -54,7 +50,6 @@ def useRobot():
 
 @control_api.route('RPC', methods=['POST'])
 def rpc():
-	print('Data test ', request.get_data())
 	return Response(
 		dispatch(request.get_data().decode()), content_type="application/json"
 	)
@@ -62,27 +57,16 @@ def rpc():
 
 @method
 def control(robotId, userId, drive, steer) -> Result:
-	print('Data test ', {
-		'robotId' : robotId,
-		'userId' : userId,
-		'drive' : drive,
-		'steer': steer	
-	})
-
 	if(userId == ''):
 		abort(404)
 
 	if(robotId not in control_sessions):
 		abort(404)
 
-	print('ID Exists')
-
 	session = control_sessions[robotId]
 
 	if(session.AssignedUser != userId):
 		abort(404)
-
-	print('Correct User')
 
 	if(drive != None):
 		session.Drive = drive
