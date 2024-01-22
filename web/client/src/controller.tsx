@@ -4,7 +4,14 @@ import { useState } from "react";
 async function turnOn(idInput: string) {
   const response = await axios.post("http://localhost:5000/controller/TurnOnRobot", {
     id: idInput
+  }).then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
+
+
 }
 
 async function turnOff(idInput: string) {

@@ -7,6 +7,8 @@ import ControllerTest from './controller.tsx'
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
-    <ControllerTest></ControllerTest>
+    {/* <ControllerTest></ControllerTest> */
+    }
+    <ControllerTest/>
   </React.StrictMode>,
 )

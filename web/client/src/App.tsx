@@ -28,6 +28,7 @@ function App() {
     //   </div>
     // </main>
     <BrowserRouter>
+    <h1>HELLLO</h1>
       <div className="relative z-0 bg-primary">
         <div className="relative z-0 text-red-500 p-4 text-xl">
           {data["message"]}
