@@ -1,3 +1,4 @@
+
 from flask import Flask
 from firebase_admin import credentials, initialize_app
 
@@ -10,7 +11,9 @@ def create_app():
   app.config['SECRET_KEY'] = 'qwerty12345'
   
   from .user_api import user_api
-  
+  from .control_session import control_api
+
   app.register_blueprint(user_api, url_prefix='/user')
-  
+  app.register_blueprint(control_api, url_prefix='/controller')
+
   return app
