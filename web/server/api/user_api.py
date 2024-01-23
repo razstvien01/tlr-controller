@@ -16,6 +16,14 @@ def parse_user_args():
   
   return parser.parse_args()
 
+def user_update_args():
+    parser = reqparse.RequestParser()
+    parser.add_argument('name', type=str)
+    parser.add_argument('age', type=int)
+    parser.add_argument('address', type=str)
+    parser.add_argument('email', type=str)
+    return parser.parse_args()
+
 class UserResource(Resource):
   def get(self, user_id=None):
     try:
@@ -23,12 +31,12 @@ class UserResource(Resource):
         #! fetching a single user
         user = user_ref.document(user_id).get()
         if user.exists:
-          return { "data": user.to_dict(), "doc_id": user.id }, 200
+          return jsonify({ "data": user.to_dict(), "doc_id": user.id })
         else:
           return {"error": "User not found"}, 404
       else:
         all_users = [{"doc_id": doc.id, **doc.to_dict()} for doc in user_ref.stream()]
-        return {"data": all_users}, 200
+        return jsonify(all_users)
     except Exception as e:
       return f"An Error Occured: {e}"
     
@@ -75,5 +83,28 @@ class UserResource(Resource):
       
       return jsonify(Success=True).get_json(), 200
       
+    except Exception as e:
+      return f"An Error Occured: {e}"
+    
+  def patch(self, user_id):
+    try:
+      args = user_update_args()
+      
+      # * CHeck if the user exist
+      user = user_ref.document(user_id).get()
+      
+      if not user.exists:
+        return jsonify({"error": "User not found"}), 404
+      
+      # * Update only the fields provided in the request
+      updated_data = {}
+      for field, value in args.items():
+        if value is not None:
+          updated_data[field] = value
+      
+      # * Update the user data
+      user_ref.document(user_id).update(updated_data)
+      
+      return jsonify(Success=True)
     except Exception as e:
       return f"An Error Occured: {e}"
