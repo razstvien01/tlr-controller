@@ -94,7 +94,7 @@ class UserResource(Resource):
       user = user_ref.document(user_id).get()
       
       if not user.exists:
-        return jsonify({"error": "User not found"}), 404
+        return jsonify({"error": "User not found"}).get_json(), 404
       
       # * Update only the fields provided in the request
       updated_data = {}
@@ -108,3 +108,15 @@ class UserResource(Resource):
       return jsonify(Success=True)
     except Exception as e:
       return f"An Error Occured: {e}"
+    
+  def delete(self, user_id):
+    try:
+      user = user_ref.document(user_id).get()
+      
+      if user.exists:
+        user_ref.document(user_id).delete()
+        return jsonify({"message": "User deleted successfully"}).get_json(), 200
+      else:
+        return jsonify({"error": "User not found"}).get_json(), 404
+    except Exception as e:
+      return f"An Errror Occured: {e}"
