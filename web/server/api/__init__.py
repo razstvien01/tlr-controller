@@ -13,7 +13,7 @@ def create_app():
   
   from .control_session import control_api
   from .user_api import UserResource
-  # app.register_blueprint(user_api, url_prefix='/user')
+  
   app.register_blueprint(control_api, url_prefix='/controller')
   
   api.add_resource(UserResource, "/users", "/users/<string:user_id>")

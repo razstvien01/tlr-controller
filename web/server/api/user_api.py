@@ -1,9 +1,10 @@
-from flask_restful import Resource
+from flask import jsonify
+from flask_restful import Resource, reqparse
 from firebase_admin import firestore
 import uuid
 
 db = firestore.client()
-user_ref = db.collection('user')
+user_ref = db.collection('users')
 
 class UserResource(Resource):
   def get(self, user_id=None):
@@ -21,4 +22,32 @@ class UserResource(Resource):
     except Exception as e:
       return f"An Error Occured: {e}"
     
-  # def post(self, )
+  def post(self):
+    try:
+      parser = reqparse.RequestParser()
+      parser.add_argument('name', type=str, required=True, help='Name cannot be blank')
+      parser.add_argument('age', type=int, required=True, help='Age cannot be blank')
+      parser.add_argument('address', type=str, required=True, help='Address cannot be blank')
+      parser.add_argument('email', type=str, required=True, help='Email cannot be blank')
+      
+      args = parser.parse_args()
+      
+      # ! Check if the email already exist
+      existing_user = user_ref.where('email', '==', args['email']).stream()
+      
+      if any(existing_user):
+        return jsonify({"error": "User with this email already exists"}).get_json(), 400
+      
+      new_user_data = {
+        'name': args['name'],
+        'age': args['age'],
+        'address': args['address'],
+        'email': args['email']
+      }
+      
+      user_ref.add(new_user_data)
+      
+      return jsonify(Success=True)
+      
+    except Exception as e:
+      return f"An Error Occured: {e}"
