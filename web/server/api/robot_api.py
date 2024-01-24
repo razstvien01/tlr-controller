@@ -26,7 +26,7 @@ def robot_update_args():
   return parser.parse_args()
 
 class RobotResource(Resource):
-  def get(self, robot_id):
+  def get(self, robot_id=None):
     try:
       if robot_id:
         #* fetching a single robot
