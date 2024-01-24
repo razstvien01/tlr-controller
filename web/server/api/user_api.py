@@ -1,7 +1,6 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from firebase_admin import firestore
-import uuid
 
 db = firestore.client()
 user_ref = db.collection('users')
@@ -18,10 +17,12 @@ def parse_user_args():
 
 def user_update_args():
     parser = reqparse.RequestParser()
+    
     parser.add_argument('name', type=str)
     parser.add_argument('age', type=int)
     parser.add_argument('address', type=str)
     parser.add_argument('email', type=str)
+    
     return parser.parse_args()
 
 class UserResource(Resource):
