@@ -42,3 +42,19 @@ class RobotResource(Resource):
         return jsonify(all_robots)
     except Exception as e:
       return f"An Error Occured: {e}"
+    
+  def post(self):
+    try:
+      args = robot_post_args()
+      
+      new_robot_data = {
+        'name': args['name'],
+        'robot_id': args['robot_id'],
+        'location': args['location'],
+        'status': args['status']
+      }
+      
+      return jsonify(Success=True).get_json(), 200
+      
+    except Exception as e:
+      return f"An Error Occured: {e}"
