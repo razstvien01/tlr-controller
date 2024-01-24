@@ -24,3 +24,21 @@ def robot_update_args():
   parser.add_argument('status', type=str)
   
   return parser.parse_args()
+
+class RobotResource(Resource):
+  def get(self, robot_id):
+    try:
+      if robot_id:
+        #* fetching a single robot
+        robot = robot_ref.document(robot_id).get()
+        
+        if robot.exists:
+          return jsonify({ "data": robot.to_dict(), "doc_id": robot.id})
+        else:
+          return {"error", "Robot not found"}, 404
+      else:
+        all_robots = [{"doc_id": doc.id, **doc.to_dict()} for doc in robot_ref.stream()]
+        
+        return jsonify(all_robots)
+    except Exception as e:
+      return f"An Error Occured: {e}"
