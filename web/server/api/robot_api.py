@@ -54,6 +54,8 @@ class RobotResource(Resource):
         'status': args['status']
       }
       
+      robot_ref.add(new_robot_data)
+      
       return jsonify(Success=True).get_json(), 200
       
     except Exception as e:
