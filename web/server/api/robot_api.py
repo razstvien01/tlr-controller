@@ -29,11 +29,13 @@ class RobotResource(Resource):
   def get(self, robot_id=None):
     try:
       if robot_id:
-        #* fetching a single robot
-        robot = robot_ref.document(robot_id).get()
+        #* fetching a single by robot_id field
+        robot_query = robot_ref.where("robot_id", "==", robot_id).limit(1).get()
         
-        if robot.exists:
-          return jsonify({ "data": robot.to_dict(), "doc_id": robot.id})
+        if len(robot_query) > 0:
+          robot = robot_query[0]
+          
+          return jsonify({"data": robot.to_dict(), "doc_id": robot.id}).get_json(), 200
         else:
           return {"error", "Robot not found"}, 404
       else:
