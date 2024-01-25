@@ -88,6 +88,13 @@ class RobotResource(Resource):
   
   def delete(self, robot_id):
     try:
-      return jsonify(Success=True)
+      robot_query = robot_ref.where("robot_id", "==", robot_id).limit(1).get()
+      
+      if not len(robot_query) > 0:
+        return jsonify({"error": "Robot not found"}), 404
+      
+      robot_ref.document(robot_query[0].id).delete()
+      
+      return jsonify({"message": "Robot deleted successfully"}).get_json(), 200
     except Exception as e:
       return f"An Errror Occured: {e}"
