@@ -62,3 +62,32 @@ class RobotResource(Resource):
       
     except Exception as e:
       return f"An Error Occured: {e}"
+    
+  def patch(self, robot_id):
+    try:
+      args = robot_update_args()
+      
+      robot_query = robot_ref.where("robot_id", "==", robot_id).limit(1).get()
+      
+      if not len(robot_query) > 0:
+        return jsonify({"error": "Robot not found"}), 404
+      
+      # # * Update only the fields provided in the request
+      updated_data = {}
+      for field, value in args.items():
+        if value is not None:
+          updated_data[field] = value
+          
+      # # * Update the robot data
+      robot_ref.document(robot_query[0].id).update(updated_data)
+      
+      return jsonify(Success=True)
+    except Exception as e:
+      return f"An Errror Occured: {e}"
+    
+  
+  def delete(self, robot_id):
+    try:
+      return jsonify(Success=True)
+    except Exception as e:
+      return f"An Errror Occured: {e}"

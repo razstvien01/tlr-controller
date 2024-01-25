@@ -87,7 +87,7 @@ class UserResource(Resource):
     except Exception as e:
       return f"An Error Occured: {e}"
     
-  def patch(self, user_id):
+  def patch(self, user_id=None):
     try:
       args = user_update_args()
       
