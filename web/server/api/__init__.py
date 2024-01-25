@@ -13,9 +13,13 @@ def create_app():
   
   from .control_session import control_api
   from .user_api import UserResource
+  from .robot_api import RobotResource
   
+  # ! CONTROLLER API
   app.register_blueprint(control_api, url_prefix='/controller')
   
+  # ! REST APIs
   api.add_resource(UserResource, "/users", "/users/<string:user_id>")
+  api.add_resource(RobotResource, "/robots", "/robots/<string:robot_id>")
 
   return app

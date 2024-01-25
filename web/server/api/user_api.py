@@ -1,7 +1,6 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from firebase_admin import firestore
-import uuid
 
 db = firestore.client()
 user_ref = db.collection('users')
@@ -18,10 +17,12 @@ def parse_user_args():
 
 def user_update_args():
     parser = reqparse.RequestParser()
+    
     parser.add_argument('name', type=str)
     parser.add_argument('age', type=int)
     parser.add_argument('address', type=str)
     parser.add_argument('email', type=str)
+    
     return parser.parse_args()
 
 class UserResource(Resource):
@@ -86,7 +87,7 @@ class UserResource(Resource):
     except Exception as e:
       return f"An Error Occured: {e}"
     
-  def patch(self, user_id):
+  def patch(self, user_id=None):
     try:
       args = user_update_args()
       
@@ -108,3 +109,15 @@ class UserResource(Resource):
       return jsonify(Success=True)
     except Exception as e:
       return f"An Error Occured: {e}"
+    
+  def delete(self, user_id):
+    try:
+      user = user_ref.document(user_id).get()
+
+      if user.exists:
+        user_ref.document(user_id).delete()
+        return jsonify({"message": "User deleted successfully"}).get_json(), 200
+      else:
+        return jsonify({"error": "User not found"}).get_json(), 404
+    except Exception as e:
+      return f"An Errror Occured: {e}"
