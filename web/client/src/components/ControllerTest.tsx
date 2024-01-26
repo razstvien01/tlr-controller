@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 
 async function turnOn(idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/TurnOnRobot", {
+  await axios.post("http://localhost:5000/controller/TurnOnRobot", {
     id: idInput
   }).then(response => {
     console.log(response.data);
@@ -15,13 +15,13 @@ async function turnOn(idInput: string) {
 }
 
 async function turnOff(idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/TurnOffRobot", {
+  await axios.post("http://localhost:5000/controller/TurnOffRobot", {
     id: idInput
   });
 }
 
 async function useRobot(userInput: string, idInput: string, toUse: boolean) {
-  const response = await axios.post("http://localhost:5000/controller/UseRobot", {
+  await axios.post("http://localhost:5000/controller/UseRobot", {
     id: idInput,
     userId: userInput,
     toUse: toUse
@@ -29,7 +29,7 @@ async function useRobot(userInput: string, idInput: string, toUse: boolean) {
 }
 
 async function driveRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, 1, null],
@@ -38,7 +38,7 @@ async function driveRobot(userInput: string, idInput: string) {
 }
 
 async function reverseRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, -1, null],
@@ -47,7 +47,7 @@ async function reverseRobot(userInput: string, idInput: string) {
 }
 
 async function steerLeftRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, null, -1],
@@ -56,7 +56,7 @@ async function steerLeftRobot(userInput: string, idInput: string) {
 }
 
 async function steerRightRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, null, 1],
@@ -65,7 +65,7 @@ async function steerRightRobot(userInput: string, idInput: string) {
 }
 
 async function stopSteerRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, null, 0],
@@ -74,7 +74,7 @@ async function stopSteerRobot(userInput: string, idInput: string) {
 }
 
 async function stopDriveRobot(userInput: string, idInput: string) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
+  await axios.post("http://localhost:5000/controller/RPC", {
     jsonrpc: '2.0',
     method: 'control',
     params: [idInput, userInput, 0, null],
