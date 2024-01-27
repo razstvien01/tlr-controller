@@ -19,6 +19,7 @@ Flask-RESTful==0.3.10
 Flask-SocketIO==5.3.6
 frozenlist==1.4.1
 gevent==23.9.1
+gevent-websocket==0.10.1
 google-api-core==2.15.0
 google-api-python-client==2.112.0
 google-auth==2.26.1
