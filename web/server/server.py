@@ -2,8 +2,9 @@ from api import create_app
 from dotenv import load_dotenv
 import os
 
-app, socketio = create_app()
 load_dotenv()
+
+app, socketio = create_app()
 
 debug_mode = os.getenv('FLASK_DEBUG', False)
 
