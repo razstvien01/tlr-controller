@@ -1,7 +1,5 @@
 # Telepresence Robot Controller
 
-The Telepresence Robot Controller is a comprehensive solution for controlling a telepresence robot remotely. It leverages Firebase for real-time communication, Flask as the backend server, and ReactJS for the frontend user interface.
-
 ## Table of Contents
 
 - [Features](#features)
