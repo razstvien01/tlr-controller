@@ -3,5 +3,5 @@ __pycache__/
 venv
 api/__pycache__/
 data/__pycache__/
-
+.env
 key.json
