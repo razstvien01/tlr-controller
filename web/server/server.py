@@ -8,6 +8,11 @@ from sockets.socket_functions import setup_socket_io
 from dotenv import load_dotenv
 import os
 
+import grpc.experimental.gevent as grpc_gevent
+
+grpc_gevent.init_gevent()
+
+
 load_dotenv()
 
 debug_mode = os.getenv('FLASK_DEBUG', False)
@@ -17,10 +22,11 @@ app.config['SECRET_KEY'] = 'qwerty12345'
 api = Api(app)
 CORS(app)
 
-api.add_resource(UserResource, "/users", "/users/<string:user_id>")
-api.add_resource(RobotResource, "/robots", "/robots/<string:robot_id>")
+api.add_resource(UserResource, "/api/users", "/api/users/<string:user_id>")
+api.add_resource(RobotResource, "/api/robots", "/api/robots/<string:robot_id>")
 
-socketio = SocketIO(app, cors_allowed_origins="*")
+# socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
 
 # Register socket events
 setup_socket_io(socketio)
@@ -28,6 +34,7 @@ setup_socket_io(socketio)
 @app.route('/')
 def index():
     return render_template("index.html")
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=debug_mode)
