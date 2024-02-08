@@ -43,4 +43,4 @@ def index():
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=debug_mode)
+    socketio.run(app, debug=debug_mode, logger=True, engineio_logger=True)
