@@ -25,9 +25,7 @@ CORS(app)
 api.add_resource(UserResource, "/api/users", "/api/users/<string:user_id>")
 api.add_resource(RobotResource, "/api/robots", "/api/robots/<string:robot_id>")
 
-# socketio = SocketIO(app, cors_allowed_origins="*")
 socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
-# socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*", ssl_context='adhoc')
 
 # Hello World API endpoint
 class HelloWorld(Resource):
