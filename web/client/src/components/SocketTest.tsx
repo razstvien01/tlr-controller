@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 
-const socket: Socket = io("http://localhost:8000/");
+const socket: Socket = io("https://tlr-contoller.onrender.com/");
 
 const SocketTest: React.FC = () => {
     const [message, setMessage] = useState<string>('');
