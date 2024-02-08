@@ -12,13 +12,13 @@ import grpc.experimental.gevent as grpc_gevent
 
 grpc_gevent.init_gevent()
 
-
 load_dotenv()
 
 debug_mode = os.getenv('FLASK_DEBUG', False)
+secret_key = os.getenv('SECRET_KEY', '')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'qwerty12345'
+app.config['SECRET_KEY'] = secret_key
 api = Api(app)
 CORS(app)
 
