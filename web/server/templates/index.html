@@ -10,7 +10,7 @@
 <body>
     <h1>Socket.IO Test</h1>
     <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var socket = io.connect('https://' + document.domain + ':' + location.port);
         socket.on('response_to_client', function(data) {
             console.log('Received response:', data);
         });

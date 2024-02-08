@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from flask_restful import Api
+from flask_restful import Api, Resource
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from api.user_api import UserResource
@@ -27,6 +27,14 @@ api.add_resource(RobotResource, "/api/robots", "/api/robots/<string:robot_id>")
 
 # socketio = SocketIO(app, cors_allowed_origins="*")
 socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
+# socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*", ssl_context='adhoc')
+
+# Hello World API endpoint
+class HelloWorld(Resource):
+    def get(self):
+        return {'message': 'Hello, World!'}
+
+api.add_resource(HelloWorld, '/api/hello')
 
 # Register socket events
 setup_socket_io(socketio)
