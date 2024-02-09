@@ -1,101 +1,126 @@
-import axios from "axios";
 import { useState } from "react";
+import { io, Socket } from "socket.io-client";
+
+const socket: Socket = io("http://localhost:5000/");
 
 async function turnOn(idInput: string) {
-  await axios.post("http://localhost:5000/controller/TurnOnRobot", {
-    id: idInput
-  }).then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
+  socket.emit('controller/TurnOnRobot/request', { id: idInput });
+
+  socket.on('controller/TurnOnRobot/response', (data: any) => {
+    console.log('Turn On Response received ', data);
   });
-
-
 }
 
 async function turnOff(idInput: string) {
-  await axios.post("http://localhost:5000/controller/TurnOffRobot", {
-    id: idInput
+  socket.emit('controller/TurnOffRobot/request', { id: idInput });
+
+  socket.on('controller/TurnOffRobot/response', (data: any) => {
+    console.log('Turn Off Response received ', data);
   });
 }
 
 async function useRobot(userInput: string, idInput: string, toUse: boolean) {
-  await axios.post("http://localhost:5000/controller/UseRobot", {
+  socket.emit('controller/UseRobot/request', {
     id: idInput,
     userId: userInput,
     toUse: toUse
   });
+
+  socket.on('controller/UseRobot/response', (data: any) => {
+    console.log('Use Robot received ', data);
+  });
 }
 
 async function driveRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, 1, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: 1,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Drive Robot received ', data);
   });
 }
 
 async function reverseRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, -1, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: -1,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Reverse Robot received ', data);
   });
 }
 
 async function steerLeftRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, -1],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: -1
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Steer Left Robot received ', data);
   });
 }
 
 async function steerRightRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, 1],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: 1
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Steer Right Robot received ', data);
   });
 }
 
 async function stopSteerRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, 0],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: 0
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Stop Steer Robot received ', data);
   });
 }
 
 async function stopDriveRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, 0, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: 0,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Stop Steer Robot received ', data);
   });
 }
 
 async function getControl(idInput: string, setControlStringFunction: any) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'getControl',
-    params: [idInput],
-    id: 1,
+  socket.emit('controller/GetControl/request', {
+    robotId: idInput,
   });
 
-  if (response.data.error && response.data.error.code == -32603) {
-    setControlStringFunction(`${idInput} is offline`);
-  } else {
-    setControlStringFunction(`Steer:${response.data.result.Steer}\tDrive:${response.data.result.Drive}`);
-  }
-
+  socket.on('controller/GetControl/response', (data: any) => {
+    if (data.statusCode == 404) {
+      setControlStringFunction(`${idInput} is offline`);
+    } else {
+      setControlStringFunction(`Steer:${data.Steer}\tDrive:${data.Drive}`);
+    }
+  });
 }
 
 function ControllerTest() {
@@ -156,7 +181,7 @@ function ControllerTest() {
         <button onClick={() => {
           stopDriveRobot(userInput, idInput)
           getControl(idInput, setControlValuePresent);
-        }} className="control-button">Stop</button>
+        }} className="control-button">Stop Drive</button>
       </div>
       <div>
         <div>Current Controls</div>
