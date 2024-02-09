@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -33,73 +32,95 @@ async function useRobot(userInput: string, idInput: string, toUse: boolean) {
 }
 
 async function driveRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, 1, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: 1,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Drive Robot received ', data);
   });
 }
 
 async function reverseRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, -1, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: -1,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Reverse Robot received ', data);
   });
 }
 
 async function steerLeftRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, -1],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: -1
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Steer Left Robot received ', data);
   });
 }
 
 async function steerRightRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, 1],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: 1
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Steer Right Robot received ', data);
   });
 }
 
 async function stopSteerRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, null, 0],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: null,
+    steer: 0
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Stop Steer Robot received ', data);
   });
 }
 
 async function stopDriveRobot(userInput: string, idInput: string) {
-  await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: 'control',
-    params: [idInput, userInput, 0, null],
-    id: 1,
+  socket.emit('controller/ControlRobot/request', {
+    robotId: idInput,
+    userId: userInput,
+    drive: 0,
+    steer: null
+  });
+
+  socket.on('controller/ControlRobot/response', (data: any) => {
+    console.log('Stop Steer Robot received ', data);
   });
 }
 
 async function getControl(idInput: string, setControlStringFunction: any) {
-  const response = await axios.post("http://localhost:5000/controller/RPC", {
-    jsonrpc: '2.0',
-    method: '//getControl',
-    params: [idInput],
-    id: 1,
+  socket.emit('controller/GetControl/request', {
+    robotId: idInput,
   });
 
-  if (response.data.error && response.data.error.code == -32603) {
-    setControlStringFunction(`${idInput} is offline`);
-  } else {
-    setControlStringFunction(`Steer:${response.data.result.Steer}\tDrive:${response.data.result.Drive}`);
-  }
-
+  socket.on('controller/GetControl/response', (data: any) => {
+    if (data.statusCode == 404) {
+      setControlStringFunction(`${idInput} is offline`);
+    } else {
+      setControlStringFunction(`Steer:${data.Steer}\tDrive:${data.Drive}`);
+    }
+  });
 }
 
 function ControllerTest() {
@@ -115,11 +136,11 @@ function ControllerTest() {
         <input type="text" value={idInput} onChange={(e) => setIdInput(e.target.value)} />
         <button id="TurnOnTest" onClick={() => {
           turnOn(idInput)
-          //getControl(idInput, setControlValuePresent)
+          getControl(idInput, setControlValuePresent)
         }}>Turn On</button>
         <button id="TurnOffTest" onClick={() => {
           turnOff(idInput)
-          //getControl(idInput, setControlValuePresent)
+          getControl(idInput, setControlValuePresent)
         }}>Turn Off</button>
       </div>
       <div>
@@ -127,40 +148,40 @@ function ControllerTest() {
         <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} />
         <button onClick={() => {
           useRobot(userInput, idInput, true)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Use Robot</button>
         <button onClick={() => {
           useRobot(userInput, idInput, false)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Un-Use Robot</button>
       </div>
       <div>
         <button onClick={() => {
           steerLeftRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Steer Left</button>
         <button onClick={() => {
           steerRightRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Steer Right</button>
         <button onClick={() => {
           stopSteerRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Stop Steer</button>
       </div>
       <div>
         <button onClick={() => {
           driveRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Drive</button>
         <button onClick={() => {
           reverseRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
+          getControl(idInput, setControlValuePresent);
         }} className="control-button">Reverse</button>
         <button onClick={() => {
           stopDriveRobot(userInput, idInput)
-          //getControl(idInput, setControlValuePresent);
-        }} className="control-button">Stop</button>
+          getControl(idInput, setControlValuePresent);
+        }} className="control-button">Stop Drive</button>
       </div>
       <div>
         <div>Current Controls</div>

@@ -17,12 +17,11 @@ def create_app():
     socketio = SocketIO(app, cors_allowed_origins="*")
     socketio.init_app(app)  # Initialize SocketIO
 
-    from .control_session import control_api, configure_controller_sockets
+    from .control_session import configure_controller_sockets
     from .user_api import UserResource
     from .robot_api import RobotResource
 
     # ! CONTROLLER API
-    app.register_blueprint(control_api, url_prefix='/controller')
     configure_controller_sockets(socketio)
 
     # ! REST APIs
