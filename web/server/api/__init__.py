@@ -1,8 +1,5 @@
-from flask import Flask
-from flask_restful import Api
 from firebase_admin import credentials, initialize_app
-from flask_socketio import SocketIO
-from flask_cors import CORS  # Import CORS
+import os
 
 cred = credentials.Certificate("key.json")
 default_app = initialize_app(cred)
@@ -29,3 +26,6 @@ def create_app():
     api.add_resource(RobotResource, "/robots", "/robots/<string:robot_id>")
 
     return app, socketio  # Return both app and socketio instances
+key_path = os.environ.get("FIREBASE_KEY_PATH", "key.json")
+cred = credentials.Certificate(key_path)
+default_app = initialize_app(cred)

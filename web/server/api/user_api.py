@@ -40,7 +40,7 @@ class UserResource(Resource):
         return jsonify(all_users)
     except Exception as e:
       return f"An Error Occured: {e}"
-    
+  
   def post(self):
     try:
       args = parse_user_args()
