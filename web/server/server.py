@@ -18,4 +18,5 @@ def handle_message(message):
     socketio.emit('response_to_client', {'data': 'Message received successfully from the server!'})
     
 if __name__ == '__main__':
+    print('running server at 5000')
     socketio.run(app, debug=debug_mode)  #! Use socketio.run to run the server

@@ -1,52 +1,73 @@
 from flask import Blueprint, jsonify, request, abort, Response
 from jsonrpcserver import dispatch, method, Result, Success
+from flask_socketio import SocketIO, emit
 
 from data.controller_input import ControllerInput
+
+def configure_controller_sockets(socketIO: SocketIO):
+	turnOnRequest = 'controller/TurnOnRobot/request'
+	turnOnResponse = 'controller/TurnOnRobot/response'
+
+	@socketIO.on(turnOnRequest)
+	def turnOnRobot(data):
+		id = data['id']
+		if id == '':
+			emit(turnOnResponse, response404())
+			return
+
+		control_sessions[id] = ControllerInput(None)
+		emit(turnOnResponse, responseSuccess())
+
+
+	turnOffRequest = 'controller/TurnOffRobot/request'
+	turnOffResponse = 'controller/TurnOffRobot/response'
+
+	@socketIO.on(turnOffRequest)
+	def turnOffRobot(data):
+		id = data['id']
+		
+		if(id not in control_sessions):
+			emit(turnOffResponse, response404())
+			return
+		
+		del control_sessions[id]
+		emit(turnOffResponse, responseSuccess())
+
+
+	useRobotRequest = 'controller/UseRobot/request'
+	useRobotResponse = 'controller/UseRobot/response'
+
+	@socketIO.on(useRobotRequest)
+	def useRobot(data):
+		print('accessed useRobot')
+
+		id = data['id']
+		userId = data['userId']
+		toUse = data['toUse']
+
+		if(userId == ''):
+			emit(useRobotResponse, response404())
+			return
+
+		if(id not in control_sessions):
+			emit(useRobotResponse, response404())
+			return
+
+		if(control_sessions[id].AssignedUser != None and toUse):
+			emit(useRobotResponse, response404())
+			return
+
+		if(toUse):
+			control_sessions[id].AssignedUser = userId
+		else:
+			control_sessions[id].AssignedUser = None
+
+		emit(useRobotResponse, responseSuccess())
 
 control_sessions = {}
 
 control_api = Blueprint('control_api', __name__)
 
-@control_api.route('TurnOnRobot', methods=['POST'])
-def turnOnRobot():
-	id = request.json['id']
-	if id == '':
-		abort(404)
-
-	control_sessions[id] = ControllerInput(None)
-	return jsonify(success=True)
-
-@control_api.route('TurnOffRobot', methods=['POST'])
-def turnOffRobot():
-	id = request.json['id']
-	
-	if(id not in control_sessions):
-		abort(404)
-	
-	del control_sessions[id]
-	return jsonify(success=True)
-
-@control_api.route('UseRobot', methods=['POST'])
-def useRobot():
-	id = request.json['id']
-	userId = request.json['userId']
-	toUse = request.json['toUse']
-
-	if(userId == ''):
-		abort(404)
-
-	if(id not in control_sessions):
-		abort(404)
-
-	if(control_sessions[id].AssignedUser != None and toUse):
-		abort(404)
-
-	if(toUse):
-		control_sessions[id].AssignedUser = userId
-	else:
-		control_sessions[id].AssignedUser = None
-	
-	return jsonify(success=True)
 
 @control_api.route('RPC', methods=['POST'])
 def rpc():
@@ -87,4 +108,9 @@ def getControl(robotId) -> Result:
 
 	return Success(control_sessions[robotId].serializable())
 	
+def response404():
+	return {'statusCode': 404 }
+
+def responseSuccess():
+	return {'success': True}
 
