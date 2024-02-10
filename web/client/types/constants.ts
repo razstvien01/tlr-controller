@@ -1,0 +1,4 @@
+export enum USER_QUERY {
+  GET_USER = "GET_USER",
+  GET_USERS = "GET_USERS"
+}
