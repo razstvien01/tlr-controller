@@ -39,7 +39,7 @@ export const getUsers = async () => {
       message: "Users Fetch Successfully",
       data: users
     })
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error fetching users:", error.message)
     
     return NextResponse.error()
