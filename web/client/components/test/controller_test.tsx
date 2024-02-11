@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 
 const socket: Socket = io("http://localhost:5000/");
 
@@ -10,7 +11,8 @@ const ControllerTest = () => {
   const [idInput, setIdInput] = useState("");
   const [userInput, setUserInput] = useState("");
   const [controlValuePresent, setControlValuePresent] = useState("");
-  
+  const [isOnRobot, setIsOnRobot] = useState(false);
+
   async function turnOn(idInput: string) {
     socket.emit("controller/TurnOnRobot/request", { id: idInput });
 
@@ -19,6 +21,15 @@ const ControllerTest = () => {
     });
   }
 
+  async function turnOff(idInput: string) {
+    socket.emit("controller/TurnOffRobot/request", { id: idInput });
+
+    socket.on("controller/TurnOffRobot/response", (data: any) => {
+      console.log("Turn Off Response received", data);
+    });
+  }
+
+  //* Getting control of the robot
   useEffect(() => {
     async function getControl(idInput: string, setControlStringFunction: any) {
       socket.emit("controller/GetControl/request", {
@@ -33,11 +44,11 @@ const ControllerTest = () => {
         }
       });
     }
-    
-    getControl(idInput, setControlValuePresent)
+
+    getControl(idInput, setControlValuePresent);
 
     return () => {};
-  }, []);
+  }, [isOnRobot]);
 
   return (
     <>
@@ -50,14 +61,25 @@ const ControllerTest = () => {
           value={idInput}
           onChange={(e) => setIdInput(e.target.value)}
         />
-        <Button
+        {/* <Button
           id="TurnOnTest"
           onClick={() => {
             turnOn(idInput);
           }}
         >
           Turn On
-        </Button>
+        </Button> */}
+        <Toggle
+          id="ToggleOnOff"
+          onPressedChange={() => {
+            if (!isOnRobot) turnOn(idInput);
+            else turnOff(idInput);
+
+            setIsOnRobot(!isOnRobot);
+          }}
+        >
+          {isOnRobot ? "Turn Off" : "Turn On"}
+        </Toggle>
       </div>
     </>
   );
