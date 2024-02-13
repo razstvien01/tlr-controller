@@ -40,13 +40,16 @@ const ControllerTest = () => {
 
   async function useRobot(userInput: string, idInput: string, toUse: boolean) {
     socket.off("controller/UseRobot/response")
+    console.log(idInput)
+    console.log(userInput)
+    console.log(toUse)
     
     socket.emit("controller/UseRobot/request", {
       id: idInput,
       userId: userInput,
       toUse: toUse,
     });
-
+  
     socket.on("controller/UseRobot/response", (data: any) => {
       console.log("Use Robot received ", data);
     });
@@ -212,8 +215,8 @@ const ControllerTest = () => {
         <Toggle
           id="toggleUse"
           onPressedChange={() => {
-            if (!isUseRobot) useRobot(userInput, idInput, !isUseRobot);
-            else turnOff(idInput);
+            if (!isUseRobot) useRobot(userInput, idInput, true);
+            else useRobot(userInput, idInput, false);;
 
             setIsUseRobot(!isUseRobot);
           }}
