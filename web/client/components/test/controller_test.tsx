@@ -18,6 +18,9 @@ const ControllerTest = () => {
 
   //************************ CONTROLLER FUNCTIONS  *****************************/
   async function turnOn(idInput: string) {
+    // Remove previous event listener
+    socket.off("controller/TurnOnRobot/response");
+    
     socket.emit("controller/TurnOnRobot/request", { id: idInput });
 
     socket.on("controller/TurnOnRobot/response", (data: any) => {
@@ -26,6 +29,8 @@ const ControllerTest = () => {
   }
 
   async function turnOff(idInput: string) {
+    socket.off("controller/TurnOffRobot/response");
+    
     socket.emit("controller/TurnOffRobot/request", { id: idInput });
 
     socket.on("controller/TurnOffRobot/response", (data: any) => {
@@ -34,6 +39,8 @@ const ControllerTest = () => {
   }
 
   async function useRobot(userInput: string, idInput: string, toUse: boolean) {
+    socket.off("controller/UseRobot/response")
+    
     socket.emit("controller/UseRobot/request", {
       id: idInput,
       userId: userInput,
@@ -46,6 +53,8 @@ const ControllerTest = () => {
   }
 
   async function steerRightRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -56,11 +65,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Steer Right Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function steerLeftRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -71,11 +82,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Steer Left Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function stopSteerRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -86,11 +99,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Stop Steer Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function driveRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -101,11 +116,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Drive Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function stopDriveRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -116,11 +133,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Stop Steer Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function reverseRobot(userInput: string, idInput: string) {
+    socket.off("controller/ControlRobot/response")
+    
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -131,11 +150,13 @@ const ControllerTest = () => {
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Reverse Robot received ", data);
     });
-    
-    setUpdate(!update)
+
+    setUpdate(!update);
   }
 
   async function getControl(idInput: string, setControlStringFunction: any) {
+    socket.off("controller/GetControl/response")
+    
     socket.emit("controller/GetControl/request", {
       robotId: idInput,
     });
