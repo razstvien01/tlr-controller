@@ -3,7 +3,7 @@ import { USER_QUERY } from '../../../types/constants'
 import { getUsers } from '../../../controllers/users.controller'
 
 
-export const GET = async (request: NextRequest, response: NextResponse) => {
+export const GET = async (request: NextRequest) => {
   const url = new URL(request.url)
   const query = url.searchParams.get("query")
   
