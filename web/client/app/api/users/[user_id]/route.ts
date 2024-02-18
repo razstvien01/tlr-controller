@@ -9,17 +9,6 @@ import {
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
-const checkIfExistsUserEmail = async (email_address: string) => {
-  //* Check if the user already exists
-  const userQuery = query(
-    collection(db, "users"),
-    where("email_address", "==", email_address)
-  );
-
-  const querySnapshot = await getDocs(userQuery);
-  return !querySnapshot.empty;
-};
-
 export const GET = async (request: NextRequest, context: any) => {
   try {
     const { params } = context;
@@ -48,12 +37,6 @@ export const GET = async (request: NextRequest, context: any) => {
 
     return NextResponse.error();
   }
-};
-
-export const POST = async (request: NextRequest, context: any) => {
-  return NextResponse.json({
-    succes: true,
-  });
 };
 
 export const PATCH = async (request: NextRequest) => {
