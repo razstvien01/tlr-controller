@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -16,7 +17,7 @@ export const checkIfExistsUserId = async (user_id: string) => {
   //* Chceck if the document with user_id exists
   const userDocRef = doc(db, "users", user_id);
   const docSnapshot = await getDoc(userDocRef);
-
+  
   return docSnapshot.exists();
 };
 
@@ -82,4 +83,31 @@ export const POST = async (request: NextRequest, context: any) => {
       user_data,
     });
   } catch (error) {}
+};
+
+export const DELETE = async (request: NextRequest) => {
+  try {
+    const user_data = await request.json();
+    const { user_id } = user_data;
+    const userDocRef = doc(db, "users", user_id);
+    
+    if(!(await checkIfExistsUserId(user_id))){
+      return NextResponse.json({
+        success: false,
+        message: "Account Not Found"
+      });
+    }
+    
+    //* Delete the document
+    await deleteDoc(userDocRef);
+
+    return NextResponse.json({
+      success: true,
+      message: "Account User Deleted Successfully"
+    });
+  } catch (error: any) {
+    console.log("Error deleting user's data:", error.message);
+
+    return NextResponse.error();
+  }
 };

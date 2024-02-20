@@ -1,6 +1,7 @@
 import { db } from "@/app/firebase";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -79,10 +80,4 @@ export const PATCH = async (request: NextRequest, context: any) => {
 
     return NextResponse.error();
   }
-};
-
-export const DELETE = async (request: NextRequest) => {
-  return NextResponse.json({
-    succes: true,
-  });
 };
