@@ -6,6 +6,7 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
@@ -44,12 +45,12 @@ export const PUT = async (request: NextRequest, context: any) => {
     const { params } = context;
     const { user_id } = params;
     const user_data = await request.json();
-    
-    const userDocRef = doc(db, "users", user_id)
-    await setDoc(userDocRef, user_data, { merge: true })
+
+    const userDocRef = doc(db, "users", user_id);
+    await setDoc(userDocRef, user_data, { merge: true });
+
     return NextResponse.json({
       succes: true,
-      user_id,
       user_data,
     });
   } catch (error: any) {
@@ -59,10 +60,25 @@ export const PUT = async (request: NextRequest, context: any) => {
   }
 };
 
-export const PATCH = async (request: NextRequest) => {
-  return NextResponse.json({
-    succes: true,
-  });
+export const PATCH = async (request: NextRequest, context: any) => {
+  try {
+    const { params } = context;
+    const { user_id } = params;
+    const user_data = await request.json();
+
+    const userDocRef = doc(db, "users", user_id);
+
+    await updateDoc(userDocRef, user_data);
+
+    return NextResponse.json({
+      succes: true,
+      user_data,
+    });
+  } catch (error: any) {
+    console.log("Error modifying user's data:", error.message);
+
+    return NextResponse.error();
+  }
 };
 
 export const DELETE = async (request: NextRequest) => {
