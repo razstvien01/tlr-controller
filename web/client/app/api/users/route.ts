@@ -8,7 +8,6 @@ import {
   getDocs,
   query,
   serverTimestamp,
-  setDoc,
   where,
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
@@ -45,7 +44,7 @@ export const GET = async (request: NextRequest) => {
     }));
 
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Users Fetch Successfully",
       data: users,
     });
@@ -62,7 +61,7 @@ export const POST = async (request: NextRequest, context: any) => {
     // const { user_id } = user_data;
     // if (await checkIfExistsUserId(user_id)) {
     //   return NextResponse.json({
-    //     succes: false,
+    //     success: false,
     //     message: "The User is Already Exists",
     //   });
     // }
