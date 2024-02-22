@@ -1,14 +1,9 @@
 import { db } from "@/app/firebase";
 import {
-  collection,
-  deleteDoc,
   doc,
   getDoc,
-  getDocs,
-  query,
   setDoc,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 
