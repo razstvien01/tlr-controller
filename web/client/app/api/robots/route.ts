@@ -12,10 +12,10 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
-export const checkIfExistsRobotId = async (robot_id: string) => {
+export const checkIfExistsRobotId = async (id: string) => {
   //* Check if any document has a field named 'robot_id' with the provided value
   const robotsCollectionRef = collection(db, 'robots');
-  const querySnapshot = await getDocs(query(robotsCollectionRef, where('robot_id', '==', robot_id)));
+  const querySnapshot = await getDocs(query(robotsCollectionRef, where('id', '==', id)));
 
   // Return true if there is at least one document with the specified robot_id
   return querySnapshot.size > 0;
@@ -60,8 +60,8 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const robot_data = await request.json();
-    const { robot_id } = robot_data
-    if(await checkIfExistsRobotId(robot_id)){
+    const { id } = robot_data
+    if(await checkIfExistsRobotId(id)){
       return NextResponse.json({
         succes: false,
         message: "Robot is Already Created",
@@ -81,10 +81,10 @@ export const POST = async (request: NextRequest, context: any) => {
 export const DELETE = async (request: NextRequest) => {
   try {
     const user_data = await request.json();
-    const { doc_id, robot_id } = user_data;
+    const { doc_id, id } = user_data;
     const userDocRef = doc(db, "robots", doc_id);
     
-    if(!(await checkIfExistsRobotId(robot_id))){
+    if(!(await checkIfExistsRobotId(id))){
       return NextResponse.json({
         success: false,
         message: "Robot Not Found"
