@@ -1,9 +1,6 @@
 from flask import Flask, render_template
-from flask_restful import Api, Resource
 from flask_socketio import SocketIO
 from flask_cors import CORS
-from api.user_api import UserResource
-from api.robot_api import RobotResource
 from api.control_session import configure_controller_sockets
 from dotenv import load_dotenv
 import os
@@ -16,7 +13,6 @@ secret_key = os.getenv('SECRET_KEY', '')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
-api = Api(app)
 CORS(app)
 
 socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
