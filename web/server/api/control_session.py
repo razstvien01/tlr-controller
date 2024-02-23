@@ -125,4 +125,3 @@ def response404():
 
 def responseSuccess():
 	return {'success': True}
-
