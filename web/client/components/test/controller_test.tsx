@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 
-const socketURL = process.env.SOCKET_URL;
+const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
 
-if(!socketURL){
-  throw new Error("REACT_APP_SOCKET_URL is not defined in the environment variables.");
+if (!socketURL) {
+  throw new Error("NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables.");
 }
 
 const socket: Socket = io(socketURL);
