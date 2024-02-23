@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 
-const socketURL = process.env.REACT_APP_SOCKET_URL;
+const socketURL = process.env.SOCKET_URL;
 
 if(!socketURL){
   throw new Error("REACT_APP_SOCKET_URL is not defined in the environment variables.");
