@@ -5,7 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 
-const socket: Socket = io("http://localhost:5000/");
+const socketURL = process.env.REACT_APP_SOCKET_URL;
+
+if(!socketURL){
+  throw new Error("REACT_APP_SOCKET_URL is not defined in the environment variables.");
+}
+
+const socket: Socket = io(socketURL);
 
 const ControllerTest = () => {
   //******************************** HOOKS  ************************************/
