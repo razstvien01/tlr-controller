@@ -16,7 +16,6 @@ export default function Home() {
         style={{ backgroundImage: "url('bg-1.gif')" }}
       >
         <div className="text-center bg-background text-foreground p-8 rounded-2xl opacity-80">
-          {/* <h2 className="text-3xl font-semibold mb-4"> */}
           <TPH1 className="mb-4">
             Welcome to Telepresence Robot Control Center
           </TPH1>

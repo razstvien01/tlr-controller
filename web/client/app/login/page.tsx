@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { TPH2 } from "@/components/typography/tp-h2";
+import { TPP } from "@/components/typography/tp-p";
+import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const router = useRouter();
@@ -25,13 +29,16 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('bg-1.gif')" }}
     >
-      <div className="max-w-md p-6 bg-white rounded-md shadow-md">
-        <h2 className="text-3xl font-semibold mb-6">Login</h2>
+      <div className="max-w-md p-6 bg-background rounded-xl shadow-md">
+        <TPH2 className="text-center">Login</TPH2>
+        <Label>
+          Enter your email and password below to login your account
+        </Label>
         <form>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-600 mb-2">
+          <div className="mt-6 mb-4">
+            <Label htmlFor="email" className="block text-gray-600 mb-2">
               Email
-            </label>
+            </Label>
             <Input
               type="email"
               id="email"
@@ -54,12 +61,18 @@ export default function Login() {
           </div>
           <Button
             type="button"
-            className="w-full bg-blue-500 text-white py-2 rounded-md"
+            className="w-full py-2"
             onClick={handleLogin}
           >
             Login
           </Button>
         </form>
+        <TPP className="mt-4 text-gray-600">
+          Don't have an account?{" "}
+          <Link href="/signup" className="text-blue-500">
+            Sign up here
+          </Link>
+        </TPP>
       </div>
     </div>
   );
