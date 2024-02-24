@@ -12,13 +12,13 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
-export const checkIfExistsUserId = async (user_id: string) => {
-  //* Chceck if the document with user_id exists
-  const userDocRef = doc(db, "users", user_id);
-  const docSnapshot = await getDoc(userDocRef);
+// export const checkIfExistsUserId = async (user_id: string) => {
+//   //* Chceck if the document with user_id exists
+//   const userDocRef = doc(db, "users", user_id);
+//   const docSnapshot = await getDoc(userDocRef);
   
-  return docSnapshot.exists();
-};
+//   return docSnapshot.exists();
+// };
 
 const checkIfExistsUserEmail = async (email_address: string) => {
   //* Check if the user already exists
@@ -90,12 +90,12 @@ export const DELETE = async (request: NextRequest) => {
     const { user_id } = user_data;
     const userDocRef = doc(db, "users", user_id);
     
-    if(!(await checkIfExistsUserId(user_id))){
-      return NextResponse.json({
-        success: false,
-        message: "Account Not Found"
-      });
-    }
+    // if(!(await checkIfExistsUserId(user_id))){
+    //   return NextResponse.json({
+    //     success: false,
+    //     message: "Account Not Found"
+    //   });
+    // }
     
     //* Delete the document
     await deleteDoc(userDocRef);

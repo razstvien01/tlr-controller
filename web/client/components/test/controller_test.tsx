@@ -8,7 +8,9 @@ import { Toggle } from "@/components/ui/toggle";
 const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
 
 if (!socketURL) {
-  throw new Error("NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables.");
+  throw new Error(
+    "NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables."
+  );
 }
 
 const socket: Socket = io(socketURL);
@@ -26,7 +28,7 @@ const ControllerTest = () => {
   async function turnOn(idInput: string) {
     // Remove previous event listener
     socket.off("controller/TurnOnRobot/response");
-    
+
     socket.emit("controller/TurnOnRobot/request", { id: idInput });
 
     socket.on("controller/TurnOnRobot/response", (data: any) => {
@@ -36,7 +38,7 @@ const ControllerTest = () => {
 
   async function turnOff(idInput: string) {
     socket.off("controller/TurnOffRobot/response");
-    
+
     socket.emit("controller/TurnOffRobot/request", { id: idInput });
 
     socket.on("controller/TurnOffRobot/response", (data: any) => {
@@ -44,26 +46,9 @@ const ControllerTest = () => {
     });
   }
 
-  async function useRobot(userInput: string, idInput: string, toUse: boolean) {
-    socket.off("controller/UseRobot/response")
-    console.log(idInput)
-    console.log(userInput)
-    console.log(toUse)
-    
-    socket.emit("controller/UseRobot/request", {
-      id: idInput,
-      userId: userInput,
-      toUse: toUse,
-    });
-  
-    socket.on("controller/UseRobot/response", (data: any) => {
-      console.log("Use Robot received ", data);
-    });
-  }
-
   async function steerRightRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -79,8 +64,8 @@ const ControllerTest = () => {
   }
 
   async function steerLeftRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -96,8 +81,8 @@ const ControllerTest = () => {
   }
 
   async function stopSteerRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -113,8 +98,8 @@ const ControllerTest = () => {
   }
 
   async function driveRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -130,8 +115,8 @@ const ControllerTest = () => {
   }
 
   async function stopDriveRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -147,8 +132,8 @@ const ControllerTest = () => {
   }
 
   async function reverseRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response")
-    
+    socket.off("controller/ControlRobot/response");
+
     socket.emit("controller/ControlRobot/request", {
       robotId: idInput,
       userId: userInput,
@@ -163,9 +148,9 @@ const ControllerTest = () => {
     setUpdate(!update);
   }
 
-  async function getControl(idInput: string, setControlStringFunction: any) {
-    socket.off("controller/GetControl/response")
-    
+  async function getControl(setControlStringFunction: any) {
+    socket.off("controller/GetControl/response");
+
     socket.emit("controller/GetControl/request", {
       robotId: idInput,
     });
@@ -179,13 +164,57 @@ const ControllerTest = () => {
     });
   }
 
-  //***************************** useEffects ************************************/
-  //* Getting control of the robot
-  useEffect(() => {
-    getControl(idInput, setControlValuePresent);
+  //***************************** custom hooks and useEffects ************************************/
+  const useRobot = (userInput: string, idInput: string, toUse: boolean) => {
+    useEffect(() => {
+      if (toUse) {
+        console.log(idInput);
+        console.log(userInput);
+        console.log(toUse);
 
-    return () => {};
-  }, [isOnRobot, isUseRobot, update]);
+        socket.emit("controller/UseRobot/request", {
+          id: idInput,
+          userId: userInput,
+          toUse: toUse,
+        });
+
+        socket.on("controller/UseRobot/response", (data: any) => {
+          console.log("Use Robot received ", data);
+        });
+      }
+      return () => {
+        // Clean up socket event listeners if needed
+        socket.off("controller/UseRobot/response");
+      };
+    }, [toUse]);
+  };
+
+  const useGetControl = () => {
+    useEffect(() => {
+      socket.emit("controller/GetControl/request", {
+        robotId: idInput,
+      });
+
+      socket.on("controller/GetControl/response", (data: any) => {
+        if (data.statusCode === 404) {
+          setControlValuePresent(`${idInput} is offline`);
+        } else {
+          setControlValuePresent(`Steer:${data.Steer}\tDrive:${data.Drive}`);
+        }
+      });
+
+      return () => {
+        // Clean up socket event listeners if needed
+        socket.off("controller/GetControl/response");
+      };
+    }, [isUseRobot, update, setControlValuePresent]);
+  };
+
+  //* Use the custom useRobot hook
+  useRobot(userInput, idInput, isUseRobot);
+
+  //* Getting control of the robot
+  useGetControl();
 
   return (
     // <div className="flex flex-col items-center justify-center h-screen">
@@ -221,9 +250,6 @@ const ControllerTest = () => {
         <Toggle
           id="toggleUse"
           onPressedChange={() => {
-            if (!isUseRobot) useRobot(userInput, idInput, true);
-            else useRobot(userInput, idInput, false);;
-
             setIsUseRobot(!isUseRobot);
           }}
         >

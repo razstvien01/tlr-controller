@@ -11,14 +11,14 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
-export const checkIfExistsRobotId = async (id: string) => {
-  //* Check if any document has a field named 'robot_id' with the provided value
-  const robotsCollectionRef = collection(db, 'robots');
-  const querySnapshot = await getDocs(query(robotsCollectionRef, where('id', '==', id)));
+// export const checkIfExistsRobotId = async (id: string) => {
+//   //* Check if any document has a field named 'robot_id' with the provided value
+//   const robotsCollectionRef = collection(db, 'robots');
+//   const querySnapshot = await getDocs(query(robotsCollectionRef, where('id', '==', id)));
 
-  // Return true if there is at least one document with the specified robot_id
-  return querySnapshot.size > 0;
-};
+//   // Return true if there is at least one document with the specified robot_id
+//   return querySnapshot.size > 0;
+// };
 
 
 const checkIfExistsUserEmail = async (email_address: string) => {
@@ -60,12 +60,12 @@ export const POST = async (request: NextRequest, context: any) => {
   try {
     const robot_data = await request.json();
     const { id } = robot_data
-    if(await checkIfExistsRobotId(id)){
-      return NextResponse.json({
-        succes: false,
-        message: "Robot is Already Created",
-      });
-    }
+    // if(await checkIfExistsRobotId(id)){
+    //   return NextResponse.json({
+    //     succes: false,
+    //     message: "Robot is Already Created",
+    //   });
+    // }
     
     await addDoc(collection(db, "robots"), {...robot_data, created_at: serverTimestamp()});
     
@@ -83,12 +83,12 @@ export const DELETE = async (request: NextRequest) => {
     const { doc_id, id } = user_data;
     const userDocRef = doc(db, "robots", doc_id);
     
-    if(!(await checkIfExistsRobotId(id))){
-      return NextResponse.json({
-        success: false,
-        message: "Robot Not Found"
-      });
-    }
+    // if(!(await checkIfExistsRobotId(id))){
+    //   return NextResponse.json({
+    //     success: false,
+    //     message: "Robot Not Found"
+    //   });
+    // }
     
     //* Delete the document
     await deleteDoc(userDocRef);
