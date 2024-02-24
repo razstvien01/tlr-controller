@@ -1,5 +1,4 @@
-"use client";
-
+// pages/index.js
 import ControllerTest from "@/components/test/controller_test";
 import Link from "next/link";
 
@@ -12,9 +11,12 @@ export default function Home() {
         {/* Add any additional header content */}
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center bg-gray-100">
-        <div className="text-center">
+      {/* Main Content with Background Image */}
+      <main
+        className="flex-1 flex flex-col items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: "url('bg-1.gif')" }}
+      >
+        <div className="text-center bg-white p-8 rounded-lg opacity-80">
           <h2 className="text-3xl font-semibold mb-4">
             Welcome to Telepresence Robot Control Center
           </h2>
