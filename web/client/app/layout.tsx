@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Header } from "@/components/header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +18,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          {children}
+          {/* Footer */}
+          <footer className="border-t-2 bg-primary p-4 text-foreground">
+            <p>&copy; 2024 Telepresence Robot App</p>
+            {/* Add any additional footer content */}
+          </footer>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
