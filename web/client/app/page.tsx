@@ -1,6 +1,7 @@
 // pages/index.js
 import ControllerTest from "@/components/test/controller_test";
 import Link from "next/link";
+import { ModeToggle } from "@/components/mode-toggle"
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       {/* Header */}
       <header className="bg-blue-500 p-4 text-white">
         <h1 className="text-2xl font-bold">Telepresence Robot App</h1>
+        <ModeToggle/>
         {/* Add any additional header content */}
       </header>
 
@@ -16,7 +18,7 @@ export default function Home() {
         className="flex-1 flex flex-col items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: "url('bg-1.gif')" }}
       >
-        <div className="text-center bg-white p-8 rounded-lg opacity-80">
+        <div className="text-center p-8 rounded-lg opacity-80">
           <h2 className="text-3xl font-semibold mb-4">
             Welcome to Telepresence Robot Control Center
           </h2>
