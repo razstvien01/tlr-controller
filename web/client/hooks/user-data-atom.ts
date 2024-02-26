@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
-import { UserDataProps } from '../types/types';
-import { UserDataInit } from '../types/init';
+import { UserDataProps } from '@/configs/types';
+import { UserDataInit } from '@/configs/init';
 
 export const userDataAtom = atom<UserDataProps>(UserDataInit);
 

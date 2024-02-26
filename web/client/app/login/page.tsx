@@ -9,7 +9,8 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-import { UserAuth } from "@/context/auth-context";
+import { UserAuth } from "@/context/auth_context";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
 export default function Login() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   
   const { user = {}, googleSignIn } = UserAuth()
+  const [currentUser, setCurrentUser] = useUserDataAtom();
   
   if(user){
     router.push("/dashboard")
@@ -36,7 +38,7 @@ export default function Login() {
 
   const handleGoogleSignup = async () => {
     try {
-      await googleSignIn()
+      setCurrentUser(await googleSignIn())
     } catch (error) {
       console.log(error);
     }

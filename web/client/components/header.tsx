@@ -1,10 +1,13 @@
+"use client"
+
 import React from "react";
 import { ModeToggle } from "../components/mode-toggle";
-import { UserNav } from "../components/user-nav"
-import { UserAuth } from "@/context/auth-context";
+import { UserNav } from "../components/user-nav";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
-// TODO JOITAIIII
 export function Header() {
+  const [currentUser, setCurrentUser] = useUserDataAtom();
+
   return (
     <div className="border-b-2">
       <div className="flex h-16 items-center px-4">
@@ -26,7 +29,8 @@ export function Header() {
             setIsUpdate={setIsUpdate}
             setIsLoading={setIsLoading}
           /> */}
-          <UserNav/>
+          {/* {currentUser.user_id != "" ? <UserNav /> : null} */}
+          <UserNav /> 
         </div>
       </div>
     </div>

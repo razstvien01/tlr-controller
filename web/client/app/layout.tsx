@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
-import { AuthContextProvider } from "@/context/auth-context";
+import { AuthContextProvider } from "@/context/auth_context";
+import { Provider } from "jotai";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,23 +20,25 @@ export default function RootLayout({
 }>) {
   
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <AuthContextProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Header />
-            {children}
-            {/* Footer */}
-            <footer className="border-t-2 bg-primary p-4 text-foreground">
-              <p>&copy; 2024 Telepresence Robot App</p>
-              {/* Add any additional footer content */}
-            </footer>
-          </ThemeProvider>
+          <Provider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
+              {children}
+              {/* Footer */}
+              <footer className="border-t-2 bg-primary p-4 text-foreground">
+                <p>&copy; 2024 Telepresence Robot App</p>
+                {/* Add any additional footer content */}
+              </footer>
+            </ThemeProvider>
+          </Provider>
         </AuthContextProvider>
       </body>
     </html>

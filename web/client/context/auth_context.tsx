@@ -15,7 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../app/firebase";
 // import { useLoadingAtom } from "../hooks/loading.atom";
-import { addGoogleUser } from "../service/users.service";
+import { addGoogleUser, getUser } from "../service/users.service";
 
 const AuthContext = createContext<any>(null);
 
@@ -33,13 +33,15 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      
+
       //* Access user data from the authentication result
       const user = result.user;
-      
+
       // setIsLoading(true)
-      
+
       addGoogleUser(user);
+      
+      return getUser(user.uid)
     } catch (error) {
       console.log("Google Sign-In Error:", error);
     }
