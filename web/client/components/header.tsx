@@ -3,6 +3,7 @@ import { ModeToggle } from "../components/mode-toggle";
 import { UserNav } from "../components/user-nav"
 import { UserAuth } from "@/context/auth-context";
 
+// TODO JOITAIIII
 export function Header() {
   return (
     <div className="border-b-2">

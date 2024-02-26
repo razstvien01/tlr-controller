@@ -33,13 +33,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-
+      
       //* Access user data from the authentication result
       const user = result.user;
-
+      
       // setIsLoading(true)
-
-      // addUser(user);
+      
       addGoogleUser(user);
     } catch (error) {
       console.log("Google Sign-In Error:", error);
