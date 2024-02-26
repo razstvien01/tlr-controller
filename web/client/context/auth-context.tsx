@@ -28,7 +28,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 }) => {
   // const [isLoading, setIsLoading] = useLoadingAtom();
   const [user, setUser] = useState(null);
-  
+
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {

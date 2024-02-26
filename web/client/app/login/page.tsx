@@ -18,7 +18,11 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   
-  const { googleSignIn } = UserAuth()
+  const { user = {}, googleSignIn } = UserAuth()
+  
+  if(user){
+    router.push("/dashboard")
+  }
 
   const handleLogin = async () => {
     // Perform authentication logic (e.g., using Firebase, API, etc.)
@@ -28,6 +32,7 @@ export default function Login() {
     // Example of navigating to the dashboard
     router.push("/dashboard");
   };
+  
 
   const handleGoogleSignup = async () => {
     try {

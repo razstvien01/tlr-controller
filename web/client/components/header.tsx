@@ -1,5 +1,7 @@
 import React from "react";
 import { ModeToggle } from "../components/mode-toggle";
+import { UserNav } from "../components/user-nav"
+import { UserAuth } from "@/context/auth-context";
 
 export function Header() {
   return (
@@ -23,6 +25,7 @@ export function Header() {
             setIsUpdate={setIsUpdate}
             setIsLoading={setIsLoading}
           /> */}
+          <UserNav/>
         </div>
       </div>
     </div>
