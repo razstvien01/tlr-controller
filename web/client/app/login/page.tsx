@@ -9,6 +9,7 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
+import { UserAuth } from "@/context/auth-context";
 
 export default function Login() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  
+  const { googleSignIn } = UserAuth()
 
   const handleLogin = async () => {
     // Perform authentication logic (e.g., using Firebase, API, etc.)
@@ -26,9 +29,9 @@ export default function Login() {
     router.push("/dashboard");
   };
 
-  const handleSignup = async () => {
+  const handleGoogleSignup = async () => {
     try {
-      // await googleSignUp()
+      await googleSignIn()
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +89,7 @@ export default function Login() {
           type="button"
           className="w-full"
           disabled={isLoading}
-          onClick={handleSignup}
+          onClick={handleGoogleSignup}
         >
           {isLoading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -96,8 +99,8 @@ export default function Login() {
           Google
         </Button>
         <TPP className="text-gray-600">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-blue-500">
+          {"Don't have an account?"}
+          <Link href="/signup" className="pl-2 text-blue-500">
             Sign up here
           </Link>
         </TPP>
