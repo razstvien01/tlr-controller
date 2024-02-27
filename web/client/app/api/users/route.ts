@@ -61,13 +61,15 @@ export const POST = async (request: NextRequest, context: any) => {
   try {
     const user_data = await request.json();
     const { user_id } = user_data;
-    if (await checkIfExistsUserId(user_id)) {
+    
+    console.log("HELLO WORLDD")
+    if (user_id && await checkIfExistsUserId(user_id)) {
       return NextResponse.json({
         success: false,
         message: "The User is Already Exists",
       });
     }
-
+    
     if (user_id) {
       //* Reference the specific document by specifying its path
       const userDocRef = doc(db, "users", user_id);
@@ -80,7 +82,7 @@ export const POST = async (request: NextRequest, context: any) => {
         created_at: serverTimestamp(),
       });
     }
-
+    
     return NextResponse.json({
       succes: true,
       message: "Account User Created Successfully",

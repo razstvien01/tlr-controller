@@ -10,17 +10,20 @@ import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { signIn, useSession } from "next-auth/react";
+import { addUser } from "@/service/users.service";
+import { UserDataProps } from "@/configs/types";
 
 export default function Signup() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = useUserDataAtom();
-  
+
   const router = useRouter();
   const session = useSession();
 
@@ -29,12 +32,42 @@ export default function Signup() {
   }
 
   const handleSignup = async () => {
-    createUserWithEmailAndPassword(auth, email, password)
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user; // Get the user object from UserCredential
+      const uid = user.uid; // Retrieve the UID from the user object
+      console.log("User UID:", uid);
+
+      const user_data = {
+        email_address: email,
+        display_name: displayName,
+        phone_number: "",
+        photo_url: "",
+        user_id: uid,
+      } as UserDataProps;
+
+      const res = await addUser(user_data);
+
+      setCurrentUser(res.user_data);
+
+      signIn("credentials", {
+        email,
+        password,
+        redirect: true,
+        callbackUrl: "/",
+      });
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn('google')
+      signIn("google");
     } catch (error) {
       console.log(error);
     }
@@ -51,6 +84,18 @@ export default function Signup() {
           Enter your email and password below to create your account
         </Label>
         <form>
+          <div className="mt-6 mb-4">
+            <Label htmlFor="email" className="block mb-2">
+              Display Name
+            </Label>
+            <Input
+              type="text"
+              id="display"
+              placeholder="Enter your display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
+          </div>
           <div className="mt-6 mb-4">
             <Label htmlFor="email" className="block mb-2">
               Email

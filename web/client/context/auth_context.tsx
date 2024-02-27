@@ -15,7 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../app/firebase";
 // import { useLoadingAtom } from "../hooks/loading.atom";
-import { addGoogleUser, getUser } from "../service/users.service";
+import { getUser } from "../service/users.service";
 
 const AuthContext = createContext<any>(null);
 
@@ -39,7 +39,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       // setIsLoading(true)
 
-      addGoogleUser(user);
+      // addGoogleUser(user);
       
       // setUser(user)
       
