@@ -7,13 +7,15 @@ import { TPP } from "@/components/typography/tp-p";
 import { UserAuth } from "@/context/auth_context";
 import { redirect, useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
-  
-  if(currentUser && currentUser.user_id != ""){
-    redirect("/dashboard")
+  const router = useRouter();
+  const session = useSession();
+
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
   }
   
   return (

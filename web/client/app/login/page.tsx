@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 // import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
@@ -19,13 +19,17 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  // const { user = {}, googleSignIn } = UserAuth();
+  const session = useSession();
+
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
+  }
 
   const [currentUser, setCurrentUser] = useUserDataAtom();
-  
-  if(currentUser && currentUser.user_id != ""){
-    console.log(currentUser.user_id + " from login")
-    router.push("/dashboard")
+
+  if (currentUser && currentUser.user_id != "") {
+    console.log(currentUser.user_id + " from login");
+    router.push("/dashboard");
   }
 
   const handleLogin = async () => {
@@ -39,8 +43,7 @@ export default function Login() {
 
   const handleGoogleSignup = async () => {
     try {
-      // setCurrentUser(await googleSignIn());
-      signIn('google')
+      signIn("google");
     } catch (error) {
       console.log(error);
     }

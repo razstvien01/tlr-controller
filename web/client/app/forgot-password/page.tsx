@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -9,19 +9,21 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
+import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { googleSignIn } = UserAuth()
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
-  if(currentUser && currentUser.user_id != ""){
-    redirect("/dashboard")
+  const router = useRouter();
+  const session = useSession();
+
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
   }
 
   const handleReset = async () => {
@@ -30,7 +32,7 @@ export default function Login() {
 
   const handleGoogleSignup = async () => {
     try {
-      setCurrentUser(await googleSignIn());
+      signIn('google')
     } catch (error) {
       console.log(error);
     }
