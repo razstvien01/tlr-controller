@@ -1,27 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 import { redirect, useRouter } from "next/navigation";
-// import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { getUserByEmail } from "@/service/users.service";
 
 export default function Dashboard() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
-  
-  
+
   const session = useSession({
     required: true,
     onUnauthenticated() {
-      // if (!user) {
-        redirect("/");
-      // }
+      redirect("/");
     },
-    
   });
-  
-  console.log(session.data?.user?.email)
-  
+
+  const fetchUser = async () => {
+    const response = await getUserByEmail(session.data?.user?.email ?? null);
+    setCurrentUser(response.data);
+  };
+
+  useEffect(() => {
+    fetchUser();
+
+    console.log(currentUser);
+    return () => {};
+  }, [session]);
+
   return <div>Dashboard</div>;
 }

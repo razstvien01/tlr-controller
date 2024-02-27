@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/app/firebase";
 import GoogleProvider from "next-auth/providers/google";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 // import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 // import { cert } from "firebase-admin/app";
 
@@ -11,7 +12,30 @@ export const authOptions = {
   pages: {
     signIn: "/signin",
   },
-
+  callbacks: {
+    
+    async signIn({ account, profile }: any) {
+      if (account.provider === "google") {
+        
+        // return profile.email_verified && profile.email.endsWith("@example.com");
+      }
+      if (account.provider === "credentials") {
+        
+        
+      }
+      return true;
+    },
+    
+    async session({ session, user, token }: any) {
+      
+      return session
+    },
+    
+    async jwt({ token, user, account, profile, isNewUser }: any) {
+      
+      return token
+    }
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",

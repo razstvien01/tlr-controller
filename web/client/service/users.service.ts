@@ -17,8 +17,39 @@ export const addUser = async (user_data: UserDataProps) => {
 };
 
 export const getUser = async (user_id: string) => {
-  const response = await axios.get(`/api/users/${user_id}`);
-  const user_data = response.data.user_data;
+  try {
+    const response = await axios.get(`/api/users/${user_id}`);
+    const user_data = response.data.user_data;
 
-  return user_data;
+    return {
+      success: true,
+      user_data,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response.data,
+    };
+  }
+};
+
+export const getUserByEmail = async (email_address: string | null) => {
+  try {
+    const params = {
+      email_address,
+    };
+    const response = await axios.get("/api/users/", {
+      params,
+    });
+    const data = response.data.data;
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response.data,
+    };
+  }
 };

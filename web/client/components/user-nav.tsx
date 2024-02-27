@@ -13,48 +13,23 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-// import { UserAuth } from "@/context/auth_context";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-// import ProfileSheet from "./profile_detail.sheet";
-// import { UserDataProps } from "../types/types";
-
-// interface UserNavProps {
-//   userData: UserDataProps;
-//   logOut: () => void;
-//   isUpdate: boolean
-//   setIsUpdate: Dispatch<SetStateAction<boolean>>
-//   setIsLoading: Dispatch<SetStateAction<boolean>>
-// }
-
-// const UserNav: React.FC<UserNavProps> = ({ userData, logOut, isUpdate, setIsUpdate, setIsLoading }) => {
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 export const UserNav: React.FC = () => {
   const router = useRouter();
-  // const [isSheetVisible, setIsSheetVisible] = useState(false);
-  // const { full_name = '', email_address = '', photo_url = '' } = userData || {}
-  // const { user = {}, logOut } = UserAuth();
-  // const {
-  //   displayName = "",
-  //   email = "",
-  //   uid = "",
-  //   phoneNumber = "",
-  //   photoURL = "",
-  // } = user || {};
+  const [currentUser, setCurrentUser] = useUserDataAtom();
+
 
   const handleSignOut = async () => {
     try {
-      await signOut()
+      await signOut();
       router.push("/");
     } catch (error) {
       console.log(error);
     }
   };
-
-  // const handleOpenSheet = () => {
-  //   setIsSheetVisible(!isSheetVisible);
-  // };
 
   return (
     <>
@@ -70,9 +45,9 @@ export const UserNav: React.FC = () => {
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">asdasd</p>
+              <p className="text-sm font-medium leading-none">{currentUser.display_name}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                asfasfsa
+                {currentUser.email_address}
               </p>
             </div>
           </DropdownMenuLabel>

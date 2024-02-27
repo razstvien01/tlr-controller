@@ -8,11 +8,21 @@ import { UserAuth } from "@/context/auth_context";
 import { redirect, useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   const router = useRouter();
   const session = useSession();
+  
+  
+  // useEffect(() => {
+    
+  //   console.log("🚀 ~ session:", session)
+  //   return () => {
+      
+  //   }
+  // }, [])
 
   if (session.status === "authenticated") {
     router.push("/dashboard");

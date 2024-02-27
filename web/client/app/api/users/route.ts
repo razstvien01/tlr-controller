@@ -35,21 +35,49 @@ const checkIfExistsUserEmail = async (email_address: string) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    //* query users collection
-    const q = collection(db, "users");
-    const querySnapshot = await getDocs(q);
+    // const user_data = await request.json();
+    const url = new URL(request.url);
+    const email_address = url.searchParams.get("email_address");
 
-    //* extract user data from the query snapshot
-    const users = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    if (email_address) {
+      //* Query users collection by email_address
+      const userQuery = query(
+        collection(db, "users"),
+        where("email_address", "==", email_address)
+      );
 
-    return NextResponse.json({
-      success: true,
-      message: "Users Fetch Successfully",
-      data: users,
-    });
+      const querySnapshot = await getDocs(userQuery);
+
+      if (!querySnapshot.empty) {
+        const user = querySnapshot.docs[0].data();
+        return NextResponse.json({
+          success: true,
+          message: "User Fetch Successfully",
+          data: user,
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          message: "User not found",
+        });
+      }
+    } else {
+      //* Query all users
+      const q = collection(db, "users");
+      const querySnapshot = await getDocs(q);
+
+      //* Extract user data from the query snapshot
+      const users = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return NextResponse.json({
+        success: true,
+        message: "Users Fetch Successfully",
+        data: users,
+      });
+    }
   } catch (error: any) {
     console.log("Error fetching users:", error.message);
 
@@ -61,15 +89,15 @@ export const POST = async (request: NextRequest, context: any) => {
   try {
     const user_data = await request.json();
     const { user_id } = user_data;
-    
-    console.log("HELLO WORLDD")
-    if (user_id && await checkIfExistsUserId(user_id)) {
+
+    console.log("HELLO WORLDD");
+    if (user_id && (await checkIfExistsUserId(user_id))) {
       return NextResponse.json({
         success: false,
         message: "The User is Already Exists",
       });
     }
-    
+
     if (user_id) {
       //* Reference the specific document by specifying its path
       const userDocRef = doc(db, "users", user_id);
@@ -82,7 +110,7 @@ export const POST = async (request: NextRequest, context: any) => {
         created_at: serverTimestamp(),
       });
     }
-    
+
     return NextResponse.json({
       succes: true,
       message: "Account User Created Successfully",

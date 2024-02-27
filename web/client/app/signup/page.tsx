@@ -38,10 +38,9 @@ export default function Signup() {
         email,
         password
       );
-      const user = userCredential.user; // Get the user object from UserCredential
-      const uid = user.uid; // Retrieve the UID from the user object
-      console.log("User UID:", uid);
-
+      const user = userCredential.user; 
+      const uid = user.uid;
+      
       const user_data = {
         email_address: email,
         display_name: displayName,
@@ -67,11 +66,15 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
-      signIn("google");
+      await signIn("google");
+      
     } catch (error) {
-      console.log(error);
+      console.log("Error signing in with Google:", error);
     }
   };
+  
+  
+  
 
   return (
     <div
