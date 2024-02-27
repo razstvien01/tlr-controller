@@ -1,13 +1,21 @@
-// pages/index.js
-import ControllerTest from "@/components/test/controller_test";
+"use client"
+
 import Link from "next/link";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/header";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
+import { UserAuth } from "@/context/auth_context";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  
+  const { user } = UserAuth()
+  
+  if(user){
+    router.push("/dashboard")
+  }
+  
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main Content with Background Image */}

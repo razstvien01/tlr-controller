@@ -4,10 +4,11 @@ import React from "react";
 import { ModeToggle } from "../components/mode-toggle";
 import { UserNav } from "../components/user-nav";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { UserAuth } from "@/context/auth_context";
 
 export function Header() {
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
+  const { user } = UserAuth()
+  
   return (
     <div className="border-b-2">
       <div className="flex h-16 items-center px-4">
@@ -21,16 +22,7 @@ export function Header() {
             setShowNewOrgDialog={setShowNewOrgDialog}
           /> */}
           <ModeToggle />
-          {/* <Notifications />
-          <UserNav
-            userData={userData}
-            logOut={logOut}
-            isUpdate={isUpdate}
-            setIsUpdate={setIsUpdate}
-            setIsLoading={setIsLoading}
-          /> */}
-          {/* {currentUser.user_id != "" ? <UserNav /> : null} */}
-          <UserNav /> 
+          {user ? <UserNav/> : null}
         </div>
       </div>
     </div>
