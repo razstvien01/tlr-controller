@@ -15,7 +15,6 @@ export const addGoogleUser = async(user: any) => {
 export const getUser = async (user_id: string) => {
   const response = await axios.get(`/api/users/${user_id}`);
   const user_data = response.data.user_data;
-  console.log("🚀 ~ getUser ~ user_data:", user_data)
   
   return user_data
 }

@@ -1,13 +1,17 @@
+// "use client";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
-import { AuthContextProvider } from "@/context/auth_context";
+import { AuthContextProvider, UserAuth } from "@/context/auth_context";
 import { Provider } from "jotai";
-import SessionProvider from "./SessionProvider"
-
-const inter = Inter({ subsets: ["latin"] });
+import SessionProvider from "./SessionProvider";
+import { use, useEffect } from "react";
+import axios from "axios";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { getUser } from "@/service/users.service";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,11 +23,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const { user = {} } = UserAuth() || {};
+  // const { uid = "" } = user || {};
+  // const [userData, setUserData] = useUserDataAtom();
+
+  // useEffect(() => {
+  //   if (user) {
+  //     const fetchUser = async () => {
+  //       setUserData(await getUser(uid));
+  //     };
+
+  //     fetchUser();
+      
+  //     console.log("FETCHED USER DATA", user.uid)
+  //     console.log(userData)
+  //   }
+
+  //   return () => {};
+  // }, [user, uid]);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <AuthContextProvider>
-          <SessionProvider>
+          {/* <SessionProvider> */}
             <Provider>
               <ThemeProvider
                 attribute="class"
@@ -40,7 +63,7 @@ export default function RootLayout({
                 </footer>
               </ThemeProvider>
             </Provider>
-          </SessionProvider>
+          {/* </SessionProvider> */}
         </AuthContextProvider>
       </body>
     </html>

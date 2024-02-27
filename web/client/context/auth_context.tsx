@@ -41,6 +41,8 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       addGoogleUser(user);
       
+      // setUser(user)
+      
       return getUser(user.uid)
     } catch (error) {
       console.log("Google Sign-In Error:", error);

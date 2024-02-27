@@ -6,17 +6,15 @@ import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
 import { UserAuth } from "@/context/auth_context";
 import { redirect, useRouter } from "next/navigation";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
 
 export default function Home() {
-  const router = useRouter();
+  const [currentUser, setCurrentUser] = useUserDataAtom();
   
-  const { user } = UserAuth()
-  
-  if(user){
-    router.push("/dashboard")
+  if(currentUser && currentUser.user_id != ""){
+    redirect("/dashboard")
   }
-  
   
   return (
     <div className="min-h-screen flex flex-col">
