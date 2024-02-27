@@ -8,15 +8,17 @@ import {
   getDocs,
   query,
   serverTimestamp,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
+import { checkIfExistsUserId } from "@/controllers/users.controller";
 
 // export const checkIfExistsUserId = async (user_id: string) => {
 //   //* Chceck if the document with user_id exists
 //   const userDocRef = doc(db, "users", user_id);
 //   const docSnapshot = await getDoc(userDocRef);
-  
+
 //   return docSnapshot.exists();
 // };
 
@@ -33,21 +35,49 @@ const checkIfExistsUserEmail = async (email_address: string) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    //* query users collection
-    const q = collection(db, "users");
-    const querySnapshot = await getDocs(q);
+    // const user_data = await request.json();
+    const url = new URL(request.url);
+    const email_address = url.searchParams.get("email_address");
 
-    //* extract user data from the query snapshot
-    const users = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    if (email_address) {
+      //* Query users collection by email_address
+      const userQuery = query(
+        collection(db, "users"),
+        where("email_address", "==", email_address)
+      );
 
-    return NextResponse.json({
-      success: true,
-      message: "Users Fetch Successfully",
-      data: users,
-    });
+      const querySnapshot = await getDocs(userQuery);
+
+      if (!querySnapshot.empty) {
+        const user = querySnapshot.docs[0].data();
+        return NextResponse.json({
+          success: true,
+          message: "User Fetch Successfully",
+          data: user,
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          message: "User not found",
+        });
+      }
+    } else {
+      //* Query all users
+      const q = collection(db, "users");
+      const querySnapshot = await getDocs(q);
+
+      //* Extract user data from the query snapshot
+      const users = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return NextResponse.json({
+        success: true,
+        message: "Users Fetch Successfully",
+        data: users,
+      });
+    }
   } catch (error: any) {
     console.log("Error fetching users:", error.message);
 
@@ -58,24 +88,29 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const user_data = await request.json();
-    // const { user_id } = user_data;
-    // if (await checkIfExistsUserId(user_id)) {
-    //   return NextResponse.json({
-    //     success: false,
-    //     message: "The User is Already Exists",
-    //   });
-    // }
-    
-    // if(!user_id){
-    //   return NextResponse.error()
-    // }
-    
-    // const userDocRef = doc(db, "users", user_id)
-    
-    await addDoc(collection(db, "users"), {...user_data, created_at: serverTimestamp()});
-    
-    // await setDoc(userDocRef, {...user_data, created_at: serverTimestamp()})
-    
+    const { user_id } = user_data;
+
+    console.log("HELLO WORLDD");
+    if (user_id && (await checkIfExistsUserId(user_id))) {
+      return NextResponse.json({
+        success: false,
+        message: "The User is Already Exists",
+      });
+    }
+
+    if (user_id) {
+      //* Reference the specific document by specifying its path
+      const userDocRef = doc(db, "users", user_id);
+
+      //* Set the document data with the specified document ID
+      await setDoc(userDocRef, { ...user_data, created_at: serverTimestamp() });
+    } else {
+      await addDoc(collection(db, "users"), {
+        ...user_data,
+        created_at: serverTimestamp(),
+      });
+    }
+
     return NextResponse.json({
       succes: true,
       message: "Account User Created Successfully",
@@ -89,20 +124,20 @@ export const DELETE = async (request: NextRequest) => {
     const user_data = await request.json();
     const { user_id } = user_data;
     const userDocRef = doc(db, "users", user_id);
-    
+
     // if(!(await checkIfExistsUserId(user_id))){
     //   return NextResponse.json({
     //     success: false,
     //     message: "Account Not Found"
     //   });
     // }
-    
+
     //* Delete the document
     await deleteDoc(userDocRef);
 
     return NextResponse.json({
       success: true,
-      message: "Account User Deleted Successfully"
+      message: "Account User Deleted Successfully",
     });
   } catch (error: any) {
     console.log("Error deleting user's data:", error.message);

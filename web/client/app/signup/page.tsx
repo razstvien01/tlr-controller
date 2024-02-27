@@ -9,46 +9,72 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-// import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 import { signIn, useSession } from "next-auth/react";
+import { addUser } from "@/service/users.service";
+import { UserDataProps } from "@/configs/types";
 
-export default function Login() {
-  const router = useRouter();
+export default function Signup() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useUserDataAtom();
 
+  const router = useRouter();
   const session = useSession();
 
   if (session.status === "authenticated") {
     router.push("/dashboard");
   }
 
-  const [currentUser, setCurrentUser] = useUserDataAtom();
+  const handleSignup = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user; 
+      const uid = user.uid;
+      
+      const user_data = {
+        email_address: email,
+        display_name: displayName,
+        phone_number: "",
+        photo_url: "",
+        user_id: uid,
+      } as UserDataProps;
 
-  if (currentUser && currentUser.user_id != "") {
-    console.log(currentUser.user_id + " from login");
-    router.push("/dashboard");
-  }
+      const res = await addUser(user_data);
 
-  const handleLogin = async () => {
-    
-    signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/",
-    });
+      setCurrentUser(res.user_data);
+
+      signIn("credentials", {
+        email,
+        password,
+        redirect: true,
+        callbackUrl: "/",
+      });
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn("google");
+      await signIn("google");
+      
     } catch (error) {
-      console.log(error);
+      console.log("Error signing in with Google:", error);
     }
   };
+  
+  
+  
 
   return (
     <div
@@ -56,11 +82,23 @@ export default function Login() {
       style={{ backgroundImage: "url('bg-1.gif')" }}
     >
       <div className="max-w-md p-6 bg-background rounded-xl shadow-md">
-        <TPH2 className="text-center">Login</TPH2>
+        <TPH2 className="text-center">Sign Up</TPH2>
         <Label className="text-muted-foreground">
-          Enter your email and password below to login your account
+          Enter your email and password below to create your account
         </Label>
         <form>
+          <div className="mt-6 mb-4">
+            <Label htmlFor="email" className="block mb-2">
+              Display Name
+            </Label>
+            <Input
+              type="text"
+              id="display"
+              placeholder="Enter your display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
+          </div>
           <div className="mt-6 mb-4">
             <Label htmlFor="email" className="block mb-2">
               Email
@@ -73,7 +111,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-2">
+          <div className="mb-4">
             <label htmlFor="password" className="block mb-2">
               Password
             </label>
@@ -85,22 +123,25 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <TPP className="text-muted-foreground pl-2 cursor-pointer font-semibold pb-4 text-sm">
-            Forgot Password?
-            <Link
-              href="/forgot-password"
-              className="pl-2 text-indigo-400 hover:text-indigo-300 "
-            >
-              Click here
-            </Link>
-          </TPP>
+          <div className="mb-4">
+            <label htmlFor="password" className="block mb-2">
+              Re-Enter Password
+            </label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Re-Enter your password"
+              value={passwordAgain}
+              onChange={(e) => setPasswordAgain(e.target.value)}
+            />
+          </div>
           <Button
             type="button"
             className="w-full py-2"
-            onClick={handleLogin}
+            onClick={handleSignup}
             disabled={isLoading || !email || !password}
           >
-            Login
+            Create Account
           </Button>
         </form>
         <div className="relative mt-6 mb-6">
@@ -128,12 +169,12 @@ export default function Login() {
           Google
         </Button>
         <TPP className="text-muted-foreground">
-          {"Don't have an account?"}
+          {"Already have an account?"}
           <Link
-            href="/signup"
+            href="/login"
             className="pl-2 cursor-pointer font-semibold text-indigo-400 hover:text-indigo-300 pb-4"
           >
-            Sign up here
+            Log in here
           </Link>
         </TPP>
       </div>

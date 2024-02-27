@@ -1,13 +1,33 @@
-// pages/index.js
-import ControllerTest from "@/components/test/controller_test";
+"use client"
+
 import Link from "next/link";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/header";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
+import { UserAuth } from "@/context/auth_context";
+import { redirect, useRouter } from "next/navigation";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useUserDataAtom();
+  const router = useRouter();
+  const session = useSession();
+  
+  
+  // useEffect(() => {
+    
+  //   console.log("🚀 ~ session:", session)
+  //   return () => {
+      
+  //   }
+  // }, [])
+
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
+  }
+  
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main Content with Background Image */}
@@ -16,7 +36,6 @@ export default function Home() {
         style={{ backgroundImage: "url('bg-1.gif')" }}
       >
         <div className="text-center bg-background text-foreground p-8 rounded-2xl opacity-80">
-          {/* <h2 className="text-3xl font-semibold mb-4"> */}
           <TPH1 className="mb-4">
             Welcome to Telepresence Robot Control Center
           </TPH1>

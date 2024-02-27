@@ -9,42 +9,30 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-// import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../firebase";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
+  const [currentUser, setCurrentUser] = useUserDataAtom();
+  
+  const router = useRouter();
   const session = useSession();
 
   if (session.status === "authenticated") {
     router.push("/dashboard");
   }
 
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
-  if (currentUser && currentUser.user_id != "") {
-    console.log(currentUser.user_id + " from login");
-    router.push("/dashboard");
-  }
-
-  const handleLogin = async () => {
-    
-    signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/",
-    });
+  const handleReset = async () => {
+    sendPasswordResetEmail(auth, email);
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn("google");
+      signIn('google')
     } catch (error) {
       console.log(error);
     }
@@ -56,9 +44,9 @@ export default function Login() {
       style={{ backgroundImage: "url('bg-1.gif')" }}
     >
       <div className="max-w-md p-6 bg-background rounded-xl shadow-md">
-        <TPH2 className="text-center">Login</TPH2>
+        <TPH2 className="text-center">Forgot Password</TPH2>
         <Label className="text-muted-foreground">
-          Enter your email and password below to login your account
+          Enter your email adress to reset your password
         </Label>
         <form>
           <div className="mt-6 mb-4">
@@ -73,34 +61,13 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-2">
-            <label htmlFor="password" className="block mb-2">
-              Password
-            </label>
-            <Input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <TPP className="text-muted-foreground pl-2 cursor-pointer font-semibold pb-4 text-sm">
-            Forgot Password?
-            <Link
-              href="/forgot-password"
-              className="pl-2 text-indigo-400 hover:text-indigo-300 "
-            >
-              Click here
-            </Link>
-          </TPP>
           <Button
             type="button"
             className="w-full py-2"
-            onClick={handleLogin}
-            disabled={isLoading || !email || !password}
+            onClick={handleReset}
+            disabled={isLoading || !email}
           >
-            Login
+            Send Forgot Password Email
           </Button>
         </form>
         <div className="relative mt-6 mb-6">
