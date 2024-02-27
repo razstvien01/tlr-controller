@@ -21,7 +21,8 @@ export function Header() {
           /> */}
           <ModeToggle />
           
-          {currentUser && currentUser.user_id != "" ? <UserNav/> : null}
+          {/* {currentUser && currentUser.user_id != "" ? <UserNav/> : null} */}
+          <UserNav/>
         </div>
       </div>
     </div>

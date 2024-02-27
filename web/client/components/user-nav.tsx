@@ -13,7 +13,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import { UserAuth } from "@/context/auth_context";
+// import { UserAuth } from "@/context/auth_context";
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -34,22 +34,17 @@ export const UserNav: React.FC = () => {
   const router = useRouter();
   // const [isSheetVisible, setIsSheetVisible] = useState(false);
   // const { full_name = '', email_address = '', photo_url = '' } = userData || {}
-  const { user = {}, logOut } = UserAuth();
-  const {
-    displayName = "",
-    email = "",
-    uid = "",
-    phoneNumber = "",
-    photoURL = "",
-  } = user || {};
+  // const { user = {}, logOut } = UserAuth();
+  // const {
+  //   displayName = "",
+  //   email = "",
+  //   uid = "",
+  //   phoneNumber = "",
+  //   photoURL = "",
+  // } = user || {};
 
   const handleSignOut = async () => {
     try {
-      // setIsLoading(true)
-      if (user) {
-        logOut();
-        router.push("/");
-      }
       await signOut()
       router.push("/");
     } catch (error) {
@@ -67,7 +62,7 @@ export const UserNav: React.FC = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={photoURL} alt="@shadcn" />
+              {/* <AvatarImage src={photoURL} alt="@shadcn" /> */}
               <AvatarFallback>ZZ</AvatarFallback>
             </Avatar>
           </Button>
@@ -75,9 +70,9 @@ export const UserNav: React.FC = () => {
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{displayName}</p>
+              <p className="text-sm font-medium leading-none">asdasd</p>
               <p className="text-xs leading-none text-muted-foreground">
-                {email}
+                asfasfsa
               </p>
             </div>
           </DropdownMenuLabel>

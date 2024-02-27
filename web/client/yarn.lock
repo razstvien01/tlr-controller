@@ -537,6 +537,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@next-auth/firebase-adapter@^0.0.2-canary.207":
+  version "0.0.2-canary.207"
+  resolved "https://registry.yarnpkg.com/@next-auth/firebase-adapter/-/firebase-adapter-0.0.2-canary.207.tgz#356072fce823b37a6ca28e18b79c666e2ff8d4d5"
+  integrity sha512-P+F3V0YGmV24SacGfOuBBSqeZRrfVSg3XVJ33/u6xb6BH4As7BowCcT012F73KZoT/LkkZUSpj4hJvlzhGI+hg==
+
 "@next/env@14.1.0":
   version "14.1.0"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-14.1.0.tgz#43d92ebb53bc0ae43dcc64fb4d418f8f17d7a341"
