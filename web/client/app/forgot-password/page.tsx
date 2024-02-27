@@ -12,12 +12,13 @@ import { Icons } from "@/components/icons/icons";
 import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { signIn } from "next-auth/react";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Login() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const { user = {}, googleSignIn } = UserAuth();
@@ -27,13 +28,8 @@ export default function Login() {
     router.push("/dashboard");
   }
 
-  const handleLogin = async () => {
-    signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/",
-    });
+  const handleReset = async () => {
+    sendPasswordResetEmail(auth, email);
   };
 
   const handleGoogleSignup = async () => {
@@ -50,9 +46,9 @@ export default function Login() {
       style={{ backgroundImage: "url('bg-1.gif')" }}
     >
       <div className="max-w-md p-6 bg-background rounded-xl shadow-md">
-        <TPH2 className="text-center">Login</TPH2>
+        <TPH2 className="text-center">Forgot Password</TPH2>
         <Label className="text-muted-foreground">
-          Enter your email and password below to login your account
+          Enter your email adress to reset your password
         </Label>
         <form>
           <div className="mt-6 mb-4">
@@ -67,34 +63,13 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-2">
-            <label htmlFor="password" className="block mb-2">
-              Password
-            </label>
-            <Input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <TPP className="text-muted-foreground pl-2 cursor-pointer font-semibold pb-4 text-sm">
-            Forgot Password?
-            <Link
-              href="/forgot-password"
-              className="pl-2 text-indigo-400 hover:text-indigo-300 "
-            >
-              Click here
-            </Link>
-          </TPP>
           <Button
             type="button"
             className="w-full py-2"
-            onClick={handleLogin}
-            disabled={isLoading || !email || !password}
+            onClick={handleReset}
+            disabled={isLoading || !email}
           >
-            Login
+            Reset
           </Button>
         </form>
         <div className="relative mt-6 mb-6">

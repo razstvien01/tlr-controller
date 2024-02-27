@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { AuthContextProvider } from "@/context/auth_context";
 import { Provider } from "jotai";
+import SessionProvider from "./SessionProvider"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,27 +19,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <AuthContextProvider>
-          <Provider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <Header />
-              {children}
-              {/* Footer */}
-              <footer className="border-t-2 bg-primary p-4 text-foreground">
-                <p>&copy; 2024 Telepresence Robot App</p>
-                {/* Add any additional footer content */}
-              </footer>
-            </ThemeProvider>
-          </Provider>
+          <SessionProvider>
+            <Provider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <Header />
+                {children}
+                {/* Footer */}
+                <footer className="border-t-2 bg-primary p-4 text-foreground">
+                  <p>&copy; 2024 Telepresence Robot App</p>
+                  {/* Add any additional footer content */}
+                </footer>
+              </ThemeProvider>
+            </Provider>
+          </SessionProvider>
         </AuthContextProvider>
       </body>
     </html>

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
 import { UserAuth } from "@/context/auth_context";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+
 
 export default function Home() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Home() {
   if(user){
     router.push("/dashboard")
   }
+  
   
   return (
     <div className="min-h-screen flex flex-col">
