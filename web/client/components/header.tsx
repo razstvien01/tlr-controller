@@ -22,7 +22,8 @@ export function Header() {
             setShowNewOrgDialog={setShowNewOrgDialog}
           /> */}
           <ModeToggle />
-          {user ? <UserNav/> : null}
+          {/* {user ? <UserNav/> : null} */}
+          <UserNav/>
         </div>
       </div>
     </div>

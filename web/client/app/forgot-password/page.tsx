@@ -69,7 +69,7 @@ export default function Login() {
             onClick={handleReset}
             disabled={isLoading || !email}
           >
-            Reset
+            Send Forgot Password Email
           </Button>
         </form>
         <div className="relative mt-6 mb-6">

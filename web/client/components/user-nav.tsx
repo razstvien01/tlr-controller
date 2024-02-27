@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
@@ -17,6 +17,7 @@ import { UserAuth } from "@/context/auth_context";
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 // import ProfileSheet from "./profile_detail.sheet";
 // import { UserDataProps } from "../types/types";
 
@@ -33,15 +34,24 @@ export const UserNav: React.FC = () => {
   const router = useRouter();
   // const [isSheetVisible, setIsSheetVisible] = useState(false);
   // const { full_name = '', email_address = '', photo_url = '' } = userData || {}
-  const { user = {}, logOut } = UserAuth()
-  const { displayName = "", email = "", uid = "", phoneNumber = "", photoURL = "" } = user || {};
-  
-  
+  const { user = {}, logOut } = UserAuth();
+  const {
+    displayName = "",
+    email = "",
+    uid = "",
+    phoneNumber = "",
+    photoURL = "",
+  } = user || {};
+
   const handleSignOut = async () => {
     try {
       // setIsLoading(true)
-      logOut();
-      router.push("/")
+      if (user) {
+        logOut();
+        router.push("/");
+      }
+      await signOut()
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +60,7 @@ export const UserNav: React.FC = () => {
   // const handleOpenSheet = () => {
   //   setIsSheetVisible(!isSheetVisible);
   // };
-  
+
   return (
     <>
       <DropdownMenu>
@@ -90,7 +100,7 @@ export const UserNav: React.FC = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
+
       {/* <ProfileSheet isSheetVisible={isSheetVisible} setIsSheetVisible={setIsSheetVisible} handleOpenSheet={handleOpenSheet} user={userData} isUpdate={isUpdate} setIsUpdate={setIsUpdate}/> */}
     </>
   );
