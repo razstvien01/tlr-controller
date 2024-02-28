@@ -51,7 +51,7 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('bg-1.gif')" }}
     >
-      <div className="max-w-md p-6 bg-background rounded-xl shadow-md">
+      <div className="max-w-md p-6 bg-background rounded-xl shadow-md opacity-80">
         <TPH2 className="text-center">Login</TPH2>
         <Label className="text-muted-foreground">
           Enter your email and password below to login your account
