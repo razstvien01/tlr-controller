@@ -7,8 +7,9 @@ import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { PlusIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import { UserAuth } from "@/context/auth_context";
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -69,11 +70,10 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
-            Project List
+            Robot List
           </h2>
           <p className="text-sm text-muted-foreground">
-            Distinct workspaces where teams log, monitor, and resolve software
-            issues, ensuring organized and efficient bug management.
+            List of robotsssss
           </p>
         </div>
 
@@ -82,13 +82,23 @@ export default function Dashboard() {
           // onClick={() => setShowDialog(!showDialog)}
           >
             <PlusIcon className="mr-2 h-4 w-4" />
-            Create Project
+            Register a Robot
           </Button>
         </div>
       </div>
       <Separator className="my-4" />
 
       <div className="relative">
+        <div className="grid grid-cols-3 gap-4">
+          {robotCards.map((robot) => (
+            <Link key={robot.id} href={`/robot-control/${robot.id}`}>
+              <div className="border p-4 rounded-md hover:bg-gray-100 transition">
+                <h2 className="text-xl font-bold mb-2">{robot.name}</h2>
+                <p className="text-gray-500">Robot ID: {robot.id}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
         {/* <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {projects
