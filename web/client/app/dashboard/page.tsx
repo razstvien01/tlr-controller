@@ -15,24 +15,24 @@ import { Separator } from "@/components/ui/separator"
 export default function Dashboard() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/");
-    },
-  });
+  // const session = useSession({
+  //   required: true,
+  //   onUnauthenticated() {
+  //     redirect("/");
+  //   },
+  // });
 
-  const fetchUser = async () => {
-    const response = await getUserByEmail(session.data?.user?.email ?? null);
-    setCurrentUser(response.data);
-  };
+  // const fetchUser = async () => {
+  //   const response = await getUserByEmail(session.data?.user?.email ?? null);
+  //   setCurrentUser(response.data);
+  // };
 
-  useEffect(() => {
-    fetchUser();
+  // useEffect(() => {
+  //   fetchUser();
 
-    console.log(currentUser);
-    return () => {};
-  }, [session]);
+  //   console.log(currentUser);
+  //   return () => {};
+  // }, [session]);
 
   // Dummy data for robot cards (replace this with your actual data)
   const robotCards = [
@@ -88,9 +88,9 @@ export default function Dashboard() {
       <Separator className="my-4" />
 
       <div className="relative">
-        <ScrollArea>
+        {/* <ScrollArea>
           <div className="flex space-x-4 pb-4">
-            {/* {projects
+            {projects
               ? projects.map((project: any, index: number) => {
                   return (
                     <ProjectCard
@@ -103,10 +103,10 @@ export default function Dashboard() {
                     />
                   );
                 })
-              : null} */}
+              : null}
           </div>
           <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </ScrollArea> */}
       </div>
       <Separator className="my-4" />
     </div>

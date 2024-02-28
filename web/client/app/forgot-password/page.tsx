@@ -20,11 +20,11 @@ export default function Login() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession();
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  // if (session.status === "authenticated") {
+  //   router.push("/dashboard");
+  // }
 
   const handleReset = async () => {
     sendPasswordResetEmail(auth, email);

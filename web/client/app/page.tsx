@@ -13,7 +13,7 @@ import { useEffect } from "react";
 export default function Home() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession();
   
   
   // useEffect(() => {
@@ -24,9 +24,9 @@ export default function Home() {
   //   }
   // }, [])
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  // if (session.status === "authenticated") {
+  //   router.push("/dashboard");
+  // }
   
   return (
     <div className="min-h-screen flex flex-col">

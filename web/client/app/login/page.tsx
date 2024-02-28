@@ -12,24 +12,31 @@ import { Icons } from "@/components/icons/icons";
 // import { UserAuth } from "@/context/auth_context";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { signIn, useSession } from "next-auth/react";
+import { UserAuth } from "@/context/auth_context";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  
+  const { user = {}, googleSignIn } = UserAuth()
 
-  const session = useSession();
+  // const session = useSession();
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  // if (session.status === "authenticated") {
+  //   router.push("/dashboard");
+  // }
 
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
-  if (currentUser && currentUser.user_id != "") {
-    console.log(currentUser.user_id + " from login");
-    router.push("/dashboard");
+  // if (currentUser && currentUser.user_id != "") {
+  //   console.log(currentUser.user_id + " from login");
+  //   router.push("/dashboard");
+  // }
+  
+  if(user){
+    router.push("/dashboard")
   }
 
   const handleLogin = async () => {
@@ -40,13 +47,14 @@ export default function Login() {
       redirect: true,
       callbackUrl: "/",
     });
+    
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn("google");
+      await googleSignIn()
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
 

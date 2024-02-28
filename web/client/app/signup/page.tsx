@@ -25,11 +25,11 @@ export default function Signup() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession();
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  // if (session.status === "authenticated") {
+  //   router.push("/dashboard");
+  // }
 
   const handleSignup = async () => {
     try {

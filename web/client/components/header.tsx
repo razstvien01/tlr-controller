@@ -7,8 +7,8 @@ import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { useSession } from "next-auth/react";
 
 export function Header() {
-  const session = useSession();
-  const isLogin = session.status === "authenticated";
+  // const session = useSession();
+  // const isLogin = session.status === "authenticated";
 
   return (
     <div className="border-b-2">
@@ -18,7 +18,8 @@ export function Header() {
         <div className="ml-auto flex items-center space-x-4">
           <ModeToggle />
 
-          {isLogin ? <UserNav /> : null}
+          {/* {isLogin ? <UserNav /> : null} */}
+          <UserNav/>
         </div>
       </div>
     </div>
