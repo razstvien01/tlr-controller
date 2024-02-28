@@ -1,26 +1,27 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useSession } from "next-auth/react";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { getUserByEmail } from "@/service/users.service";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator"
+import { UserAuth } from "@/context/auth_context";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
-  // const session = useSession({
-  //   required: true,
-  //   onUnauthenticated() {
-  //     redirect("/");
-  //   },
-  // });
+  const { user } = UserAuth();
+
+  useEffect(() => {
+    if (!user) {
+      // Redirect to home if unauthenticated
+      router.push("/");
+    }
+  }, [user, router]);
 
   // const fetchUser = async () => {
   //   const response = await getUserByEmail(session.data?.user?.email ?? null);

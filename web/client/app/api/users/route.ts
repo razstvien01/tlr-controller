@@ -90,7 +90,6 @@ export const POST = async (request: NextRequest, context: any) => {
     const user_data = await request.json();
     const { user_id } = user_data;
 
-    console.log("HELLO WORLDD");
     if (user_id && (await checkIfExistsUserId(user_id))) {
       return NextResponse.json({
         success: false,

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import { Icons } from "@/components/icons/icons";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
-import { signIn, useSession } from "next-auth/react";
+import { UserAuth } from "@/context/auth_context";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,19 +20,23 @@ export default function Login() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
   const router = useRouter();
-  // const session = useSession();
+  
+  const { user } = UserAuth();
 
-  // if (session.status === "authenticated") {
-  //   router.push("/dashboard");
-  // }
-
+  useEffect(() => {
+    if (user) {
+      // Redirect to dashboard if authenticated
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+  
   const handleReset = async () => {
     sendPasswordResetEmail(auth, email);
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn('google')
+      // signIn('google')
     } catch (error) {
       console.log(error);
     }
