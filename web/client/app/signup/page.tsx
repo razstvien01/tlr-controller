@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,7 @@ import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
-import { signIn, useSession } from "next-auth/react";
-import { addUser } from "@/service/users.service";
-import { UserDataProps } from "@/configs/types";
+import { UserAuth } from "@/context/auth_context";
 
 export default function Signup() {
   const [displayName, setDisplayName] = useState("");
@@ -25,40 +21,44 @@ export default function Signup() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
   const router = useRouter();
-  const session = useSession();
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
+  const { user, googleSignIn } = UserAuth();
+
+  useEffect(() => {
+    if (user) {
+      // Redirect to dashboard if authenticated
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
   const handleSignup = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user; 
-      const uid = user.uid;
-      
-      const user_data = {
-        email_address: email,
-        display_name: displayName,
-        phone_number: "",
-        photo_url: "",
-        user_id: uid,
-      } as UserDataProps;
+      // const userCredential = await createUserWithEmailAndPassword(
+      //   auth,
+      //   email,
+      //   password
+      // );
+      // const user = userCredential.user;
+      // const uid = user.uid;
 
-      const res = await addUser(user_data);
+      // const user_data = {
+      //   email_address: email,
+      //   display_name: displayName,
+      //   phone_number: "",
+      //   photo_url: "",
+      //   user_id: uid,
+      // } as UserDataProps;
 
-      setCurrentUser(res.user_data);
+      // const res = await addUser(user_data);
 
-      signIn("credentials", {
-        email,
-        password,
-        redirect: true,
-        callbackUrl: "/",
-      });
+      // setCurrentUser(res.user_data);
+
+      // signIn("credentials", {
+      //   email,
+      //   password,
+      //   redirect: true,
+      //   callbackUrl: "/",
+      // });
     } catch (error) {
       console.error("Error signing up:", error);
     }
@@ -66,15 +66,11 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
-      await signIn("google");
-      
+      await googleSignIn()
     } catch (error) {
-      console.log("Error signing in with Google:", error);
+      console.log(error)
     }
   };
-  
-  
-  
 
   return (
     <div

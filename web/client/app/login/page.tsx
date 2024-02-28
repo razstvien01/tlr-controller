@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -9,44 +9,40 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-// import { UserAuth } from "@/context/auth_context";
-import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { signIn, useSession } from "next-auth/react";
+import { UserAuth } from "@/context/auth_context";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  
+  const { user, googleSignIn } = UserAuth()
 
-  const session = useSession();
+  useEffect(() => {
+    if (user) {
+      // Redirect to dashboard if authenticated
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
-
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
-  if (currentUser && currentUser.user_id != "") {
-    console.log(currentUser.user_id + " from login");
-    router.push("/dashboard");
-  }
-
+  
   const handleLogin = async () => {
     
-    signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      callbackUrl: "/",
-    });
+    // signIn("credentials", {
+    //   email,
+    //   password,
+    //   redirect: true,
+    //   callbackUrl: "/",
+    // });
+    
   };
 
   const handleGoogleSignup = async () => {
     try {
-      signIn("google");
+      await googleSignIn()
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   };
 

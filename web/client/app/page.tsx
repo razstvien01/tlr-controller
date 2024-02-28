@@ -1,36 +1,29 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
 import { UserAuth } from "@/context/auth_context";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   const router = useRouter();
-  const session = useSession();
-  
-  
-  // useEffect(() => {
-    
-  //   console.log("🚀 ~ session:", session)
-  //   return () => {
-      
-  //   }
-  // }, [])
 
-  if (session.status === "authenticated") {
-    router.push("/dashboard");
-  }
-  
+  const { user } = UserAuth();
+
+  useEffect(() => {
+    if (user) {
+      // Redirect to dashboard if authenticated
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Main Content with Background Image */}
       <main
         className="flex-1 flex flex-col items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: "url('bg-1.gif')" }}
@@ -40,7 +33,6 @@ export default function Home() {
             Welcome to Telepresence Robot Control Center
           </TPH1>
 
-          {/* </h2> */}
           <TPP className="mb-6">
             Explore the future of remote presence with our telepresence robot.
             Control your robot seamlessly from anywhere in the world.

@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   useContext,
   createContext,
   useState,
@@ -14,8 +14,10 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { auth } from "../app/firebase";
+import { addUser } from "@/service/users.service";
+import { UserDataProps } from "@/configs/types";
+// import { addUser } from "../services/users.service";
 // import { useLoadingAtom } from "../hooks/loading.atom";
-import { getUser } from "../service/users.service";
 
 const AuthContext = createContext<any>(null);
 
@@ -36,18 +38,37 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       //* Access user data from the authentication result
       const user = result.user;
-
+      
       // setIsLoading(true)
+      const user_data = {
+        display_name: user.displayName,
+        email_address: user.email,
+        phone_number: user.phoneNumber,
+        photo_url: user.photoURL,
+        user_id: user.uid
+      } as UserDataProps
 
-      // addGoogleUser(user);
-      
-      // setUser(user)
-      
-      return getUser(user.uid)
+      addUser(user_data);
     } catch (error) {
       console.log("Google Sign-In Error:", error);
     }
   };
+
+  // const googleSignUp = async () => {
+  //   const provider = new GoogleAuthProvider();
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+
+  //     //* Access user data from the authentication result
+  //     const user = result.user;
+      
+  //     // setIsLoading(true)
+
+  //     // addUser(user);
+  //   } catch (error) {
+  //     console.log("Google Sign-In Error:", error);
+  //   }
+  // };
 
   const logOut = () => {
     signOut(auth);
