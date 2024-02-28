@@ -13,6 +13,17 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
+
+        //       async function turnOn(idInput: string) {
+        //     // Remove previous event listener
+        //     socket.off("controller/TurnOnRobot/response");
+
+        //     socket.emit("controller/TurnOnRobot/request", { id: idInput });
+
+        //     socket.on("controller/TurnOnRobot/response", (data: any) => {
+        //       console.log("Turn On Response Received", data);
+        //     });
+        //   }
         const socket = io.connect('http://localhost:5000'); // Update with your server URL
         socket.on('connect', () => {
             console.log('Connected to server');

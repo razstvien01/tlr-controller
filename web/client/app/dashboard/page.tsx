@@ -66,7 +66,7 @@ export default function Dashboard() {
     //     ))}
     //   </div>
     // </div>
-    <div className="h-full px-4 py-6 lg:px-8">
+    <div className="h-full px-4 py-6 lg:px-8 items-center min-h-screen">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
@@ -89,12 +89,12 @@ export default function Dashboard() {
       <Separator className="my-4" />
 
       <div className="relative">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {robotCards.map((robot) => (
-            <Link key={robot.id} href={`/robot-control/${robot.id}`}>
-              <div className="border p-4 rounded-md hover:bg-gray-100 transition">
+            <Link key={robot.id} href={`/controller`}>
+              <div className="border p-4 rounded-md hover:bg-primary transition">
                 <h2 className="text-xl font-bold mb-2">{robot.name}</h2>
-                <p className="text-gray-500">Robot ID: {robot.id}</p>
+                <p className="text-muted-foreground">Robot ID: {robot.id}</p>
               </div>
             </Link>
           ))}

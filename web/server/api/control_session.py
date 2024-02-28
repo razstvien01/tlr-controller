@@ -28,7 +28,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		
 		print("Will message to the other client")
 		
-		emit('flask_to_client_message', {'message': 'Use Robot response received'}, room=request.sid)
+		# emit('flask_to_client_message', {'message': 'Use Robot response received'}, room=request.sid)
 
 	# @socketIO.on(turnOnRequest)
 	# def turnOnRobot(data):
@@ -76,7 +76,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		id = data['id']
 		userId = data['userId']
 		toUse = data['toUse']
-
+		
 		if(userId == ''):
 			emit(useRobotResponse, response404())
 			return
@@ -126,7 +126,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if(steer != None):
 			session.Steer = steer
 
-		emit(controlRobotResponse, responseSuccess())
+		emit(controlRobotResponse, {'success': True, 'drive': drive, 'steer': steer})
 
 	getControlRequest = 'controller/GetControl/request'
 	getControlResponse = 'controller/GetControl/response'

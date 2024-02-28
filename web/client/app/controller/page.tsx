@@ -6,7 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
+import { UserAuth } from "@/context/auth_context";
+import { useRouter } from "next/navigation";
 
+// TODO Domain Driven Design - organize data (lessen bug)
+// TODO Relationship domain - dynamic relationship
+// TODO Foreign key - static relationship- dle mailis
 const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
 
 if (!socketURL) {
@@ -25,6 +30,16 @@ const ControllerTest = () => {
   const [isOnRobot, setIsOnRobot] = useState(false);
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [update, setUpdate] = useState(false);
+  
+  const router = useRouter()
+  const { user } = UserAuth();
+
+  useEffect(() => {
+    if (!user) {
+      // Redirect to home if unauthenticated
+      router.push("/");
+    }
+  }, [user, router]);
 
   //************************ CONTROLLER FUNCTIONS  *****************************/
   async function turnOn(idInput: string) {
