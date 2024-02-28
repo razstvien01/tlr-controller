@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { UserAuth } from "@/context/auth_context";
 import { useRouter } from "next/navigation";
+import { TPH2 } from "@/components/typography/tp-h2";
 
 // TODO Domain Driven Design - organize data (lessen bug)
 // TODO Relationship domain - dynamic relationship
@@ -235,7 +236,8 @@ const ControllerTest = () => {
   useGetControl();
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen gap-10">
+      <TPH2>Manual Navigation Controller</TPH2>
       <div className="bg-primary p-10 rounded-lg">
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="robotId">Robot ID</Label>
