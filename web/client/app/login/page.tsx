@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -10,22 +9,16 @@ import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 import { UserAuth } from "@/context/auth_context";
+import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Login() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   
   const { user, googleSignIn } = UserAuth()
 
-  useEffect(() => {
-    if (user) {
-      // Redirect to dashboard if authenticated
-      router.push("/dashboard");
-    }
-  }, [user, router]);
-
+  pushToDashboardIfAuthenticated();
   
   const handleLogin = async () => {
     

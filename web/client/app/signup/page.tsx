@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { UserAuth } from "@/context/auth_context";
+import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Signup() {
   const [displayName, setDisplayName] = useState("");
@@ -20,16 +20,9 @@ export default function Signup() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
-  const router = useRouter();
-
   const { user, googleSignIn } = UserAuth();
 
-  useEffect(() => {
-    if (user) {
-      // Redirect to dashboard if authenticated
-      router.push("/dashboard");
-    }
-  }, [user, router]);
+  pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
@@ -40,7 +33,6 @@ export default function Signup() {
       // );
       // const user = userCredential.user;
       // const uid = user.uid;
-
       // const user_data = {
       //   email_address: email,
       //   display_name: displayName,
@@ -48,11 +40,8 @@ export default function Signup() {
       //   photo_url: "",
       //   user_id: uid,
       // } as UserDataProps;
-
       // const res = await addUser(user_data);
-
       // setCurrentUser(res.user_data);
-
       // signIn("credentials", {
       //   email,
       //   password,
@@ -66,9 +55,9 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
-      await googleSignIn()
+      await googleSignIn();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 

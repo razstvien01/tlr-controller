@@ -6,9 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
-import { UserAuth } from "@/context/auth_context";
-import { useRouter } from "next/navigation";
 import { TPH2 } from "@/components/typography/tp-h2";
+import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 
 // TODO Domain Driven Design - organize data (lessen bug)
 // TODO Relationship domain - dynamic relationship
@@ -32,15 +31,7 @@ const ControllerTest = () => {
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [update, setUpdate] = useState(false);
   
-  const router = useRouter()
-  const { user } = UserAuth();
-
-  useEffect(() => {
-    if (!user) {
-      // Redirect to home if unauthenticated
-      router.push("/");
-    }
-  }, [user, router]);
+  redirectBackIfUnAuthenticated()
 
   //************************ CONTROLLER FUNCTIONS  *****************************/
   async function turnOn(idInput: string) {

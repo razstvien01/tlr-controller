@@ -4,23 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
-import { UserAuth } from "@/context/auth_context";
-import { useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
-import { useEffect } from "react";
+import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
-  const router = useRouter();
 
-  const { user } = UserAuth();
-
-  useEffect(() => {
-    if (user) {
-      // Redirect to dashboard if authenticated
-      router.push("/dashboard");
-    }
-  }, [user, router]);
+  pushToDashboardIfAuthenticated();
 
   return (
     <div className="min-h-screen flex flex-col">
