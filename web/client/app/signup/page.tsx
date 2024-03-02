@@ -11,6 +11,8 @@ import { Icons } from "@/components/icons/icons";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { UserAuth } from "@/context/auth_context";
 import { pushToDashboardIfAuthenticated } from "@/utility/utility";
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth"
+import { auth } from "@/app/firebase";
 
 export default function Signup() {
   const [displayName, setDisplayName] = useState("");
@@ -18,36 +20,16 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
   const { user, googleSignIn } = UserAuth();
-
+  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
-      // const userCredential = await createUserWithEmailAndPassword(
-      //   auth,
-      //   email,
-      //   password
-      // );
-      // const user = userCredential.user;
-      // const uid = user.uid;
-      // const user_data = {
-      //   email_address: email,
-      //   display_name: displayName,
-      //   phone_number: "",
-      //   photo_url: "",
-      //   user_id: uid,
-      // } as UserDataProps;
-      // const res = await addUser(user_data);
-      // setCurrentUser(res.user_data);
-      // signIn("credentials", {
-      //   email,
-      //   password,
-      //   redirect: true,
-      //   callbackUrl: "/",
-      // });
+      const res = await createUserWithEmailAndPassword(email, password)
+      console.log(res)
+      setPassword('')
+      setEmail('')
     } catch (error) {
       console.error("Error signing up:", error);
     }
