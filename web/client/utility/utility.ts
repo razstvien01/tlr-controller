@@ -14,7 +14,7 @@ export const redirectBackIfUnAuthenticated = () => {
   const router = useRouter()
   const { user } = UserAuth()
   
-  if(user){
+  if(!user){
     router.push("/")
   }
 }
