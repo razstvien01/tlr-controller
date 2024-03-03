@@ -14,19 +14,6 @@ export default function Dashboard() {
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
   redirectBackIfUnAuthenticated()
-  
-
-  // const fetchUser = async () => {
-  //   const response = await getUserByEmail(session.data?.user?.email ?? null);
-  //   setCurrentUser(response.data);
-  // };
-
-  // useEffect(() => {
-  //   fetchUser();
-
-  //   console.log(currentUser);
-  //   return () => {};
-  // }, [session]);
 
   // Dummy data for robot cards (replace this with your actual data)
   const robotCards = [

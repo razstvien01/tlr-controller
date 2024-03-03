@@ -58,17 +58,13 @@ export const PUT = async (request: NextRequest, context: any) => {
 
 export const PATCH = async (request: NextRequest, context: any) => {
   try {
-    console.log("Updating user accountn")
     const { params } = context;
     const { user_id } = params;
     const user_data = await request.json();
     
-    console.log(user_data)
-    
     const userDocRef = doc(db, "users", user_id);
 
     await updateDoc(userDocRef, user_data);
-    console.log("Successful")
     return NextResponse.json({
       success: true,
       user_data,

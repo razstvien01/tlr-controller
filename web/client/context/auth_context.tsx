@@ -42,6 +42,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const user = result?.user;
 
       if (!user) {
+        console.error("Failure in signing up an account");
         return;
       }
       const user_data = {
@@ -56,13 +57,10 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       //* update user data
       setCurrentUser(user_data);
-
-      
     } catch (error) {
       console.log("Google Sign-In Error:", error);
       return false;
-      
-    } finally{
+    } finally {
       // TODO set loading state
     }
     return true;
@@ -78,7 +76,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       console.log(res);
 
       if (!res) {
-        console.error("Failure in creating an account");
+        console.error("Failure in signing up an account");
         return;
       }
 
@@ -94,9 +92,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       } as UserDataProps;
 
       await addUser(user_data);
-      
+
       // TODO add a display_name to the account
-      await modifyUser(user_data)
+      await modifyUser(user_data);
 
       setCurrentUser(user_data);
 

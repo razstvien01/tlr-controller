@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { checkIfExistsUserId } from "@/controllers/users.controller";
+import { UserDataProps } from "@/configs/types";
 
 // export const checkIfExistsUserId = async (user_id: string) => {
 //   //* Chceck if the document with user_id exists
@@ -88,7 +89,7 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const user_data = await request.json();
-    const { user_id } = user_data;
+    const { user_id, ...other_data } = user_data as UserDataProps;
 
     if (user_id && (await checkIfExistsUserId(user_id))) {
       return NextResponse.json({
@@ -100,9 +101,9 @@ export const POST = async (request: NextRequest, context: any) => {
     if (user_id) {
       //* Reference the specific document by specifying its path
       const userDocRef = doc(db, "users", user_id);
-
+      
       //* Set the document data with the specified document ID
-      await setDoc(userDocRef, { ...user_data, created_at: serverTimestamp() });
+      await setDoc(userDocRef, { ...other_data, created_at: serverTimestamp() });
     } else {
       await addDoc(collection(db, "users"), {
         ...user_data,
