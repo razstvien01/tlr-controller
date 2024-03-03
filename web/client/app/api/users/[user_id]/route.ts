@@ -46,7 +46,7 @@ export const PUT = async (request: NextRequest, context: any) => {
     await setDoc(userDocRef, user_data, { merge: true });
 
     return NextResponse.json({
-      succes: true,
+      success: true,
       user_data,
     });
   } catch (error: any) {
@@ -61,13 +61,12 @@ export const PATCH = async (request: NextRequest, context: any) => {
     const { params } = context;
     const { user_id } = params;
     const user_data = await request.json();
-
+    
     const userDocRef = doc(db, "users", user_id);
 
     await updateDoc(userDocRef, user_data);
-
     return NextResponse.json({
-      succes: true,
+      success: true,
       user_data,
     });
   } catch (error: any) {

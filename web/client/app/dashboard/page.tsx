@@ -2,39 +2,18 @@
 
 import React, { useEffect } from "react";
 
-import { useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { Button } from "@/components/ui/button";
-import { TPH1 } from "@/components/typography/tp-h1";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { UserAuth } from "@/context/auth_context";
 import Link from "next/link";
+import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 
 export default function Dashboard() {
-  const router = useRouter();
   const [currentUser, setCurrentUser] = useUserDataAtom();
-
-  const { user } = UserAuth();
-
-  useEffect(() => {
-    if (!user) {
-      // Redirect to home if unauthenticated
-      router.push("/");
-    }
-  }, [user, router]);
-
-  // const fetchUser = async () => {
-  //   const response = await getUserByEmail(session.data?.user?.email ?? null);
-  //   setCurrentUser(response.data);
-  // };
-
-  // useEffect(() => {
-  //   fetchUser();
-
-  //   console.log(currentUser);
-  //   return () => {};
-  // }, [session]);
+  
+  redirectBackIfUnAuthenticated()
 
   // Dummy data for robot cards (replace this with your actual data)
   const robotCards = [

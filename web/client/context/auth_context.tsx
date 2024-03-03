@@ -7,17 +7,16 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../app/firebase";
-import { addUser } from "@/service/users.service";
+import { addUser, getUser, modifyUser } from "@/service/users.service";
 import { UserDataProps } from "@/configs/types";
-// import { addUser } from "../services/users.service";
-// import { useLoadingAtom } from "../hooks/loading.atom";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSignInWithGoogle,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
 const AuthContext = createContext<any>(null);
 
@@ -30,62 +29,137 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 }) => {
   // const [isLoading, setIsLoading] = useLoadingAtom();
   const [user, setUser] = useState(null);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
+  const [createUserWithEmailAndPassword] =
+    useCreateUserWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+
+  const [currentUser, setCurrentUser] = useUserDataAtom();
 
   const googleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
+      //* Use the hook to sign in with Google
+      const result = await signInWithGoogle();
+      const user = result?.user;
 
-      //* Access user data from the authentication result
-      const user = result.user;
-      
-      // setIsLoading(true)
+      if (!user) {
+        console.error("Failure in signing up an account");
+        return;
+      }
       const user_data = {
         display_name: user.displayName,
         email_address: user.email,
         phone_number: user.phoneNumber,
         photo_url: user.photoURL,
-        user_id: user.uid
-      } as UserDataProps
+        user_id: user.uid,
+      } as UserDataProps;
 
-      addUser(user_data);
+      await addUser(user_data);
+
+      //* update user data
+      getUserDataInit(user.uid);
     } catch (error) {
       console.log("Google Sign-In Error:", error);
+      return false;
+    } finally {
+      // TODO set loading state
     }
+    return true;
   };
 
-  // const googleSignUp = async () => {
-  //   const provider = new GoogleAuthProvider();
-  //   try {
-  //     const result = await signInWithPopup(auth, provider);
+  const signUp = async (
+    display_name: string,
+    email: string,
+    password: string
+  ) => {
+    try {
+      const res = await createUserWithEmailAndPassword(email, password);
 
-  //     //* Access user data from the authentication result
-  //     const user = result.user;
-      
-  //     // setIsLoading(true)
+      if (!res) {
+        console.error("Failure in signing up an account");
+        return;
+      }
 
-  //     // addUser(user);
-  //   } catch (error) {
-  //     console.log("Google Sign-In Error:", error);
-  //   }
-  // };
+      const { user } = res;
+      const { uid } = user;
+
+      const user_data = {
+        display_name,
+        email_address: email,
+        user_id: uid,
+        phone_number: "",
+        photo_url: "",
+      } as UserDataProps;
+
+      await addUser(user_data);
+
+      await modifyUser(user_data);
+
+      setCurrentUser(user_data);
+
+      return true;
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
+    return false;
+  };
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      // TODO Trigger loading state if needed
+      // setIsLoading(true);
+
+      // Use the hook to sign in with email and password
+      const result = await signInWithEmailAndPassword(email, password);
+
+      const user = result?.user;
+
+      if (user) {
+        getUserDataInit(user?.uid);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Email and Password Sign-In Error:", error);
+    } finally {
+      // Todo Reset loading state
+      // setIsLoading(false);
+    }
+    return false;
+  };
 
   const logOut = () => {
     signOut(auth);
   };
 
+  const getUserDataInit = async (user_id: string) => {
+    const response = await getUser(user_id);
+    setCurrentUser(response.user_data);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser: any) => {
       setUser(currentUser);
+
+      const { uid } = currentUser || {};
+
+      if (!uid) return;
+      getUserDataInit(uid);
     });
 
     return () => unsubscribe();
   }, [user]);
 
+  const contextValue = {
+    user,
+    googleSignIn,
+    logOut,
+    signUp,
+    signIn,
+  };
+
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

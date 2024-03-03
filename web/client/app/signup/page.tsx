@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -9,8 +8,10 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { UserAuth } from "@/context/auth_context";
+import { pushToDashboardIfAuthenticated } from "@/utility/utility";
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth"
+import { auth } from "@/app/firebase";
 
 export default function Signup() {
   const [displayName, setDisplayName] = useState("");
@@ -18,47 +19,16 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
-  const router = useRouter();
-
-  const { user, googleSignIn } = UserAuth();
-
-  useEffect(() => {
-    if (user) {
-      // Redirect to dashboard if authenticated
-      router.push("/dashboard");
-    }
-  }, [user, router]);
+  const { user, googleSignIn, signUp } = UserAuth() || {};
+  pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
-      // const userCredential = await createUserWithEmailAndPassword(
-      //   auth,
-      //   email,
-      //   password
-      // );
-      // const user = userCredential.user;
-      // const uid = user.uid;
-
-      // const user_data = {
-      //   email_address: email,
-      //   display_name: displayName,
-      //   phone_number: "",
-      //   photo_url: "",
-      //   user_id: uid,
-      // } as UserDataProps;
-
-      // const res = await addUser(user_data);
-
-      // setCurrentUser(res.user_data);
-
-      // signIn("credentials", {
-      //   email,
-      //   password,
-      //   redirect: true,
-      //   callbackUrl: "/",
-      // });
+      await signUp(displayName, email, password)
+      setDisplayName('')
+      setPassword('')
+      setPasswordAgain('')
+      setEmail('')
     } catch (error) {
       console.error("Error signing up:", error);
     }
@@ -66,9 +36,9 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
-      await googleSignIn()
+      await googleSignIn();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 

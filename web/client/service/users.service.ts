@@ -53,3 +53,17 @@ export const getUserByEmail = async (email_address: string | null) => {
     };
   }
 };
+
+export const modifyUser = async (user_data: UserDataProps) => {
+  try {
+    const { user_id, ...other_data } = user_data
+    const response = await axios.patch(`/api/users/${user_id}`, other_data);
+
+    return response.data;
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response.data,
+    };
+  }
+};

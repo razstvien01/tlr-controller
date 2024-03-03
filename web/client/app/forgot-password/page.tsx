@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -13,22 +12,16 @@ import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 import { UserAuth } from "@/context/auth_context";
+import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
-  const router = useRouter();
-  
-  const { user } = UserAuth();
+  const { user } = UserAuth() || {};
 
-  useEffect(() => {
-    if (user) {
-      // Redirect to dashboard if authenticated
-      router.push("/dashboard");
-    }
-  }, [user, router]);
+  pushToDashboardIfAuthenticated();
   
   const handleReset = async () => {
     sendPasswordResetEmail(auth, email);

@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -13,16 +12,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children, 
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthContextProvider>
-          <Provider>
+        <Provider>
+          <AuthContextProvider>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -31,11 +29,11 @@ export default function RootLayout({
             >
               <Header />
               {children}
-              
-              <Footer/>
+
+              <Footer />
             </ThemeProvider>
-          </Provider>
-        </AuthContextProvider>
+          </AuthContextProvider>
+        </Provider>
       </body>
     </html>
   );
