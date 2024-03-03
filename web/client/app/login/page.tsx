@@ -16,18 +16,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   
-  const { user, googleSignIn } = UserAuth() || {}
+  const { googleSignIn, signIn } = UserAuth() || {}
 
   pushToDashboardIfAuthenticated();
   
   const handleLogin = async () => {
-    
-    // signIn("credentials", {
-    //   email,
-    //   password,
-    //   redirect: true,
-    //   callbackUrl: "/",
-    // });
+    try {
+      await signIn(email, password)
+    } catch (error) {
+      console.log(error)
+    }
     
   };
 

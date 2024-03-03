@@ -19,12 +19,12 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { user, googleSignIn, signup } = UserAuth() || {};
+  const { user, googleSignIn, signUp } = UserAuth() || {};
   pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
-      await signup(displayName, email, password)
+      await signUp(displayName, email, password)
       setDisplayName('')
       setPassword('')
       setPasswordAgain('')

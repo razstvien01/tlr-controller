@@ -32,6 +32,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const [signInWithGoogle] = useSignInWithGoogle(auth);
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
 
   const [currentUser, setCurrentUser] = useUserDataAtom();
 
@@ -54,9 +55,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       } as UserDataProps;
 
       await addUser(user_data);
-      
+
       //* update user data
-      setCurrentUser(user_data);
+      getUserDataInit(user.uid);
     } catch (error) {
       console.log("Google Sign-In Error:", error);
       return false;
@@ -66,14 +67,14 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     return true;
   };
 
-  const signup = async (
+  const signUp = async (
     display_name: string,
     email: string,
     password: string
   ) => {
     try {
       const res = await createUserWithEmailAndPassword(email, password);
-      
+
       if (!res) {
         console.error("Failure in signing up an account");
         return;
@@ -91,11 +92,11 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       } as UserDataProps;
 
       await addUser(user_data);
-      
+
       await modifyUser(user_data);
-      
+
       setCurrentUser(user_data);
-      
+
       return true;
     } catch (error) {
       console.error("Error signing up:", error);
@@ -103,24 +104,47 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     return false;
   };
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      // TODO Trigger loading state if needed
+      // setIsLoading(true);
+
+      // Use the hook to sign in with email and password
+      const result = await signInWithEmailAndPassword(email, password);
+
+      const user = result?.user;
+
+      if (user) {
+        getUserDataInit(user?.uid);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Email and Password Sign-In Error:", error);
+    } finally {
+      // Todo Reset loading state
+      // setIsLoading(false);
+    }
+    return false;
+  };
+
   const logOut = () => {
     signOut(auth);
   };
-  
+
   const getUserDataInit = async (user_id: string) => {
-    const response = await getUser(user_id)
-    setCurrentUser(response.user_data)
-  }
+    const response = await getUser(user_id);
+    setCurrentUser(response.user_data);
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser: any) => {
-      
       setUser(currentUser);
-      
-      const { uid } = currentUser || {}
-      
-      if(!uid) return;
-      getUserDataInit(uid)
+
+      const { uid } = currentUser || {};
+
+      if (!uid) return;
+      getUserDataInit(uid);
     });
 
     return () => unsubscribe();
@@ -130,7 +154,8 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     user,
     googleSignIn,
     logOut,
-    signup,
+    signUp,
+    signIn,
   };
 
   return (
