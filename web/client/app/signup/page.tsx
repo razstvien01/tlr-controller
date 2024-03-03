@@ -20,15 +20,16 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { user, googleSignIn } = UserAuth();
+  const { user, googleSignIn, signup } = UserAuth();
   const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
-      const res = await createUserWithEmailAndPassword(email, password)
-      console.log(res)
+      signup(name, email, password)
+      setDisplayName('')
       setPassword('')
+      setPasswordAgain('')
       setEmail('')
     } catch (error) {
       console.error("Error signing up:", error);
