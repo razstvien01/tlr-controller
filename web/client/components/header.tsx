@@ -13,9 +13,9 @@ export function Header() {
       <div className="flex h-16 items-center px-4">
         <h1 className="text-2xl font-bold">Telepresence Robot App</h1>
 
-        <div className="flex-grow"></div> {/* Add this to take up remaining space */}
-
-        <MainNav />
+        <div className="flex-grow"></div>
+      
+        {user && <MainNav />}
 
         <div className="ml-auto flex items-center space-x-4 pl-10">
           <ModeToggle />
