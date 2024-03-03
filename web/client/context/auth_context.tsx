@@ -9,7 +9,7 @@ import {
 } from "react";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../app/firebase";
-import { addUser, modifyUser } from "@/service/users.service";
+import { addUser, getUser, modifyUser } from "@/service/users.service";
 import { UserDataProps } from "@/configs/types";
 import {
   useCreateUserWithEmailAndPassword,
@@ -54,7 +54,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       } as UserDataProps;
 
       await addUser(user_data);
-
+      
       //* update user data
       setCurrentUser(user_data);
     } catch (error) {
@@ -73,8 +73,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   ) => {
     try {
       const res = await createUserWithEmailAndPassword(email, password);
-      console.log(res);
-
+      
       if (!res) {
         console.error("Failure in signing up an account");
         return;
@@ -95,9 +94,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       // TODO add a display_name to the account
       await modifyUser(user_data);
-
+      
       setCurrentUser(user_data);
-
+      
       return true;
     } catch (error) {
       console.error("Error signing up:", error);
@@ -108,10 +107,19 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const logOut = () => {
     signOut(auth);
   };
+  
+  const getUserDataInit = async (user_id: string) => {
+    const response = await getUser(user_id)
+    setCurrentUser(response.user_data)
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser: any) => {
+      
       setUser(currentUser);
+      
+      const { uid } = currentUser
+      getUserDataInit(uid)
     });
 
     return () => unsubscribe();

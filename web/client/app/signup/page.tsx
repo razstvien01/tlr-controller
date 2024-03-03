@@ -24,7 +24,7 @@ export default function Signup() {
 
   const handleSignup = async () => {
     try {
-      signup(displayName, email, password)
+      await signup(displayName, email, password)
       setDisplayName('')
       setPassword('')
       setPasswordAgain('')
