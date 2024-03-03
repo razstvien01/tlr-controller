@@ -8,7 +8,6 @@ import { TPH2 } from "@/components/typography/tp-h2";
 import { TPP } from "@/components/typography/tp-p";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
-import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { UserAuth } from "@/context/auth_context";
 import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth"
@@ -21,12 +20,11 @@ export default function Signup() {
   const [passwordAgain, setPasswordAgain] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { user, googleSignIn, signup } = UserAuth();
-  const [createUserWithEmailAndPassword] = useCreateUserWithEmailAndPassword(auth);
   pushToDashboardIfAuthenticated();
 
   const handleSignup = async () => {
     try {
-      signup(name, email, password)
+      signup(displayName, email, password)
       setDisplayName('')
       setPassword('')
       setPasswordAgain('')

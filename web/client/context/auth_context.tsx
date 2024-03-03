@@ -9,12 +9,12 @@ import {
 } from "react";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../app/firebase";
-import { addUser } from "@/service/users.service";
+import { addUser, modifyUser } from "@/service/users.service";
 import { UserDataProps } from "@/configs/types";
 import {
   useCreateUserWithEmailAndPassword,
   useSignInWithGoogle,
-  useSignInWithEmailAndPassword 
+  useSignInWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 
@@ -42,7 +42,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const user = result?.user;
 
       if (!user) {
-        console.error("No user found");
         return;
       }
       const user_data = {
@@ -58,37 +57,48 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       //* update user data
       setCurrentUser(user_data);
 
-      return true;
+      
     } catch (error) {
       console.log("Google Sign-In Error:", error);
+      return false;
+      
+    } finally{
+      // TODO set loading state
     }
-    return false;
+    return true;
   };
 
-  const signup = async (display_name: string, email: string, password: string) => {
+  const signup = async (
+    display_name: string,
+    email: string,
+    password: string
+  ) => {
     try {
       const res = await createUserWithEmailAndPassword(email, password);
       console.log(res);
-      
-      if(!res){
-        console.error("Failure in creating an account")
+
+      if (!res) {
+        console.error("Failure in creating an account");
         return;
       }
-      
-      const { user } = res
-      const { uid } = user
-      
+
+      const { user } = res;
+      const { uid } = user;
+
       const user_data = {
         display_name,
         email_address: email,
         user_id: uid,
         phone_number: "",
         photo_url: "",
-      } as UserDataProps
+      } as UserDataProps;
+
+      await addUser(user_data);
       
-      await addUser(user_data)
-      
-      setCurrentUser(user_data)
+      // TODO add a display_name to the account
+      await modifyUser(user_data)
+
+      setCurrentUser(user_data);
 
       return true;
     } catch (error) {
