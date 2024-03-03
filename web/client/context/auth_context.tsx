@@ -16,8 +16,8 @@ import {
 import { auth } from "../app/firebase";
 import { addUser } from "@/service/users.service";
 import { UserDataProps } from "@/configs/types";
-// import { addUser } from "../services/users.service";
-// import { useLoadingAtom } from "../hooks/loading.atom";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
 const AuthContext = createContext<any>(null);
 
@@ -30,45 +30,38 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 }) => {
   // const [isLoading, setIsLoading] = useLoadingAtom();
   const [user, setUser] = useState(null);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
+  const [currentUser, setCurrentUser] = useUserDataAtom();
 
   const googleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
+      //* Use the hook to sign in with Google
+      const result = await signInWithGoogle();
+      const user = result?.user;
 
-      //* Access user data from the authentication result
-      const user = result.user;
-      
-      // setIsLoading(true)
+      if (!user) {
+        console.error("No user found");
+        return;
+      }
       const user_data = {
         display_name: user.displayName,
         email_address: user.email,
         phone_number: user.phoneNumber,
         photo_url: user.photoURL,
-        user_id: user.uid
-      } as UserDataProps
+        user_id: user.uid,
+      } as UserDataProps;
 
-      addUser(user_data);
+      await addUser(user_data);
+
+      //* update user data
+      setCurrentUser(user_data);
+
+      return true;
     } catch (error) {
       console.log("Google Sign-In Error:", error);
     }
+    return false;
   };
-
-  // const googleSignUp = async () => {
-  //   const provider = new GoogleAuthProvider();
-  //   try {
-  //     const result = await signInWithPopup(auth, provider);
-
-  //     //* Access user data from the authentication result
-  //     const user = result.user;
-      
-  //     // setIsLoading(true)
-
-  //     // addUser(user);
-  //   } catch (error) {
-  //     console.log("Google Sign-In Error:", error);
-  //   }
-  // };
 
   const logOut = () => {
     signOut(auth);

@@ -6,6 +6,7 @@ import { UserNav } from "../components/user-nav";
 import { UserAuth } from "@/context/auth_context";
 import { useRouter } from "next/navigation";
 
+// TODO
 export function Header() {
   const { user } = UserAuth();
   const router = useRouter();
