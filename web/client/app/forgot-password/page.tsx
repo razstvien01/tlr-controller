@@ -19,7 +19,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
-  const { user } = UserAuth();
+  const { user } = UserAuth() || {};
 
   pushToDashboardIfAuthenticated();
   

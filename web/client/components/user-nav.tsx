@@ -21,7 +21,7 @@ export const UserNav: React.FC = () => {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
-  const { logOut } = UserAuth()
+  const { logOut } = UserAuth() || {}
   
   const handleSignOut = async () => {
     try {

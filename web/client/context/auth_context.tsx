@@ -91,8 +91,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       } as UserDataProps;
 
       await addUser(user_data);
-
-      // TODO add a display_name to the account
+      
       await modifyUser(user_data);
       
       setCurrentUser(user_data);
@@ -118,7 +117,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       
       setUser(currentUser);
       
-      const { uid } = currentUser
+      const { uid } = currentUser || {}
+      
+      if(!uid) return;
       getUserDataInit(uid)
     });
 

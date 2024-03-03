@@ -16,7 +16,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   
-  const { user, googleSignIn } = UserAuth()
+  const { user, googleSignIn } = UserAuth() || {}
 
   pushToDashboardIfAuthenticated();
   

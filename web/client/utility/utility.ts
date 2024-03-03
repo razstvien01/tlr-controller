@@ -3,7 +3,7 @@ import { UserAuth } from "../context/auth_context";
 
 export const pushToDashboardIfAuthenticated = () => {
   const router = useRouter()
-  const { user } = UserAuth()
+  const { user } = UserAuth() || {}
   
   if(user){
     router.push("/dashboard")
@@ -12,7 +12,7 @@ export const pushToDashboardIfAuthenticated = () => {
 
 export const redirectBackIfUnAuthenticated = () => {
   const router = useRouter()
-  const { user } = UserAuth()
+  const { user } = UserAuth() || {}
   
   if(!user){
     router.push("/")
