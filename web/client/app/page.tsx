@@ -8,7 +8,6 @@ import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Home() {
-  const [currentUser, setCurrentUser] = useUserDataAtom();
 
   pushToDashboardIfAuthenticated();
 
