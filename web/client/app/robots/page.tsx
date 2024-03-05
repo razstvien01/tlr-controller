@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { AddRobotDialog } from "@/components/dialogs/add-robot-dialog"
+import { AddRobotDialog } from "@/components/dialogs/add-robot-dialog";
 import Link from "next/link";
+import RobotCard from "@/components/robot-card";
 
 export default function Robots() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -15,10 +16,17 @@ export default function Robots() {
     { id: "robot1", name: "Robot 1" },
     { id: "robot2", name: "Robot 2" },
     { id: "robot3", name: "Robot 3" },
+    { id: "robot3", name: "Robot 3" },
+    { id: "robot3", name: "Robot 3" },
+    { id: "robot3", name: "Robot 3" },
   ];
   return (
     <>
-      <AddRobotDialog showDialog={showDialog} setShowDialog={setShowDialog} setSuccessAdd={setSuccessAdd}/>
+      <AddRobotDialog
+        showDialog={showDialog}
+        setShowDialog={setShowDialog}
+        setSuccessAdd={setSuccessAdd}
+      />
       <div className="h-full px-4 py-6 lg:px-8 items-center min-h-screen">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -38,13 +46,14 @@ export default function Robots() {
         <Separator className="my-4" />
 
         <div className="relative">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {robotCards.map((robot) => (
               <Link key={robot.id} href={`/controller`}>
-                <div className="border p-4 rounded-md hover:bg-primary transition">
+                {/* <div className="border p-4 rounded-md hover:bg-primary transition">
                   <h2 className="text-xl font-bold mb-2">{robot.name}</h2>
                   <p className="text-muted-foreground">Robot ID: {robot.id}</p>
-                </div>
+                </div> */}
+                <RobotCard/>
               </Link>
             ))}
           </div>

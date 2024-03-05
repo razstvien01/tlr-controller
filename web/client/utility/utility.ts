@@ -11,7 +11,6 @@ export const pushToDashboardIfAuthenticated = () => {
   const [user] = useAuthState(auth);
 
   if (typeof window !== "undefined") {
-    // Perform localStorage action
     const userSession = sessionStorage.getItem("user");
 
     useEffect(() => {
@@ -31,7 +30,6 @@ export const redirectBackIfUnAuthenticated = () => {
   const router = useRouter();
 
   if (typeof window !== "undefined") {
-    // Perform localStorage action
     const userSession = sessionStorage.getItem("user");
 
     useEffect(() => {
