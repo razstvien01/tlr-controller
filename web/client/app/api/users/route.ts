@@ -112,7 +112,7 @@ export const POST = async (request: NextRequest, context: any) => {
     }
 
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Account User Created Successfully",
       user_data,
     });

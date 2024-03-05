@@ -4,13 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { TPP } from "@/components/typography/tp-p";
-import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 
 export default function Home() {
-
   pushToDashboardIfAuthenticated();
-
+  
   return (
     <div className="min-h-screen flex flex-col">
       <main
