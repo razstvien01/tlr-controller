@@ -16,3 +16,20 @@ export const addRobot = async (robot_data: RobotDataProps) => {
     };
   }
 };
+
+// export const getUsers = async () => {
+//   try {
+//     const response = await axios.get(`/api/robots/`);
+//     const user_data = response.data.user_data;
+
+//     return {
+//       success: true,
+//       user_data,
+//     };
+//   } catch (error: any) {
+//     return {
+//       success: false,
+//       error: error.response.data,
+//     };
+//   }
+// };
