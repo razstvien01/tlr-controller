@@ -16,9 +16,9 @@ export default function Robots() {
     { id: "robot1", name: "Robot 1" },
     { id: "robot2", name: "Robot 2" },
     { id: "robot3", name: "Robot 3" },
-    { id: "robot3", name: "Robot 3" },
-    { id: "robot3", name: "Robot 3" },
-    { id: "robot3", name: "Robot 3" },
+    { id: "robot4", name: "Robot 4" },
+    { id: "robot5", name: "Robot 5" },
+    { id: "robot6", name: "Robot 6" },
   ];
   return (
     <>
@@ -27,7 +27,7 @@ export default function Robots() {
         setShowDialog={setShowDialog}
         setSuccessAdd={setSuccessAdd}
       />
-      <div className="h-full px-4 py-6 lg:px-8 items-center min-h-screen">
+      <div className="h-full px-4 py-6 lg:px-8 justify-center min-h-screen">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">
@@ -45,14 +45,10 @@ export default function Robots() {
         </div>
         <Separator className="my-4" />
 
-        <div className="relative">
-          <div className="grid grid-cols-3 gap-4">
-            {robotCards.map((robot) => (
+        <div className="relative justify-center items-center">
+          <div className="grid grid-cols-4">
+            {robotCards.slice().reverse().map((robot) => (
               <Link key={robot.id} href={`/controller`}>
-                {/* <div className="border p-4 rounded-md hover:bg-primary transition">
-                  <h2 className="text-xl font-bold mb-2">{robot.name}</h2>
-                  <p className="text-muted-foreground">Robot ID: {robot.id}</p>
-                </div> */}
                 <RobotCard/>
               </Link>
             ))}
