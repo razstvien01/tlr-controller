@@ -79,7 +79,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         console.error("Failure in signing up an account");
         return;
       }
-
+      
       const { user } = res;
       const { uid } = user;
 
@@ -111,7 +111,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       // Use the hook to sign in with email and password
       const result = await signInWithEmailAndPassword(email, password);
-
+      
       const user = result?.user;
 
       if (user) {
@@ -129,6 +129,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   };
 
   const logOut = () => {
+    sessionStorage.removeItem("user");
     signOut(auth);
   };
 
@@ -144,6 +145,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const { uid } = currentUser || {};
 
       if (!uid) return;
+      sessionStorage.setItem("user", `${true}`);
       getUserDataInit(uid);
     });
 

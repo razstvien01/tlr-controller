@@ -1,20 +1,49 @@
 import { redirect, useRouter } from "next/navigation";
-import { UserAuth } from "../context/auth_context";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebase";
+import { useSessionStorage } from "./useSessionStorage";
+import { useEffect } from "react";
+import { twMerge } from "tailwind-merge";
+import clsx, { ClassValue } from "clsx";
 
 export const pushToDashboardIfAuthenticated = () => {
   const router = useRouter();
-  const { user } = UserAuth() || {};
+  const [user] = useAuthState(auth);
 
-  if (user) {
-    router.push("/dashboard");
+  if (typeof window !== "undefined") {
+    const userSession = sessionStorage.getItem("user");
+
+    useEffect(() => {
+      console.log(userSession);
+
+      if (user && userSession) {
+        router.push("/dashboard");
+      }
+
+      return () => {};
+    }, [userSession, user]);
   }
 };
 
 export const redirectBackIfUnAuthenticated = () => {
+  const [user] = useAuthState(auth);
   const router = useRouter();
-  const { user } = UserAuth() || {};
 
-  if (!user) {
-    redirect("/");
+  if (typeof window !== "undefined") {
+    const userSession = sessionStorage.getItem("user");
+
+    useEffect(() => {
+      console.log(userSession);
+
+      if (!user && !userSession) {
+        router.push("/");
+      }
+
+      return () => {};
+    }, [userSession, user]);
   }
 };
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}

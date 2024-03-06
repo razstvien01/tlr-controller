@@ -10,6 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons/icons";
 import { UserAuth } from "@/context/auth_context";
 import { pushToDashboardIfAuthenticated } from "@/utility/utility";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase";
+import { Router } from "lucide-react";
+// import { useRouter } from "next/navigation";
+// import { useSessionStorage } from "@/utility/useSessionStorage";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,6 +24,16 @@ export default function Login() {
   const { googleSignIn, signIn } = UserAuth() || {}
 
   pushToDashboardIfAuthenticated();
+  // const [user] = useAuthState(auth)
+  // const router = useRouter()
+  // const userSession = sessionStorage.getItem('user')
+  // const [userSession, setUserSession] = useSessionStorage<boolean>("user", false);
+  
+  // console.log({user})
+  
+  // if(!user && !userSession){
+  //   router.push('/dashboard')
+  // }
   
   const handleLogin = async () => {
     try {

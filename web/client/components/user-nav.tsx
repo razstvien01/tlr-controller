@@ -14,11 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 
-import { useRouter } from "next/navigation";
 import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { UserAuth } from "@/context/auth_context";
 export const UserNav: React.FC = () => {
-  const router = useRouter();
   const [currentUser, setCurrentUser] = useUserDataAtom();
   
   const { logOut } = UserAuth() || {}

@@ -5,3 +5,11 @@ export interface UserDataProps {
   photo_url: string
   user_id: string
 }
+
+export interface RobotDataProps {
+  robot_id: string
+  robot_name: string
+  robot_description: string
+  location: string
+  photo_url: string
+}
