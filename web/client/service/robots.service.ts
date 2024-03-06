@@ -6,7 +6,8 @@ export const addRobot = async (robot_data: RobotDataProps) => {
     const response = await axios.post("/api/robots", robot_data)
     return {
       success: true,
-      robot_data: response.data?.robot_data
+      robot_data: response.data?.robot_data,
+      message: response.data?.message
     }
   } catch (error: any) {
     return {

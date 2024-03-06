@@ -71,7 +71,7 @@ export const POST = async (request: NextRequest, context: any) => {
     
     return NextResponse.json({
       succes: true,
-      message: "Robot Created Successfully",
+      message: "Robot Registered Successfully",
       robot_data,
     });
   } catch (error) {}

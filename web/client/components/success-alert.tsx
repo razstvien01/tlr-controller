@@ -9,7 +9,7 @@ interface AlertSuccessProps {
 
 const AlertSuccess: React.FC<AlertSuccessProps> = ({ description }) => {
   return (
-    <Alert className="text-green-600 border border-green-600">
+    <Alert variant={"default"}>
       <Check className="w-4 h-4 text-green-600" />
       <AlertTitle>Success</AlertTitle>
       <AlertDescription>{description}</AlertDescription>

@@ -92,36 +92,41 @@ export function AddRobotDialog({
       setHasSubmitted(false);
     }
   }, [showToast, toastParams]);
-
-  const getActualImageUrl = async () => {
-    try {
-      // Axios follows redirects by default, so the resolved URL will be the final one after redirection.
-      const response = await axios({
-        method: "GET",
-        url: "https://source.unsplash.com/random/?space,night,star,moon",
-        maxRedirects: 5, // The default is 5, but it's set explicitly here for clarity
-      });
-
-      return response.request.responseURL; // This should give the final redirected URL
-    } catch (error) {
-      console.error("Error fetching the actual image URL:", error);
-      return ""; // Return an empty string or handle the error as appropriate
-    }
-  };
-
+  
   // Function to handle form submission with async image URL fetching.
   const handleSubmit = async () => {
-    console.log(robotData)
-    addRobot(robotData)
+    setIsSave(true)
+    const res = await addRobot(robotData)
+    if(res.success){
+      setHasSubmitted(true)
+      setToastParams({
+        title: "Robot registered",
+        description: "You have successfully registered a robot.",
+        variant: "default"
+      })
+      setMessage(res.message)
+      setIsVisible({
+        error: false,
+        success: true
+      })
+    } else {
+      setMessage(res.error.message)
+      setIsVisible((prev) => ({
+        ...prev,
+        error: true
+      }))
+    }
+    
+    setIsSave(false)
   };
 
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Robot</DialogTitle>
+          <DialogTitle>Register Robot</DialogTitle>
           <DialogDescription>
-            Add a new robot to control it remotely
+            Register a new robot to control it remotely
           </DialogDescription>
         </DialogHeader>
         <div>
@@ -166,6 +171,7 @@ export function AddRobotDialog({
           <Button
             variant="outline"
             onClick={() => setShowDialog(false)}
+            disabled={isSave || isVisible.success}
           >
             Cancel
           </Button>
