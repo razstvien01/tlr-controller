@@ -45,7 +45,7 @@ export const GET = async (request: NextRequest) => {
     }));
 
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Robot Fetch Successfully",
       data: robots,
     });
@@ -70,7 +70,7 @@ export const POST = async (request: NextRequest, context: any) => {
     await addDoc(collection(db, "robots"), {...robot_data, created_at: serverTimestamp()});
     
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Robot Registered Successfully",
       robot_data,
     });
