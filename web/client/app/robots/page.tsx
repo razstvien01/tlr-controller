@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { AddRobotDialog } from "@/components/dialogs/add-robot-dialog";
 import Link from "next/link";
 import RobotCard from "@/components/robot-card";
+import { getRobots } from "@/service/robots.service";
+import { RobotDataProps } from "@/configs/types";
+import { RobotDataInit } from "@/configs/init";
 
 export default function Robots() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [successAdd, setSuccessAdd] = useState<boolean>(false);
+  const [robots, setRobots] = useState<RobotDataProps[]>([])
   // Dummy data for robot cards (replace this with your actual data)
   const robotCards = [
     { id: "robot1", name: "Robot 1" },
@@ -20,6 +24,20 @@ export default function Robots() {
     { id: "robot5", name: "Robot 5" },
     { id: "robot6", name: "Robot 6" },
   ];
+  
+  const fetchRobots = async () =>{
+    const response = await getRobots()
+    setRobots(response.robot_data)
+  }
+  
+  useEffect(() => {
+    fetchRobots()
+  
+    return () => {
+      
+    }
+  }, [])
+  
   return (
     <>
       <AddRobotDialog
@@ -47,9 +65,9 @@ export default function Robots() {
 
         <div className="relative justify-center items-center">
           <div className="grid grid-cols-4">
-            {robotCards.slice().reverse().map((robot) => (
-              <Link key={robot.id} href={`/controller`}>
-                <RobotCard/>
+            {robots.slice().reverse().map((robot: RobotDataProps) => (
+              <Link key={robot.robot_id} href={`/controller`}>
+                <RobotCard robot={robot}/>
               </Link>
             ))}
           </div>

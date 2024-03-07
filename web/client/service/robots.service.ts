@@ -20,8 +20,9 @@ export const addRobot = async (robot_data: RobotDataProps) => {
 export const getRobots = async () => {
   try {
     const response = await axios.get(`/api/robots/`);
-    const robot_data = response.data.robot_data;
-
+    const robot_data = response.data.data;
+    
+    console.log("robots:", robot_data)
     return {
       success: true,
       robot_data,
