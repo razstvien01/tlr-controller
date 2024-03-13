@@ -27,7 +27,7 @@ export default function Robots() {
     return () => {
       
     }
-  }, [])
+  }, [successAdd])
   
   return (
     <>
@@ -56,7 +56,7 @@ export default function Robots() {
 
         <div className="relative justify-center items-center">
           <div className="grid grid-cols-4">
-            {robots.slice().reverse().map((robot: RobotDataProps) => (
+            {robots.map((robot: RobotDataProps) => (
               <Link key={robot.robot_id} href={`/controller/${robot.doc_id}`}>
                 <RobotCard robot={robot}/>
               </Link>

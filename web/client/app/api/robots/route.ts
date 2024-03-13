@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
   query,
   serverTimestamp,
   where,
@@ -35,7 +36,8 @@ const checkIfExistsUserEmail = async (email_address: string) => {
 export const GET = async (request: NextRequest) => {
   try {
     //* query users collection
-    const q = collection(db, "robots");
+    // const q = collection(db, "robots");
+    const q = query(collection(db, "robots"), orderBy("created_at", "desc"))
     const querySnapshot = await getDocs(q);
 
     //* extract user data from the query snapshot

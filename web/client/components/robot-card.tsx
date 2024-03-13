@@ -16,6 +16,20 @@ interface RobotCardProps {
 }
 
 export default function RobotCard({ robot }: RobotCardProps) {
+  // Function to limit the description to 100 characters
+  // const limitDescription = (description) => {
+  //   if (description.length > 100) {
+  //     return description.substring(0, 100) + "...";
+  //   }
+  //   return description;
+  // };
+  
+  const limitDescription = (description: string) =>{
+    if(description.length > 100) {
+      return description.substring(0, 300) + "...";
+    } return description;
+  }
+  
   return (
     <Card className="lg:max-w-md w-full">
       <CardHeader>
@@ -39,12 +53,8 @@ export default function RobotCard({ robot }: RobotCardProps) {
         >
           {robot.status}
         </p>
-        <p className="text-gray-600 mb-4">{robot.robot_description}</p>
+        <p className="text-gray-600 mb-4">{limitDescription(robot.robot_description)}</p>
       </CardContent>
-
-      {/* <CardFooter>
-        <Button>Button</Button>
-      </CardFooter> */}
     </Card>
   );
 }
