@@ -59,7 +59,7 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const robot_data = await request.json();
-    const { id } = robot_data
+    const { doc_id, ...other_data } = robot_data
     // if(await checkIfExistsRobotId(id)){
     //   return NextResponse.json({
     //     succes: false,
@@ -67,7 +67,7 @@ export const POST = async (request: NextRequest, context: any) => {
     //   });
     // }
     
-    await addDoc(collection(db, "robots"), {...robot_data, created_at: serverTimestamp()});
+    await addDoc(collection(db, "robots"), {...other_data, created_at: serverTimestamp()});
     
     return NextResponse.json({
       success: true,
