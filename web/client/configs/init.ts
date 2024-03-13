@@ -13,5 +13,7 @@ export const RobotDataInit: RobotDataProps = {
   robot_description: "",
   robot_id: "",
   location: "",
-  robot_name: ""
+  robot_name: "",
+  status: "inactive",
+  doc_id: ""
 }

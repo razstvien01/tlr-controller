@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
   query,
   serverTimestamp,
   where,
@@ -35,17 +36,18 @@ const checkIfExistsUserEmail = async (email_address: string) => {
 export const GET = async (request: NextRequest) => {
   try {
     //* query users collection
-    const q = collection(db, "robots");
+    // const q = collection(db, "robots");
+    const q = query(collection(db, "robots"), orderBy("created_at", "desc"))
     const querySnapshot = await getDocs(q);
 
     //* extract user data from the query snapshot
     const robots = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      doc_id: doc.id,
       ...doc.data(),
     }));
 
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Robot Fetch Successfully",
       data: robots,
     });
@@ -59,7 +61,7 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const robot_data = await request.json();
-    const { id } = robot_data
+    const { doc_id, ...other_data } = robot_data
     // if(await checkIfExistsRobotId(id)){
     //   return NextResponse.json({
     //     succes: false,
@@ -67,10 +69,10 @@ export const POST = async (request: NextRequest, context: any) => {
     //   });
     // }
     
-    await addDoc(collection(db, "robots"), {...robot_data, created_at: serverTimestamp()});
+    await addDoc(collection(db, "robots"), {...other_data, created_at: serverTimestamp()});
     
     return NextResponse.json({
-      succes: true,
+      success: true,
       message: "Robot Registered Successfully",
       robot_data,
     });
