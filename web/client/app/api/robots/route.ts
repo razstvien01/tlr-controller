@@ -40,7 +40,7 @@ export const GET = async (request: NextRequest) => {
 
     //* extract user data from the query snapshot
     const robots = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      doc_id: doc.id,
       ...doc.data(),
     }));
 
