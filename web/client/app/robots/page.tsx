@@ -9,7 +9,6 @@ import Link from "next/link";
 import RobotCard from "@/components/robot-card";
 import { getRobots } from "@/service/robots.service";
 import { RobotDataProps } from "@/configs/types";
-import { RobotDataInit } from "@/configs/init";
 
 export default function Robots() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
