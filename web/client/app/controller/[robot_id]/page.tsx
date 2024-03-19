@@ -1,7 +1,7 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ChevronRightIcon,
@@ -13,16 +13,34 @@ import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 import { Toggle } from "@/components/ui/toggle";
 
+// const controller = new ControllerService();
+
 // TODO -
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
-  const controller = new ControllerService("robot_id", "user_id");
-
   const [update, setUpdate] = useState<boolean>(false);
   const [isUseRobot, setIsUseRobot] = useState(false);
+  const [controller, setController] = useState<ControllerService | null>(null);
 
   redirectBackIfUnAuthenticated();
 
-  controller.useRobot(isUseRobot, update, setUpdate);
+  useEffect(() => {
+    if (!controller) {
+      // Create the controller only if it's not already created
+      const newController = new ControllerService(params.robot_id, "user_id");
+      setController(newController);
+    }
+
+    return () => {};
+  }, [controller, params.robot_id]);
+
+  const useRobot = () => {
+    setIsUseRobot(!isUseRobot); // Toggle the isUseRobot state
+    if (controller) {
+      controller.useRobot(!isUseRobot, () => {
+        // Logic to execute after using the robot
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -63,7 +81,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             id="toggleUse"
             variant={"outline"}
             onPressedChange={() => {
-              setIsUseRobot(!isUseRobot);
+              useRobot();
             }}
           >
             {isUseRobot ? "Un-Use Robot" : "Use Robot"}

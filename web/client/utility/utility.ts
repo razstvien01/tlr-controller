@@ -14,8 +14,6 @@ export const pushToDashboardIfAuthenticated = () => {
     const userSession = sessionStorage.getItem("user");
 
     useEffect(() => {
-      console.log(userSession);
-
       if (user && userSession) {
         router.push("/dashboard");
       }
@@ -33,8 +31,6 @@ export const redirectBackIfUnAuthenticated = () => {
     const userSession = sessionStorage.getItem("user");
 
     useEffect(() => {
-      console.log(userSession);
-
       if (!user && !userSession) {
         router.push("/");
       }

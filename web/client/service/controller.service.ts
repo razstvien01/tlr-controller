@@ -8,6 +8,7 @@ export class ControllerService {
   private _robotId: string | undefined;
   private _socket: Socket | undefined;
   private _userId: string | undefined
+  
   constructor(robotId: string, userId: string) {
     this.socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
     if (!this.socketURL) {
@@ -30,14 +31,14 @@ export class ControllerService {
     this._socketURL = url;
   }
 
-  private get socket() {
+  public get socket() {
     return this._socket!;
   }
-
-  public async turnOn(idInput: string) {
+  
+  public async turnOn(robot_id: string) {
     this.socket.off("controller/TurnOnRobot/response");
 
-    this.socket.emit("controller/TurnOnRobot/request", { id: idInput });
+    this.socket.emit("controller/TurnOnRobot/request", { id: robot_id });
 
     this.socket.on("controller/TurnOnRobot/response", (data: any) => {
       console.log("Turn On Response Received", data);
@@ -55,33 +56,26 @@ export class ControllerService {
   }
 
   public useRobot(
-    // userInput: string,
-    // idInput: string,
     isUseRobot: boolean,
-    update: boolean,
-    setUpdate: UpdateFunction
+    callback: () => void
   ): void {
-    useEffect(() => {
-      
-      console.log(this._robotId)
-      console.log(this._userId)
-      console.log(isUseRobot)
-      this.socket.emit("controller/UseRobot/request", {
-        id: this._robotId,
-        userId: this._userId,
-        toUse: isUseRobot,
-      });
+    this.socket.off("controller/UseRobot/response");
+    this.socket.emit("controller/UseRobot/request", {
+      id: this._robotId,
+      userId: this._userId,
+      toUse: isUseRobot,
+    });
 
-      this.socket.on("controller/UseRobot/response", (data: any) => {
+    this.socket.on("controller/UseRobot/response", (data: any) => {
+      if(isUseRobot)
         console.log("Use Robot received ", data);
-      });
-      // }
+      else console.log("Un-Use Robot received ", data);
+    });
 
-      return () => {
-        setUpdate(!update);
-        // Clean up socket event listeners if needed
-        this.socket.off("controller/UseRobot/response");
-      };
-    }, [isUseRobot]);
+    callback(); // Call the callback function to execute logic outside the class
   }
+
+  // public disposeUseRobot(): void {
+  //   this.socket.off("controller/UseRobot/response");
+  // }
 }

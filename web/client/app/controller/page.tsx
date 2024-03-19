@@ -152,7 +152,7 @@ const ControllerTest = () => {
 
     socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Reverse Robot received ", data);
-    });
+ });
 
     setUpdate(!update);
   }
