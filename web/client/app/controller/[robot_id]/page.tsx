@@ -13,20 +13,18 @@ import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 import { Toggle } from "@/components/ui/toggle";
 
-// const controller = new ControllerService();
-
-// TODO -
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
-  const [update, setUpdate] = useState<boolean>(false);
-  const [isUseRobot, setIsUseRobot] = useState(false);
   const [controller, setController] = useState<ControllerService | null>(null);
+  const [isUseRobot, setIsUseRobot] = useState(false);
+  const [controlValuePresent, setControlValuePresent] = useState("Steer: null Drive: null");
   const [isDriveRobot, setIsDriveRobot] = useState(false);
+  const [updateControls, setUpdateControls] = useState(false)
 
   redirectBackIfUnAuthenticated();
 
   useEffect(() => {
     if (!controller) {
-      // Create the controller only if it's not already created
+      //* Create the controller only if it's not already created
       const newController = new ControllerService(params.robot_id, "user_id");
       setController(newController);
     }
@@ -34,10 +32,19 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     return () => {};
   }, [controller, params.robot_id]);
 
+  useEffect(() => {
+    if (controller) {
+      controller.getControl(setControlValuePresent);
+    }
+
+    return () => {};
+  }, [isUseRobot, updateControls]);
+
   const useRobot = () => {
     if (controller) {
       setIsUseRobot(!isUseRobot);
       controller.useRobot(!isUseRobot);
+      setUpdateControls(!updateControls)
     }
   };
 
@@ -47,6 +54,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       if (!isDriveRobot) {
         controller.driveRobot();
       } else controller.stopDriveRobot();
+      setUpdateControls(!updateControls)
     }
   };
 
@@ -82,7 +90,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         </div>
         <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Current Controls: </Label>
-          <label className="text-xl font-bold">Hello world</label>
+          <label className="text-xl font-bold">{controlValuePresent}</label>
         </div>
         <div className="flex flex-col p-5 items-center">
           <Toggle

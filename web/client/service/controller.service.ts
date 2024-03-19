@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { Socket, io } from "socket.io-client";
 
 export class ControllerService {
@@ -93,6 +94,22 @@ export class ControllerService {
 
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Stop Drive Robot received ", data);
+    });
+  }
+
+  public getControl(setControl: Dispatch<SetStateAction<string>>) {
+    this.socket.off("controller/GetControl/response");
+
+    this.socket.emit("controller/GetControl/request", {
+      robotId: this._robotId,
+    });
+
+    this.socket.on("controller/GetControl/response", (data: any) => {
+      if (data.statusCode === 404) {
+        setControl("Steer: null Drive: null");
+      } else {
+        setControl(`Steer:${data.Steer}\nDrive:${data.Drive}`);
+      }
     });
   }
 }
