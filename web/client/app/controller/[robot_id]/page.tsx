@@ -20,6 +20,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [update, setUpdate] = useState<boolean>(false);
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [controller, setController] = useState<ControllerService | null>(null);
+  const [isDriveRobot, setIsDriveRobot] = useState(false);
 
   redirectBackIfUnAuthenticated();
 
@@ -34,11 +35,18 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   }, [controller, params.robot_id]);
 
   const useRobot = () => {
-    setIsUseRobot(!isUseRobot); // Toggle the isUseRobot state
     if (controller) {
-      controller.useRobot(!isUseRobot, () => {
-        // Logic to execute after using the robot
-      });
+      setIsUseRobot(!isUseRobot);
+      controller.useRobot(!isUseRobot);
+    }
+  };
+
+  const driveRobot = () => {
+    if (controller) {
+      setIsDriveRobot(!isDriveRobot);
+      if(!isDriveRobot){
+        controller.driveRobot()
+      }
     }
   };
 
@@ -106,7 +114,19 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             <Button variant="outline" size="icon">
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
-            <Button variant={"destructive"}>Stop</Button>
+            {/* <Button variant={"destructive"}>
+              {isDriveRobot ? "Stop Drive" : "Drive Robot"}
+            </Button> */}
+            <Toggle
+              size={"lg"}
+              className="bg-destructive"
+              variant={"outline"}
+              onPressedChange={() => {
+                driveRobot();
+              }}
+            >
+              {isDriveRobot ? "Stop" : "Drive"}
+            </Toggle>
             <Button variant="outline" size="icon">
               <ChevronRightIcon className="h-4 w-4" />
             </Button>

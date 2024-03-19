@@ -1,14 +1,11 @@
-import { SetStateAction, useEffect } from "react";
 import { Socket, io } from "socket.io-client";
-
-type UpdateFunction = (update: boolean) => void;
 
 export class ControllerService {
   private _socketURL: string | undefined;
   private _robotId: string | undefined;
   private _socket: Socket | undefined;
-  private _userId: string | undefined
-  
+  private _userId: string | undefined;
+
   constructor(robotId: string, userId: string) {
     this.socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
     if (!this.socketURL) {
@@ -18,9 +15,9 @@ export class ControllerService {
     }
     this._socket = io(this.socketURL);
     this._robotId = robotId;
-    this._userId = userId
-    
-    this.turnOn(this._robotId)
+    this._userId = userId;
+
+    this.turnOn(this._robotId);
   }
 
   public get socketURL(): string | undefined {
@@ -34,8 +31,8 @@ export class ControllerService {
   public get socket() {
     return this._socket!;
   }
-  
-  public async turnOn(robot_id: string) {
+
+  public turnOn(robot_id: string) {
     this.socket.off("controller/TurnOnRobot/response");
 
     this.socket.emit("controller/TurnOnRobot/request", { id: robot_id });
@@ -45,7 +42,7 @@ export class ControllerService {
     });
   }
 
-  public async turnOff(idInput: string) {
+  public turnOff(idInput: string) {
     this.socket.off("controller/TurnOffRobot/response");
 
     this.socket.emit("controller/TurnOffRobot/request", { id: idInput });
@@ -55,10 +52,7 @@ export class ControllerService {
     });
   }
 
-  public useRobot(
-    isUseRobot: boolean,
-    callback: () => void
-  ): void {
+  public useRobot(isUseRobot: boolean): void {
     this.socket.off("controller/UseRobot/response");
     this.socket.emit("controller/UseRobot/request", {
       id: this._robotId,
@@ -67,15 +61,38 @@ export class ControllerService {
     });
 
     this.socket.on("controller/UseRobot/response", (data: any) => {
-      if(isUseRobot)
-        console.log("Use Robot received ", data);
+      if (isUseRobot) console.log("Use Robot received ", data);
       else console.log("Un-Use Robot received ", data);
     });
-
-    callback(); // Call the callback function to execute logic outside the class
   }
 
-  // public disposeUseRobot(): void {
-  //   this.socket.off("controller/UseRobot/response");
-  // }
+  public driveRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: 1,
+      steer: null,
+    });
+
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Drive Robot received ", data);
+    });
+  }
+
+  public stopDriveRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: 0,
+      steer: null,
+    });
+
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Stop Steer Robot received ", data);
+    });
+  }
 }
