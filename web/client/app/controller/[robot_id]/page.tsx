@@ -44,9 +44,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const driveRobot = () => {
     if (controller) {
       setIsDriveRobot(!isDriveRobot);
-      if(!isDriveRobot){
-        controller.driveRobot()
-      }
+      if (!isDriveRobot) {
+        controller.driveRobot();
+      } else controller.stopDriveRobot();
     }
   };
 

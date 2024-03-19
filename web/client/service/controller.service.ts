@@ -92,7 +92,7 @@ export class ControllerService {
     });
 
     this.socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Stop Steer Robot received ", data);
+      console.log("Stop Drive Robot received ", data);
     });
   }
 }
