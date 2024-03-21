@@ -97,6 +97,20 @@ export class ControllerService {
     });
   }
 
+  public reverseDriveRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: -1,
+      steer: null,
+    });
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Reverse Robot received ", data);
+    });
+  }
+
   public getControl(setControl: Dispatch<SetStateAction<string>>) {
     this.socket.off("controller/GetControl/response");
 

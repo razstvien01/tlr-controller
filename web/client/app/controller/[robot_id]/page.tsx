@@ -16,8 +16,10 @@ import { Toggle } from "@/components/ui/toggle";
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
-  const [controlValuePresent, setControlValuePresent] = useState("Steer: null Drive: null");
-  const [updateControls, setUpdateControls] = useState(false)
+  const [controlValuePresent, setControlValuePresent] = useState(
+    "Steer: null Drive: null"
+  );
+  const [updateControls, setUpdateControls] = useState(false);
 
   redirectBackIfUnAuthenticated();
 
@@ -43,25 +45,30 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     if (controller) {
       setIsUseRobot(!isUseRobot);
       controller.useRobot(!isUseRobot);
-      setUpdateControls(!updateControls)
+      setUpdateControls(!updateControls);
     }
   };
 
   const stopRobot = () => {
-    // if (controller) {
-    //   setIsDriveRobot(!isDriveRobot);
-    //   if (!isDriveRobot) {
-    //     controller.driveRobot();
-    //   } else controller.stopDriveRobot();
-    //   setUpdateControls(!updateControls)
-    // }
-    
-    if(controller){
+    if (controller) {
       controller.stopDriveRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
+
+  const driveRobot = () => {
+    if (controller) {
+      controller.driveRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
+  
+  const reverseDriveRobot = () => {
+    if(controller){
+      controller.reverseDriveRobot()
       setUpdateControls(!updateControls)
     }
-  
-  };
+  }
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -120,7 +127,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
 
-          <Button className="mb-3" variant="outline" size="icon">
+          <Button
+            id="drive"
+            className="mb-3"
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              driveRobot();
+            }}
+          >
             <ChevronUpIcon className="h-4 w-4" />
           </Button>
           <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
@@ -132,7 +147,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               className="bg-destructive"
               variant={"outline"}
               onClick={() => {
-                stopRobot()
+                stopRobot();
               }}
             >
               Stop
@@ -141,7 +156,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
           </div>
-          <Button variant="outline" size="icon">
+          <Button id="reverse" variant="outline" size="icon" onClick={() => {
+            reverseDriveRobot()
+          }}>
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
         </div>
