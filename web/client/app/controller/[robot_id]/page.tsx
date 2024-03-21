@@ -17,7 +17,6 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [controlValuePresent, setControlValuePresent] = useState("Steer: null Drive: null");
-  const [isDriveRobot, setIsDriveRobot] = useState(false);
   const [updateControls, setUpdateControls] = useState(false)
 
   redirectBackIfUnAuthenticated();
@@ -48,14 +47,20 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
   };
 
-  const driveRobot = () => {
-    if (controller) {
-      setIsDriveRobot(!isDriveRobot);
-      if (!isDriveRobot) {
-        controller.driveRobot();
-      } else controller.stopDriveRobot();
+  const stopRobot = () => {
+    // if (controller) {
+    //   setIsDriveRobot(!isDriveRobot);
+    //   if (!isDriveRobot) {
+    //     controller.driveRobot();
+    //   } else controller.stopDriveRobot();
+    //   setUpdateControls(!updateControls)
+    // }
+    
+    if(controller){
+      controller.stopDriveRobot();
       setUpdateControls(!updateControls)
     }
+  
   };
 
   return (
@@ -122,19 +127,16 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             <Button variant="outline" size="icon">
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
-            {/* <Button variant={"destructive"}>
-              {isDriveRobot ? "Stop Drive" : "Drive Robot"}
-            </Button> */}
-            <Toggle
+            <Button
               size={"lg"}
               className="bg-destructive"
               variant={"outline"}
-              onPressedChange={() => {
-                driveRobot();
+              onClick={() => {
+                stopRobot()
               }}
             >
-              {isDriveRobot ? "Stop" : "Drive"}
-            </Toggle>
+              Stop
+            </Button>
             <Button variant="outline" size="icon">
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
