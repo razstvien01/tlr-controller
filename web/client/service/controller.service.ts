@@ -141,7 +141,9 @@ export class ControllerService {
     });
   }
 
-  public getControl(setControl: Dispatch<SetStateAction<string>>) {
+  public getControl(
+    setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
+  ) {
     this.socket.off("controller/GetControl/response");
 
     this.socket.emit("controller/GetControl/request", {
@@ -150,9 +152,10 @@ export class ControllerService {
 
     this.socket.on("controller/GetControl/response", (data: any) => {
       if (data.statusCode === 404) {
-        setControl("Steer: null Drive: null");
+        setControl({ steer: 0, drive: 0 }); // Set default values
       } else {
-        setControl(`Steer:${data.Steer}\nDrive:${data.Drive}`);
+        const controlObject = { steer: data.Steer, drive: data.Drive };
+        setControl(controlObject);
       }
     });
   }

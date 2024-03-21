@@ -16,9 +16,11 @@ import { Toggle } from "@/components/ui/toggle";
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
-  const [controlValuePresent, setControlValuePresent] = useState(
-    "Steer: null Drive: null"
-  );
+  const [controlValuePresent, setControlValuePresent] = useState({
+    steer: 0,
+    drive: 0,
+  });
+
   const [updateControls, setUpdateControls] = useState(false);
 
   redirectBackIfUnAuthenticated();
@@ -70,7 +72,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
   };
 
+  const steerControlRobot = () => {};
   const steerLeftRobot = () => {
+    console.log(controlValuePresent);
     if (controller) {
       controller.steerLeftRobot();
       setUpdateControls(!updateControls);
@@ -85,7 +89,20 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   };
 
   return (
-    <div className="flex flex-col items-center h-screen">
+    <div className="flex flex-col h-screen">
+      <div className="flex flex-col justify-between p-5 items-rigjt">
+        <Toggle
+          className="text-lg ml-auto mr-4 bg-primary"
+          id="toggleUse"
+          variant={"outline"}
+          size={"lg"}
+          onPressedChange={() => {
+            useRobot();
+          }}
+        >
+          {isUseRobot ? "Un-Use Robot" : "Use Robot"}
+        </Toggle>
+      </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">
           <h1 className="text-center">ROBOT CAMERA {params.robot_id}</h1>
@@ -96,44 +113,56 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       </div>
       <div className="flex justify-between w-full p-5">
         <div className="flex flex-col items-center pl-20 mb-2">
-          <h3 className="font-semibold mb-2 ">Move Camera</h3>
+          <h3 className="font-semibold mb-2 text-lg ">Move Camera</h3>
 
-          <Button className="mb-3" variant="outline" size="icon">
+          <Button
+            className="mb-3 text-lg border-primary"
+            variant="outline"
+            size="icon"
+          >
             <ChevronUpIcon className="h-4 w-4" />
           </Button>
           <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
-            <Button variant="outline" size="icon">
+            <Button
+              className="text-lg border-primary"
+              variant="outline"
+              size="icon"
+            >
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
-            <Button variant={"destructive"}>Reset</Button>
-            <Button variant="outline" size="icon">
+            <Button className="text-lg border-primary" variant={"destructive"}>
+              Reset
+            </Button>
+            <Button
+              className="text-lg border-primary"
+              variant="outline"
+              size="icon"
+            >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
           </div>
-          <Button variant="outline" size="icon">
+          <Button
+            className="text-lg border-primary"
+            variant="outline"
+            size="icon"
+          >
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
         </div>
         <div className="flex flex-col p-5 items-center">
-          <Label className="text-lg">Current Controls: </Label>
-          <label className="text-xl font-bold">{controlValuePresent}</label>
+          <Label className="text-xl font-bold">Current Controls: </Label>
+          <Label className="text-lg font-semibold">
+            Steer: {controlValuePresent.steer}
+          </Label>
+          <Label className="text-lg font-semibold">
+            Drive: {controlValuePresent.drive}
+          </Label>
         </div>
-        <div className="flex flex-col p-5 items-center">
-          <Toggle
-            id="toggleUse"
-            variant={"outline"}
-            onPressedChange={() => {
-              useRobot();
-            }}
-          >
-            {isUseRobot ? "Un-Use Robot" : "Use Robot"}
-          </Toggle>
-        </div>
+
         <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Robot Status: </Label>
           <label className="text-xl font-bold">Hello world</label>
         </div>
-
         {/* <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Current Controls: </Label>
           <label className="text-xl font-bold">Hello world</label>
@@ -143,7 +172,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
           <Button
             id="drive"
-            className="mb-3"
+            className="mb-3 text-lg border-primary"
             variant="outline"
             size="icon"
             onClick={() => {
@@ -154,6 +183,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           </Button>
           <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
             <Button
+              className="text-lg border-primary"
               id="leftSteer"
               variant="outline"
               size="icon"
@@ -164,9 +194,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
+              className="text-lg border-primary"
               size={"lg"}
-              className="bg-destructive"
-              variant={"outline"}
+              variant={"destructive"}
               onClick={() => {
                 stopRobot();
               }}
@@ -174,6 +204,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               Stop
             </Button>
             <Button
+              className="text-lg border-primary"
               id="righhtSteer"
               variant="outline"
               size="icon"
@@ -185,6 +216,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             </Button>
           </div>
           <Button
+            className="text-lg border-primary"
             id="reverse"
             variant="outline"
             size="icon"
