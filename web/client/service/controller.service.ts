@@ -111,6 +111,36 @@ export class ControllerService {
     });
   }
 
+  public steerRightRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: null,
+      steer: 1,
+    });
+
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Steer Right Robot received ", data);
+    });
+  }
+
+  public steerLeftRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: null,
+      steer: -1,
+    });
+
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Steer Left Robot received ", data);
+    });
+  }
+
   public getControl(setControl: Dispatch<SetStateAction<string>>) {
     this.socket.off("controller/GetControl/response");
 

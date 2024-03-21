@@ -62,13 +62,27 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       setUpdateControls(!updateControls);
     }
   };
-  
+
   const reverseDriveRobot = () => {
-    if(controller){
-      controller.reverseDriveRobot()
-      setUpdateControls(!updateControls)
+    if (controller) {
+      controller.reverseDriveRobot();
+      setUpdateControls(!updateControls);
     }
-  }
+  };
+
+  const steerLeftRobot = () => {
+    if (controller) {
+      controller.steerLeftRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
+
+  const steerRightRobot = () => {
+    if (controller) {
+      controller.steerRightRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -139,7 +153,14 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             <ChevronUpIcon className="h-4 w-4" />
           </Button>
           <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
-            <Button variant="outline" size="icon">
+            <Button
+              id="leftSteer"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                steerLeftRobot();
+              }}
+            >
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
             <Button
@@ -152,13 +173,25 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             >
               Stop
             </Button>
-            <Button variant="outline" size="icon">
+            <Button
+              id="righhtSteer"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                steerRightRobot();
+              }}
+            >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
           </div>
-          <Button id="reverse" variant="outline" size="icon" onClick={() => {
-            reverseDriveRobot()
-          }}>
+          <Button
+            id="reverse"
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              reverseDriveRobot();
+            }}
+          >
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
         </div>
