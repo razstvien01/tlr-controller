@@ -1,317 +1,253 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
-import { TPH2 } from "@/components/typography/tp-h2";
+import {
+  ChevronRightIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+} from "@radix-ui/react-icons";
+import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
+import { Toggle } from "@/components/ui/toggle";
 
-// TODO Domain Driven Design - organize data (lessen bug)
-// TODO Relationship domain - dynamic relationship
-// TODO Foreign key - static relationship- dle mailis
-const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
-
-if (!socketURL) {
-  throw new Error(
-    "NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables."
-  );
-}
-
-const socket: Socket = io(socketURL);
-
-const ControllerTest = () => {
-  //******************************** HOOKS  ************************************/
-  const [idInput, setIdInput] = useState("");
-  const [userInput, setUserInput] = useState("");
-  const [controlValuePresent, setControlValuePresent] = useState("");
-  const [isOnRobot, setIsOnRobot] = useState(false);
+const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
+  const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
-  const [update, setUpdate] = useState(false);
-  
-  redirectBackIfUnAuthenticated()
+  const [controlValuePresent, setControlValuePresent] = useState({
+    steer: 0,
+    drive: 0,
+  });
 
-  //************************ CONTROLLER FUNCTIONS  *****************************/
-  async function turnOn(idInput: string) {
-    // Remove previous event listener
-    socket.off("controller/TurnOnRobot/response");
+  const [updateControls, setUpdateControls] = useState(false);
 
-    socket.emit("controller/TurnOnRobot/request", { id: idInput });
+  redirectBackIfUnAuthenticated();
 
-    socket.on("controller/TurnOnRobot/response", (data: any) => {
-      console.log("Turn On Response Received", data);
-    });
-  }
+  useEffect(() => {
+    if (!controller) {
+      //* Create the controller only if it's not already created
+      const newController = new ControllerService(params.robot_id, "user_id");
+      setController(newController);
+    }
 
-  async function turnOff(idInput: string) {
-    socket.off("controller/TurnOffRobot/response");
+    return () => {};
+  }, [controller, params.robot_id]);
 
-    socket.emit("controller/TurnOffRobot/request", { id: idInput });
+  useEffect(() => {
+    if (controller) {
+      controller.getControl(setControlValuePresent);
+    }
 
-    socket.on("controller/TurnOffRobot/response", (data: any) => {
-      console.log("Turn Off Response received", data);
-    });
-  }
+    return () => {};
+  }, [isUseRobot, updateControls]);
 
-  async function steerRightRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: null,
-      steer: 1,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Steer Right Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function steerLeftRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: null,
-      steer: -1,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Steer Left Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function stopSteerRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: null,
-      steer: 0,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Stop Steer Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function driveRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: 1,
-      steer: null,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Drive Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function stopDriveRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: 0,
-      steer: null,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Stop Steer Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function reverseRobot(userInput: string, idInput: string) {
-    socket.off("controller/ControlRobot/response");
-
-    socket.emit("controller/ControlRobot/request", {
-      robotId: idInput,
-      userId: userInput,
-      drive: -1,
-      steer: null,
-    });
-
-    socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Reverse Robot received ", data);
-    });
-
-    setUpdate(!update);
-  }
-
-  async function getControl(setControlStringFunction: any) {
-    socket.off("controller/GetControl/response");
-
-    socket.emit("controller/GetControl/request", {
-      robotId: idInput,
-    });
-
-    socket.on("controller/GetControl/response", (data: any) => {
-      if (data.statusCode == 404) {
-        setControlStringFunction(`${idInput} is offline`);
-      } else {
-        setControlStringFunction(`Steer:${data.Steer}\tDrive:${data.Drive}`);
-      }
-    });
-  }
-
-  //***************************** custom hooks and useEffects ************************************/
-  const useRobot = (userInput: string, idInput: string) => {
-    useEffect(() => {
-      // if (isUseRobot) {
-      //   console.log(idInput);
-      //   console.log(userInput);
-      //   console.log(isUseRobot);
-
-      socket.emit("controller/UseRobot/request", {
-        id: idInput,
-        userId: userInput,
-        toUse: isUseRobot,
-      });
-
-      socket.on("controller/UseRobot/response", (data: any) => {
-        console.log("Use Robot received ", data);
-      });
-      // }
-      return () => {
-        setUpdate(!update);
-        // Clean up socket event listeners if needed
-        socket.off("controller/UseRobot/response");
-      };
-    }, [isUseRobot]);
+  const useRobot = () => {
+    if (controller) {
+      setIsUseRobot(!isUseRobot);
+      controller.useRobot(!isUseRobot);
+      setUpdateControls(!updateControls);
+    }
   };
 
-  const useGetControl = () => {
-    useEffect(() => {
-      socket.emit("controller/GetControl/request", {
-        robotId: idInput,
-      });
+  const stopRobot = () => {
+    if (controller) {
+      controller.stopDriveRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
 
-      socket.on("controller/GetControl/response", (data: any) => {
-        if (data.statusCode === 404) {
-          setControlValuePresent(`${idInput} is offline`);
+  const driveRobot = () => {
+    if (controller) {
+      controller.driveRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
+
+  const reverseDriveRobot = () => {
+    if (controller) {
+      controller.reverseDriveRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
+
+  const steerControlRobot = (isSteerLeft: boolean) => {
+    if (controller) {
+      if (isSteerLeft) {
+        if (controlValuePresent.steer == -1 || controlValuePresent.steer == 0) {
+          controller.steerLeftRobot();
         } else {
-          setControlValuePresent(`Steer:${data.Steer}\tDrive:${data.Drive}`);
+          controller.stopSteerRobot();
         }
-      });
-
-      return () => {
-        // Clean up socket event listeners if needed
-        socket.off("controller/GetControl/response");
-      };
-    }, [isUseRobot, update, setControlValuePresent]);
+      } else{
+        if (controlValuePresent.steer == 1 || controlValuePresent.steer == 0) {
+          controller.steerRightRobot();
+        } else {
+          controller.stopSteerRobot();
+        }
+      }
+      setUpdateControls(!updateControls);
+    }
+  };
+  const steerLeftRobot = () => {
+    console.log(controlValuePresent);
+    if (controller) {
+      controller.steerLeftRobot();
+      setUpdateControls(!updateControls);
+    }
   };
 
-  //* Use the custom useRobot hook
-  useRobot(userInput, idInput);
-
-  //* Getting control of the robot
-  useGetControl();
+  const steerRightRobot = () => {
+    if (controller) {
+      controller.steerRightRobot();
+      setUpdateControls(!updateControls);
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-10">
-      <TPH2>Manual Navigation Controller</TPH2>
-      <div className="bg-primary p-10 rounded-lg">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="robotId">Robot ID</Label>
-          <Input
-            type="text"
-            id="robotId"
-            placeholder="Input Robot ID"
-            value={idInput}
-            onChange={(e) => setIdInput(e.target.value)}
-          />
-          <Toggle
-            id="toggleOnOff"
-            onPressedChange={() => {
-              if (!isOnRobot) turnOn(idInput);
-              else turnOff(idInput);
-
-              setIsOnRobot(!isOnRobot);
-            }}
-          >
-            {isOnRobot ? "Turn Off" : "Turn On"}
-          </Toggle>
-          <Label htmlFor="userId">User ID</Label>
-          <Input
-            type="text"
-            id="userId"
-            placeholder="Input User ID"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-          />
-          <Toggle
-            id="toggleUse"
-            onPressedChange={() => {
-              setIsUseRobot(!isUseRobot);
-            }}
-          >
-            {isUseRobot ? "Un-Use Robot" : "Use Robot"}
-          </Toggle>
+    <div className="flex flex-col h-screen">
+      <div className="flex flex-col justify-between p-5 items-rigjt">
+        <Toggle
+          className="text-lg ml-auto mr-4 bg-primary"
+          id="toggleUse"
+          variant={"outline"}
+          size={"lg"}
+          onPressedChange={() => {
+            useRobot();
+          }}
+        >
+          {isUseRobot ? "Un-Use Robot" : "Use Robot"}
+        </Toggle>
+      </div>
+      <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
+        <div className="w-2/3 border border-black justify-center">
+          <h1 className="text-center">ROBOT CAMERA {params.robot_id}</h1>
         </div>
-        <div className="grid grid-cols-3 gap-4 pt-5">
+        <div className="w-1/3 border border-black">
+          <h1 className="text-center">OPERATOR CAMERA</h1>
+        </div>
+      </div>
+      <div className="flex justify-between w-full p-5">
+        <div className="flex flex-col items-center pl-20 mb-2">
+          <h3 className="font-semibold mb-2 text-lg ">Move Camera</h3>
+
           <Button
-            className="p-4 bg-blue-500 h-50"
-            onClick={() => steerLeftRobot(userInput, idInput)}
+            className="mb-3 text-lg border-primary"
+            variant="outline"
+            size="icon"
           >
-            Steer Left
+            <ChevronUpIcon className="h-4 w-4" />
           </Button>
+          <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
+            <Button
+              className="text-lg border-primary"
+              variant="outline"
+              size="icon"
+            >
+              <ChevronLeftIcon className="h-4 w-4" />
+            </Button>
+            <Button className="text-lg border-primary" variant={"destructive"}>
+              Reset
+            </Button>
+            <Button
+              className="text-lg border-primary"
+              variant="outline"
+              size="icon"
+            >
+              <ChevronRightIcon className="h-4 w-4" />
+            </Button>
+          </div>
           <Button
-            className="p-4 bg-blue-500 h-50"
-            onClick={() => driveRobot(userInput, idInput)}
+            className="text-lg border-primary"
+            variant="outline"
+            size="icon"
           >
-            Drive
-          </Button>
-          <Button
-            className="p-4 bg-blue-500 h-50"
-            onClick={() => steerRightRobot(userInput, idInput)}
-          >
-            Steer Right
-          </Button>
-          <Button
-            className="p-4 bg-red-500 h-50"
-            onClick={() => stopSteerRobot(userInput, idInput)}
-          >
-            Stop Steer
-          </Button>
-          <Button
-            className="p-4 bg-red-500 h-50"
-            onClick={() => reverseRobot(userInput, idInput)}
-          >
-            Reverse
-          </Button>
-          <Button
-            className="p-4 bg-red-500 h-50"
-            onClick={() => stopDriveRobot(userInput, idInput)}
-          >
-            Stop Drive
+            <ChevronDownIcon className="h-4 w-4" />
           </Button>
         </div>
         <div className="flex flex-col p-5 items-center">
+          <Label className="text-xl font-bold">Current Controls: </Label>
+          <Label className="text-lg font-semibold">
+            Steer: {controlValuePresent.steer}
+          </Label>
+          <Label className="text-lg font-semibold">
+            Drive: {controlValuePresent.drive}
+          </Label>
+        </div>
+
+        <div className="flex flex-col p-5 items-center">
+          <Label className="text-lg">Robot Status: </Label>
+          <label className="text-xl font-bold">Hello world</label>
+        </div>
+        {/* <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Current Controls: </Label>
-          <label className="text-xl font-bold">{controlValuePresent}</label>
+          <label className="text-xl font-bold">Hello world</label>
+        </div> */}
+        <div className="flex flex-col items-center pr-20 mb-2">
+          <h3 className="font-semibold mb-2 ">Move Robot</h3>
+
+          <Button
+            id="drive"
+            className="mb-3 text-lg border-primary"
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              driveRobot();
+            }}
+          >
+            <ChevronUpIcon className="h-4 w-4" />
+          </Button>
+          <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
+            <Button
+              className="text-lg border-primary"
+              id="leftSteer"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                // steerLeftRobot();
+                steerControlRobot(true);
+              }}
+            >
+              <ChevronLeftIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              className="text-lg border-primary"
+              size={"lg"}
+              variant={"destructive"}
+              onClick={() => {
+                stopRobot();
+              }}
+            >
+              Stop
+            </Button>
+            <Button
+              className="text-lg border-primary"
+              id="righhtSteer"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                steerControlRobot(false);
+              }}
+            >
+              <ChevronRightIcon className="h-4 w-4" />
+            </Button>
+          </div>
+          <Button
+            className="text-lg border-primary"
+            id="reverse"
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              reverseDriveRobot();
+            }}
+          >
+            <ChevronDownIcon className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default ControllerTest;
+export default RobotControllerPage;
