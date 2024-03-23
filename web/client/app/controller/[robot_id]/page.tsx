@@ -72,7 +72,18 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
   };
 
-  const steerControlRobot = () => {};
+  const steerControlRobot = (isSteerLeft: boolean) => {
+    if (controller) {
+      if (controlValuePresent.steer == 1 || controlValuePresent.steer == -1) {
+        controller.stopSteerRobot();
+      } else if (isSteerLeft) {
+        controller.steerLeftRobot();
+      } else {
+        controller.steerRightRobot();
+      }
+      setUpdateControls(!updateControls);
+    }
+  };
   const steerLeftRobot = () => {
     console.log(controlValuePresent);
     if (controller) {
@@ -188,7 +199,8 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               variant="outline"
               size="icon"
               onClick={() => {
-                steerLeftRobot();
+                // steerLeftRobot();
+                steerControlRobot(true)
               }}
             >
               <ChevronLeftIcon className="h-4 w-4" />
@@ -209,7 +221,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               variant="outline"
               size="icon"
               onClick={() => {
-                steerRightRobot();
+                steerControlRobot(false)
               }}
             >
               <ChevronRightIcon className="h-4 w-4" />

@@ -141,6 +141,21 @@ export class ControllerService {
     });
   }
 
+  public stopSteerRobot() {
+    this.socket.off("controller/ControlRobot/response");
+
+    this.socket.emit("controller/ControlRobot/request", {
+      robotId: this._robotId,
+      userId: this._userId,
+      drive: null,
+      steer: 0,
+    });
+
+    this.socket.on("controller/ControlRobot/response", (data: any) => {
+      console.log("Stop Steer Robot received ", data);
+    });
+  }
+
   public getControl(
     setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
   ) {
