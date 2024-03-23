@@ -1,7 +1,7 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ChevronRightIcon,
@@ -41,13 +41,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
 
     return () => {};
-  }, [isUseRobot, updateControls]);
+  }, [controller, isUseRobot, updateControls]);
 
   const useRobot = () => {
     if (controller) {
-      setIsUseRobot(!isUseRobot);
+      setIsUseRobot((prevState) => !prevState);
+      stopRobot();
+      stopSteerRobot();
       controller.useRobot(!isUseRobot);
-      setUpdateControls(!updateControls);
+      setUpdateControls((prevState) => !prevState);
     }
   };
 
@@ -76,32 +78,35 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     if (controller) {
       if (isSteerLeft) {
         if (controlValuePresent.steer == -1 || controlValuePresent.steer == 0) {
-          controller.steerLeftRobot();
+          steerLeftRobot();
         } else {
-          controller.stopSteerRobot();
+          stopSteerRobot();
         }
-      } else{
+      } else {
         if (controlValuePresent.steer == 1 || controlValuePresent.steer == 0) {
-          controller.steerRightRobot();
+          steerRightRobot();
         } else {
-          controller.stopSteerRobot();
+          stopSteerRobot();
         }
       }
       setUpdateControls(!updateControls);
     }
   };
+
+  const stopSteerRobot = () => {
+    if (controller) {
+      controller.stopSteerRobot();
+    }
+  };
   const steerLeftRobot = () => {
-    console.log(controlValuePresent);
     if (controller) {
       controller.steerLeftRobot();
-      setUpdateControls(!updateControls);
     }
   };
 
   const steerRightRobot = () => {
     if (controller) {
       controller.steerRightRobot();
-      setUpdateControls(!updateControls);
     }
   };
 
@@ -113,9 +118,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           id="toggleUse"
           variant={"outline"}
           size={"lg"}
-          onPressedChange={() => {
-            useRobot();
-          }}
+          onPressedChange={useRobot}
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
