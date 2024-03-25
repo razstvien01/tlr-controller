@@ -13,7 +13,7 @@ public:
   
   void loop();
   
-  void on(const char* eventName, std::function<void (const char* data)> callback);
+  void onMessage(std::function<void (WStype_t type, uint8_t* payload, size_t length)> callback);
   
 private:
   WebSocketsClient webSocket;
