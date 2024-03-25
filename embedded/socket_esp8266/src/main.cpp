@@ -1,20 +1,34 @@
 #include <Arduino.h>
+#include "socketio_client/socketio_client.h"
+#include <ESP8266WiFi.h>
 
-// put function declarations here:
-int myFunction(int, int);
+const char* ssid = "YourWiFiSSID";
+const char* password = "YourWiFiPassword";
+const char* host = "your-flask-backend-hostname";
+const uint16_t port = 5000;
+
+SocketIOClient socketIOClient;
+
+void wifiConnect();
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  delay(100);
+  
 }
 
 void loop() {
-  Serial.println("Hello wolrd");
-  delay(1000);
+  
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void wifiConnect(){
+  WiFi.begin(ssid, password);
+  while(WiFi.status() != WL_CONNECTED){
+    delay(1000);;
+    Serial.println("Connecting to WiFi...");
+  }
+  
+  Serial.println("Connected to WiFi!");
+  
+  // Initializee and connect socket.io client
 }
