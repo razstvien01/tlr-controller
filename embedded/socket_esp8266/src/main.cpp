@@ -1,23 +1,28 @@
 #include <Arduino.h>
-#include "socketio_client/socketio_client.h"
+// #include "socketio_client/socketio_client.h"
 #include <ESP8266WiFi.h>
 
-const char* ssid = "YourWiFiSSID";
-const char* password = "YourWiFiPassword";
+const char* ssid = "HG8145V5_0484D";
+const char* password = "PZz6VKmu";
 const char* host = "your-flask-backend-hostname";
 const uint16_t port = 5000;
 
-SocketIOClient socketIOClient;
+// SocketIOClient socketIOClient;
 
 void wifiConnect();
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(100);
   
+  
+  wifiConnect();
 }
 
 void loop() {
+  // Serial.read => software
+  Serial.println("Hello world");
+  delay(1000);
   
 }
 
