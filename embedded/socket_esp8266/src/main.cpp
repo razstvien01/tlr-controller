@@ -1,11 +1,17 @@
-#include "secrets.h"
+
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+// #include <ESP8266>
+// #include <Firebase_ESP_Client.h>
+#include <Firebase_ESP_Client.h>
+#include "secrets/secrets.h"
 
 const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASSWORD;
 const char* host = BACKEND_HOST;
 const uint16_t port = PORT;
+
+FirebaseData firebaseData;
 
 void wifiConnect();
 
