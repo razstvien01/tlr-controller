@@ -1,27 +1,40 @@
 #include "socketio_client.h"
 
-SocketIOClient::SocketIOClient()
+WebSocketClient::WebSocketClient()
 {
-}
-void SocketIOClient::begin(const char *host, uint16_t port)
-{
-  webSocket.begin(host, port, "/");
-  webSocket.onEvent(std::bind(&SocketIOClient::webSocketEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  webSocket.onEvent(std::bind(&WebSocketClient::webSocketEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-void SocketIOClient::loop()
+void WebSocketClient::begin(const char *host, uint16_t port)
+{
+  webSocket.begin(host, port, "/");
+  webSocket.setReconnectInterval(5000);
+}
+
+void WebSocketClient::loop()
 {
   webSocket.loop();
 }
 
-// void SocketIOClient::on(const char* eventName, std::function<void (const char* data)> callback) {
-//     // webSocket.on(eventName, callback);
-// }
-
-void SocketIOClient::webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
+void WebSocketClient::sendMessage(const char *message)
 {
-  if (type == WStype_TEXT)
+  webSocket.sendTXT(message);
+}
+
+void WebSocketClient::webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
+{
+  switch (type)
   {
-    Serial.printf("[WebSocket] Message received: %s\n", payload);
+  case WStype_DISCONNECTED:
+    Serial.printf("[WSc] Disconnected!\n");
+    break;
+  case WStype_CONNECTED:
+    Serial.printf("[WSc] Connected to url: %s\n", payload);
+    sendMessage("Hello from ESP8266!");
+    break;
+  case WStype_TEXT:
+    Serial.printf("[WSc] Received: %s\n", payload);
+    // Handle received messages here
+    break;
   }
 }

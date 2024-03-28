@@ -5,5 +5,5 @@
 #define WIFI_PASSWORD "PZz6VKmu"
 
 //* SOCKET IO credentials
-#define WEBSOCKETS_HOST "your-flask-backend-hostname"
+#define WEBSOCKETS_HOST "https://tlr-contoller.onrender.com/"
 #define WEBSOCKETS_PORT 8080
