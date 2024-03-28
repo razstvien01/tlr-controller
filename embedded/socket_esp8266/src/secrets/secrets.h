@@ -5,9 +5,5 @@
 #define WIFI_PASSWORD "PZz6VKmu"
 
 //* SOCKET IO credentials
-#define BACKEND_HOST "your-flask-backend-hostname"
-
-
-//* Firebae Credentials
-#define FIREBASE_HOST "tlr-controller.firebaseapp.com"
-#define FIREBASE_AUTH "AIzaSyDAQUgmmHVOWOQvo6IKH3LgNjVFK79yjuo"
+#define WEBSOCKETS_HOST "your-flask-backend-hostname"
+#define WEBSOCKETS_PORT 8080
