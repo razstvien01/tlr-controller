@@ -36,5 +36,8 @@ void WebSocketClient::webSocketEvent(WStype_t type, uint8_t *payload, size_t len
     Serial.printf("[WSc] Received: %s\n", payload);
     // Handle received messages here
     break;
+  case WStype_ERROR:
+    Serial.printf("[WSc] Error: %s\n", payload);
+    break;
   }
 }

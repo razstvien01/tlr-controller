@@ -1,6 +1,5 @@
 
 #include <Arduino.h>
-
 #include "secrets/secrets.h"
 #include "wifi_helper/wifi_helper.h"
 #include "socketio_client/socketio_client.h"
