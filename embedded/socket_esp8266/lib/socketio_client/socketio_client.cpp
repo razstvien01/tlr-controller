@@ -1,43 +1,50 @@
 #include "socketio_client.h"
 
-WebSocketClient::WebSocketClient()
+SocketIOClient::SocketIOClient()
 {
-  webSocket.onEvent(std::bind(&WebSocketClient::webSocketEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  webSocket.onEvent(std::bind(&SocketIOClient::webSocketEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-void WebSocketClient::begin(const char *host, uint16_t port)
+void SocketIOClient::begin(const char *host, uint16_t port)
 {
-  webSocket.begin(host, port, "/");
+  webSocket.begin(host, port, "/socket.io/?EIO=4&transport=websocket");
   webSocket.setReconnectInterval(5000);
 }
 
-void WebSocketClient::loop()
+void SocketIOClient::loop()
 {
   webSocket.loop();
 }
 
-void WebSocketClient::sendMessage(const char *message)
+void SocketIOClient::sendMessage(const char *event, const char *message)
 {
-  webSocket.sendTXT(message);
+  sendSocketIOMessage(event, message);
 }
 
-void WebSocketClient::webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
+void SocketIOClient::webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
 {
   switch (type)
   {
   case WStype_DISCONNECTED:
-    Serial.printf("[WSc] Disconnected!\n");
+    Serial.println("[SocketIO] Disconnected!");
     break;
   case WStype_CONNECTED:
-    Serial.printf("[WSc] Connected to url: %s\n", payload);
-    sendMessage("Hello from ESP8266!");
+    Serial.println("[SocketIO] Connected to server");
+    // Optionally, you can send a handshake message here to complete the Socket.IO connection process
     break;
   case WStype_TEXT:
-    Serial.printf("[WSc] Received: %s\n", payload);
+    Serial.printf("[SocketIO] Received: %s\n", payload);
     // Handle received messages here
     break;
-  case WStype_ERROR:
-    Serial.printf("[WSc] Error: %s\n", payload);
-    break;
   }
+}
+
+void SocketIOClient::sendSocketIOMessage(const char *event, const char *message)
+{
+  // Implement Socket.IO message encoding and sending here
+  // This typically involves sending a JSON string with the event name and message
+  // For example: {"event":"myEvent","data":"Hello, world!"}
+  // Note: This is a simplified example. Socket.IO messages can be more complex, including binary data and acknowledgments.
+  String msg = String("{\"event\":\"") + String(event) + "\",\"data\":\"" + String(message) + "\"}";
+  webSocket.sendTXT(msg.c_str());
 }

@@ -4,17 +4,18 @@
 #include <Arduino.h>
 #include <WebSocketsClient.h>
 
-class WebSocketClient
+class SocketIOClient
 {
 public:
-  WebSocketClient();
+  SocketIOClient();
   void begin(const char *host, uint16_t port);
   void loop();
-  void sendMessage(const char *message);
+  void sendMessage(const char *event, const char *message);
 
 private:
   WebSocketsClient webSocket;
   void webSocketEvent(WStype_t type, uint8_t *payload, size_t length);
+  void sendSocketIOMessage(const char *event, const char *message);
 };
 
 #endif
