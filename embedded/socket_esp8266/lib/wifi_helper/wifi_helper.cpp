@@ -12,6 +12,13 @@ void WifiHelper::wifiConnect(const char *ssid, const char *password)
     delay(1000);
     Serial.println("Connecting to WiFi...");
   }
+  
+  Serial.println("\nWiFi connected!");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+}
 
-  Serial.println("Connected to WiFi!");
+bool WifiHelper::isConnected()
+{
+  return WiFi.status() == WL_CONNECTED;
 }

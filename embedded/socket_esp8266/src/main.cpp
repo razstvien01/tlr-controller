@@ -23,6 +23,12 @@ void setup()
 
 void loop()
 {
+
+  if (!wifiHelper.isConnected())
+  {
+    wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
+  }
+  
   socketIOClient.loop();
   delay(1000);
 }

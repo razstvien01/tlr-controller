@@ -2,7 +2,8 @@
 #define SOCKETIO_CLIENT_H
 
 #include <Arduino.h>
-#include <WebSocketsClient.h>
+// #include <WebSocketsClient.h>
+#include <SocketIOclient.h>
 
 class SocketIOClient
 {
