@@ -10,15 +10,14 @@
 class SocketIOClientRev
 {
 public:
-  SocketIOClientRev();
   void begin(const char *host, uint16_t port);
   void loop();
   void emitConnect();
 
 private:
   SocketIOclient socketIO;
-  void socketIOEvent(socketIOmessageType_t type, uint8_t * payload, size_t length);
   void eventNameHandler(String eventName);
+  void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length);
 };
 
 #endif

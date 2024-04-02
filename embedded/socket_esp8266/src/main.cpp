@@ -3,11 +3,11 @@
 
 #include "secrets.h"
 #include "wifi_helper.h"
-#include "socketio_client.h"
+#include "socketio_client_rev.h"
 
 WifiHelper wifiHelper;
 
-SocketIOClient socketIOClient;
+SocketIOClientRev socketIOClient;
 
 void setup()
 {
@@ -19,6 +19,7 @@ void setup()
 
   //! Initialize SocketIOClient
   socketIOClient.begin(SOCKETIO_HOST, SOCKETIO_PORT);
+  socketIOClient.emitConnect();
 }
 
 void loop()
@@ -28,7 +29,7 @@ void loop()
   {
     wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
   }
-  
+
   socketIOClient.loop();
   delay(1000);
 }
