@@ -2,7 +2,7 @@
 
 void SocketIOClientRev::begin(const char *host, uint16_t port)
 {
-  socketIO.begin(host, port, "/");
+  socketIO.begin(host, port, "/socket.io/?EIO=4");
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->socketIOEvent(type, payload, length); });
   socketIO.setReconnectInterval(5000);
