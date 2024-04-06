@@ -9,7 +9,7 @@ import { pushToDashboardIfAuthenticated } from "@/utility/utility";
 export default function Home() {
   pushToDashboardIfAuthenticated();
   
-  return (
+  return (  
     <div className="min-h-screen flex flex-col">
       <main
         className="flex-1 flex flex-col items-center justify-center bg-cover bg-center"

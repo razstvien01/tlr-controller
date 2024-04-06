@@ -29,4 +29,5 @@ def stop_server(signal, frame):
 if __name__ == '__main__':
     print('running server at 5000')
     signal.signal(signal.SIGINT, stop_server)
-    socketio.run(app, debug=debug_mode)  #! Use socketio.run to run the server
+    socketio.run(app, port=5000, host="0.0.0.0", debug=debug_mode)
+    
