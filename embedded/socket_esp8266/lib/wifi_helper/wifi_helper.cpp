@@ -10,10 +10,10 @@ void WifiHelper::wifiConnect(const char *ssid, const char *password)
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(1000);
-    Serial.println("Connecting to WiFi...");
+    Serial.println("Connecting to the Interner...");
   }
   
-  Serial.println("\nWiFi connected!");
+  Serial.println("\nInternet connected!");
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 }
