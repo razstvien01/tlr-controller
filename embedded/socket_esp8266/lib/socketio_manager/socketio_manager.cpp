@@ -39,24 +39,24 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     String eventName = doc[0];
     Serial.printf("[IOc] event name: %s\n", eventName.c_str());
 
-    // Message Includes a ID for a ACK (callback)
+    //! Message Includes a ID for a ACK (callback)
     if (id)
     {
-      // creat JSON message for Socket.IO (ack)
+      //* creat JSON message for Socket.IO (ack)
       DynamicJsonDocument docOut(1024);
       JsonArray array = docOut.to<JsonArray>();
 
-      // add payload (parameters) for the ack (callback function)
+      //* add payload (parameters) for the ack (callback function)
       JsonObject param1 = array.createNestedObject();
       param1["now"] = millis();
 
-      // JSON to String (Serializion)
+      //* JSON to String (Serializion)
       String output;
       output += id;
 
       serializeJson(docOut, output);
 
-      // Send event
+      //* Send event
       socketIO.send(sIOtype_ACK, output);
     }
   }
