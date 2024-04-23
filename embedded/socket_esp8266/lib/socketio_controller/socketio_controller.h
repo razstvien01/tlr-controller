@@ -6,7 +6,7 @@ class SocketIOController{
   public:
     SocketIOController(const char* robotId, const char* userId, SocketIOclient& socketIOClient);
     ~SocketIOController(); //* Destructor
-    void turnOn(SocketIOclient& socketIO);
+    void turnOn();
     void handleTurnOnResponse(const char* payload);
     void handleControlResponse(const char* payload);
     void handleGetControlResponse(const char* payload);

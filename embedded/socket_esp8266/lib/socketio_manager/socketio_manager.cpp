@@ -19,14 +19,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     socketIO.send(sIOtype_CONNECT, "/");
     // controller.turnOn();
     
-    DynamicJsonDocument doc(1024);
-    doc["id"] = robotId;
-
-    String payload;
-    serializeJson(doc, payload);
-    Serial.printf(robotId);
-    
-    socketIO.sendTXT("controller/TurnOnRobot/request", payload.c_str(), payload.length());
+    // socketIO.send
     
     break;
   case sIOtype_EVENT:

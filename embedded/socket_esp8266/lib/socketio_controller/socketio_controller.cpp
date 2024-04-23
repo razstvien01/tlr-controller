@@ -15,7 +15,7 @@ SocketIOController::~SocketIOController()
     delete[] userId;
 }
 
-void SocketIOController::turnOn(SocketIOclient &socketIO)
+void SocketIOController::turnOn()
 {
     DynamicJsonDocument doc(1024);
     doc["id"] = robotId;
@@ -25,8 +25,9 @@ void SocketIOController::turnOn(SocketIOclient &socketIO)
     Serial.printf(robotId);
 
     // Use socketIOClient to send the "Turn On" request
-    socketIO.sendTXT((uint8_t)0, "", 34);
-    // socketIO.send(sIOtjype_CONNECT, "/");
+    // socketIOClient.sendTXT("controller/TurnOnRobot/request", payload.c_str(), payload.length());
+    // socketIOClient.send(sIOtype_CONNECT, "/");
+    
 }
 
 void SocketIOController::handleTurnOnResponse(const char *payload)
