@@ -28,7 +28,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   useEffect(() => {
     if (!controller) {
       //* Create the controller only if it's not already created
-      const newController = new ControllerService(params.robot_id, "user_id");
+      const newController = new ControllerService(params.robot_id, "z5vydzfsluZm0RPqTBVHccrip9i2");
       setController(newController);
     }
 

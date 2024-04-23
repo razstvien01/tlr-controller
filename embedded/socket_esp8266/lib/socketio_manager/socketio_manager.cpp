@@ -1,7 +1,9 @@
 #include "socketio_manager.h"
+#include "secrets.h"
 
-SocketIOManager::SocketIOManager() {
-    
+// socketio_manager.cpp
+SocketIOManager::SocketIOManager() : controller(RID, UID, socketIO) {
+    // Initialize other members if needed
 }
 
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
@@ -15,6 +17,17 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
 
     // join default namespace (no auto join in Socket.IO V3)
     socketIO.send(sIOtype_CONNECT, "/");
+    // controller.turnOn();
+    
+    DynamicJsonDocument doc(1024);
+    doc["id"] = robotId;
+
+    String payload;
+    serializeJson(doc, payload);
+    Serial.printf(robotId);
+    
+    socketIO.sendTXT("controller/TurnOnRobot/request", payload.c_str(), payload.length());
+    
     break;
   case sIOtype_EVENT:
   {

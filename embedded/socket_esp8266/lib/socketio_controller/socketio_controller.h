@@ -1,21 +1,21 @@
 #ifndef SOCKETIO_CONTROLLER_H
 #define SOCKETIO_CONTROLLER_H
-
-#include "socketio_manager.h"
+#include <SocketIOclient.h>
 
 class SocketIOController{
   public:
-    SocketIOController(const char* rId, const char* uId, const char* serverURL, uint16_t port);
-    void turnOn();
+    SocketIOController(const char* robotId, const char* userId, SocketIOclient& socketIOClient);
+    ~SocketIOController(); //* Destructor
+    void turnOn(SocketIOclient& socketIO);
     void handleTurnOnResponse(const char* payload);
     void handleControlResponse(const char* payload);
     void handleGetControlResponse(const char* payload);
     void listen();
     
   private:
-    SocketIOManager socketManager;
-    const char* robotId;
-    const char* userId;
+    char* robotId;
+    char* userId;
+    SocketIOclient& socketIOClient; // Reference to the SocketIOclient object
 };
 
 #endif

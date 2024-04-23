@@ -5,6 +5,8 @@
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
 
+#include "socketio_controller.h"
+
 class SocketIOManager {
 public:
     SocketIOManager();
@@ -14,6 +16,7 @@ public:
 
 private:
     SocketIOclient socketIO;
+    SocketIOController controller;
 };
 
 #endif

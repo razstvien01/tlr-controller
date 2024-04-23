@@ -18,7 +18,9 @@ export class ControllerService {
     this._robotId = robotId;
     this._userId = userId;
 
-    this.turnOn(this._robotId);
+    // this.turnOn(this._robotId);
+    console.log("Robot ID: " +  this._robotId)
+    console.log("User ID: " + this._userId)
   }
 
   public get socketURL(): string | undefined {

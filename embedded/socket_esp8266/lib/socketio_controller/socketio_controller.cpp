@@ -1,44 +1,54 @@
 #include "socketio_controller.h"
-
+#include <cstring>
 #include <ArduinoJson.h>
 
-SocketIOController::SocketIOController(const char* rId, const char* uId, const char* serverURL, uint16_t port)
-    : socketManager(SocketIOManager()), robotId(rId), userId(uId) {
-    // socketManager.begin(serverURL, port, "/socket.io");
-    
-    
+SocketIOController::SocketIOController(const char *robotId, const char *userId, SocketIOclient &socketIOClient)
+    : robotId(new char[strlen(robotId) + 1]), userId(new char[strlen(userId) + 1]), socketIOClient(socketIOClient)
+{
+    strcpy(this->robotId, robotId);
+    strcpy(this->userId, userId);
 }
 
-void SocketIOController::turnOn() {
+SocketIOController::~SocketIOController()
+{
+    delete[] robotId;
+    delete[] userId;
+}
+
+void SocketIOController::turnOn(SocketIOclient &socketIO)
+{
     DynamicJsonDocument doc(1024);
     doc["id"] = robotId;
+
     String payload;
     serializeJson(doc, payload);
-    // socketManager.emit("controller/TurnOnRobot/request", payload.c_str());
+    Serial.printf(robotId);
+
+    // Use socketIOClient to send the "Turn On" request
+    socketIO.sendTXT((uint8_t)0, "", 34);
+    // socketIO.send(sIOtjype_CONNECT, "/");
 }
 
-void SocketIOController::handleTurnOnResponse(const char* payload) {
+void SocketIOController::handleTurnOnResponse(const char *payload)
+{
     // Handle the Turn On response here
     // For example, parse the JSON payload if needed
     Serial.println("Turn On Response Received: ");
     Serial.println(payload);
 }
 
-void SocketIOController::handleControlResponse(const char* payload) {
+void SocketIOController::handleControlResponse(const char *payload)
+{
     // Handle the Control Robot response here
     // For example, parse the JSON payload if needed
     Serial.println("Control Robot Response Received: ");
     Serial.println(payload);
 }
 
-void SocketIOController::handleGetControlResponse(const char* payload) {
+void SocketIOController::handleGetControlResponse(const char *payload)
+{
     // Handle the Get Control response here
     // For example, parse the JSON payload if needed
     Serial.println("Get Control Response Received: ");
     Serial.println(payload);
-}
-
-void SocketIOController::listen() {
-    // Add any additional listening logic here if needed
-    socketManager.loop();
 }
