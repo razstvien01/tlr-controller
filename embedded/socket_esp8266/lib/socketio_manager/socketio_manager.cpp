@@ -2,11 +2,13 @@
 #include "secrets.h"
 
 // socketio_manager.cpp
-SocketIOManager::SocketIOManager() : controller(RID, UID, socketIO) {
-    // Initialize other members if needed
+SocketIOManager::SocketIOManager() : controller(RID, UID, socketIO)
+{
+  // Initialize other members if needed
 }
 
-void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
+void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
+{
   switch (type)
   {
   case sIOtype_DISCONNECT:
@@ -18,9 +20,9 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     // join default namespace (no auto join in Socket.IO V3)
     socketIO.send(sIOtype_CONNECT, "/");
     // controller.turnOn();
-    
+
     // socketIO.send
-    
+
     break;
   case sIOtype_EVENT:
   {
@@ -82,13 +84,36 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   }
 }
 
-void SocketIOManager::begin(const char* host, uint16_t port, const char* path) {
-    socketIO.begin(host, port, path);
-    socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length) {
-        this->onEvent(type, payload, length);
-    });
+void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
+{
+  socketIO.begin(host, port, path);
+  socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
+                   { this->onEvent(type, payload, length); });
 }
 
-void SocketIOManager::loop() {
+void SocketIOManager::turnOn()
+{
+  // creat JSON message for Socket.IO (event)
+  DynamicJsonDocument doc(1024);
+  JsonArray array = doc.to<JsonArray>();
+
+  // add evnet name
+  // Hint: socket.on('event_name', ....
+  array.add("controller/TurnOnRobot/request");
+
+  // add payload (parameters) for the event
+  JsonObject param1 = array.createNestedObject();
+  param1["id"] = "sample_id";
+
+  // JSON to String (serializion)
+  String output;
+  serializeJson(doc, output);
+
+  // Send event
+  socketIO.sendEVENT(output);
+}
+
+void SocketIOManager::loop()
+{
   socketIO.loop();
 }
