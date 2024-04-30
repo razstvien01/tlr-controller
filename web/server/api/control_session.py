@@ -7,8 +7,6 @@ control_sessions = {}
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
 	def handle_connect():
-		client_sid = request.sid
-		print(f"Client connected with session ID: {request.sid}")
 		
 		emit('message', {'message': 'Welcome to the server!'})
 	
@@ -21,8 +19,12 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-
+		
+		print("id: " + id)
+		print(turnOnResponse)
+  
 		control_sessions[id] = ControllerInput(None)
+  
 		emit(turnOnResponse, responseSuccess())
 		
 
