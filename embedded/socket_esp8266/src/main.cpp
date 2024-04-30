@@ -1,12 +1,13 @@
+#include "secrets.h"
 
 #include <Arduino.h>
-#include "secrets.h"
 
 #include "wifi_helper.h"
 #include "socketio_manager.h"
 
 WifiHelper wifiHelper;
 SocketIOManager socketIOManager;
+
 
 void setup()
 {

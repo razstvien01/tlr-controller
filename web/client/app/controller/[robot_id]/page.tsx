@@ -28,12 +28,30 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   useEffect(() => {
     if (!controller) {
       //* Create the controller only if it's not already created
-      const newController = new ControllerService(params.robot_id, "z5vydzfsluZm0RPqTBVHccrip9i2");
+      const newController = new ControllerService(
+        params.robot_id,
+        "z5vydzfsluZm0RPqTBVHccrip9i2"
+      );
       setController(newController);
     }
 
     return () => {};
   }, [controller, params.robot_id]);
+
+  useEffect(() => {
+    if (controller) {
+      console.log("Listen for turn on response");
+      controller.handleTurnOnResponse((data: any) => {
+        console.log("Turn On Response Received", data);
+        controller.socket.off("controller/TurnOnRobot/response");
+      });
+    }
+
+    return () => {
+      // // Clean up by removing the listener when the component unmounts
+      // controller.socket.off("controller/TurnOnRobot/response");
+    };
+  }, [controller]);
 
   useEffect(() => {
     if (controller) {
@@ -80,12 +98,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         if (controlValuePresent.steer == -1 || controlValuePresent.steer == 0) {
           steerLeftRobot();
         } else {
+          console.log("Will agi here");
           stopSteerRobot();
         }
       } else {
         if (controlValuePresent.steer == 1 || controlValuePresent.steer == 0) {
+          console.log("Will agi here A");
           steerRightRobot();
         } else {
+          console.log("Will agi here B");
           stopSteerRobot();
         }
       }

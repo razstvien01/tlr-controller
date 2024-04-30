@@ -2,9 +2,12 @@
 #include "secrets.h"
 
 // socketio_manager.cpp
-SocketIOManager::SocketIOManager() : controller(RID, UID, socketIO)
+SocketIOManager::SocketIOManager() : controller(socketIO)
 {
-  // Initialize other members if needed
+}
+
+SocketIOManager::~SocketIOManager() {
+    
 }
 
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
@@ -22,7 +25,9 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     // controller.turnOn();
 
     // socketIO.send
-    turnOn();
+    // turnOn();
+    
+    controller.turnOn();
 
     break;
   case sIOtype_EVENT:
