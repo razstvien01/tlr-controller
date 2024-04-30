@@ -1,0 +1,1 @@
+#define C_RES_TURNONROBOT "controller/TurnOnRobot/response"
