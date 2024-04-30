@@ -20,7 +20,7 @@ void setup()
   socketIOManager.begin(SOCKETIO_LOCALHOST, SOCKETIO_LOCALPORT, SOCKETIO_URL);
   // socketIOManager.begin(SOCKETIO_HOST, SOCKETIO_PORT, SOCKETIO_URL);
 
-  socketIOManager.turnOn();
+  
 }
 
 void loop()

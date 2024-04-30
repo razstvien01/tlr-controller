@@ -22,6 +22,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     // controller.turnOn();
 
     // socketIO.send
+    turnOn();
 
     break;
   case sIOtype_EVENT:

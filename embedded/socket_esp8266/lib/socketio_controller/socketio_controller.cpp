@@ -17,17 +17,24 @@ SocketIOController::~SocketIOController()
 
 void SocketIOController::turnOn()
 {
+    // creat JSON message for Socket.IO (event)
     DynamicJsonDocument doc(1024);
-    doc["id"] = robotId;
+    JsonArray array = doc.to<JsonArray>();
 
-    String payload;
-    serializeJson(doc, payload);
-    Serial.printf(robotId);
+    // add evnet name
+    // Hint: socket.on('event_name', ....
+    array.add("controller/TurnOnRobot/request");
 
-    // Use socketIOClient to send the "Turn On" request
-    // socketIOClient.sendTXT("controller/TurnOnRobot/request", payload.c_str(), payload.length());
-    // socketIOClient.send(sIOtype_CONNECT, "/");
-    
+    // add payload (parameters) for the event
+    JsonObject param1 = array.createNestedObject();
+    param1["id"] = "sample_id";
+
+    // JSON to String (serializion)
+    String output;
+    serializeJson(doc, output);
+
+    // Send event
+    socketIOClient.sendEVENT(output);
 }
 
 void SocketIOController::handleTurnOnResponse(const char *payload)
