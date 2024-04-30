@@ -21,6 +21,8 @@ export class ControllerService {
     // this.turnOn(this._robotId);
     console.log("Robot ID: " +  this._robotId)
     console.log("User ID: " + this._userId)
+    
+    
   }
 
   public get socketURL(): string | undefined {
@@ -53,6 +55,10 @@ export class ControllerService {
     this.socket.on("controller/TurnOffRobot/response", (data: any) => {
       console.log("Turn Off Response received", data);
     });
+  }
+  
+  public handleTurnOnResponse(callback: (data: any) => void): void {
+    this.socket.on("controller/TurnOnRobot/response", callback);
   }
 
   public useRobot(isUseRobot: boolean): void {
