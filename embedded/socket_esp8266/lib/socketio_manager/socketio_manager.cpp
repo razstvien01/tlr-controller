@@ -1,13 +1,12 @@
 #include "socketio_manager.h"
 #include "secrets.h"
 
-// socketio_manager.cpp
 SocketIOManager::SocketIOManager() : controller(socketIO)
 {
 }
 
-SocketIOManager::~SocketIOManager() {
-    
+SocketIOManager::~SocketIOManager()
+{
 }
 
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
@@ -20,13 +19,8 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   case sIOtype_CONNECT:
     Serial.printf("[IOc] Connected to url: %s\n", payload);
 
-    // join default namespace (no auto join in Socket.IO V3)
     socketIO.send(sIOtype_CONNECT, "/");
-    // controller.turnOn();
 
-    // socketIO.send
-    // turnOn();
-    
     controller.turnOn();
 
     break;
@@ -95,28 +89,6 @@ void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
   socketIO.begin(host, port, path);
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->onEvent(type, payload, length); });
-}
-
-void SocketIOManager::turnOn()
-{
-  // creat JSON message for Socket.IO (event)
-  DynamicJsonDocument doc(1024);
-  JsonArray array = doc.to<JsonArray>();
-
-  // add evnet name
-  // Hint: socket.on('event_name', ....
-  array.add("controller/TurnOnRobot/request");
-
-  // add payload (parameters) for the event
-  JsonObject param1 = array.createNestedObject();
-  param1["id"] = "sample_id";
-
-  // JSON to String (serializion)
-  String output;
-  serializeJson(doc, output);
-
-  // Send event
-  socketIO.sendEVENT(output);
 }
 
 void SocketIOManager::loop()

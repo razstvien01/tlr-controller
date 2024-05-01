@@ -15,7 +15,6 @@ public:
     void begin(const char *host, uint16_t port, const char *path);
     void loop();
     void onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length);
-    void turnOn();
 
 private:
     SocketIOclient socketIO;

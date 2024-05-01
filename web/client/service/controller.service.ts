@@ -22,7 +22,9 @@ export class ControllerService {
     console.log("Robot ID: " +  this._robotId)
     console.log("User ID: " + this._userId)
     
-    
+    this.socket.on("/", (data: any) => {
+      console.log("Connected to the server.", data);
+    });
   }
 
   public get socketURL(): string | undefined {

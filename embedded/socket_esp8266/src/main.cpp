@@ -19,9 +19,6 @@ void setup()
 
   //! Initialize SocketIOClient
   socketIOManager.begin(SOCKETIO_LOCALHOST, SOCKETIO_LOCALPORT, SOCKETIO_URL);
-  // socketIOManager.begin(SOCKETIO_HOST, SOCKETIO_PORT, SOCKETIO_URL);
-
-  
 }
 
 void loop()
