@@ -25,22 +25,33 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
   redirectBackIfUnAuthenticated();
 
-  useEffect(() => {
-    console.log('Controller test', controller);
-    if (!controller) {
-      //* Create the controller only if it's not already created
-      const newController = new ControllerService(
-        params.robot_id,
-        "z5vydzfsluZm0RPqTBVHccrip9i2"
-      );
-      setController(newController);
+  if (!controller) {
+    //* Create the controller only if it's not already created
+    const newController = new ControllerService(
+      params.robot_id,
+      "z5vydzfsluZm0RPqTBVHccrip9i2"
+    );
+    setController(newController);
 
-      newController.turnOn(params.robot_id);
-    }
+    newController.turnOn(params.robot_id);
+  }
+
+  // useEffect(() => {
+  //   console.log('Controller test', controller);
+  //   if (!controller) {
+  //     //* Create the controller only if it's not already created
+  //     const newController = new ControllerService(
+  //       params.robot_id,
+  //       "z5vydzfsluZm0RPqTBVHccrip9i2"
+  //     );
+  //     setController(newController);
+
+  //     newController.turnOn(params.robot_id);
+  //   }
 
 
-    return () => { };
-  }, [controller, params.robot_id]);
+  //   return () => { };
+  // }, [controller, params.robot_id]);
 
   // useEffect(() => {
   //   if (controller) {
@@ -57,13 +68,13 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   //   };
   // }, [controller]);
 
-  // useEffect(() => {
-  //   if (controller) {
-  //     controller.getControl(setControlValuePresent);
-  //   }
+  useEffect(() => {
+    if (controller) {
+      controller.getControl(setControlValuePresent);
+    }
 
-  //   return () => { };
-  // }, [controller, isUseRobot, updateControls]);
+    return () => { };
+  }, [controller, isUseRobot, updateControls]);
 
   const useRobot = () => {
     if (controller) {
