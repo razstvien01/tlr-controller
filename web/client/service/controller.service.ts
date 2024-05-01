@@ -19,9 +19,9 @@ export class ControllerService {
     this._userId = userId;
 
     // this.turnOn(this._robotId);
-    console.log("Robot ID: " +  this._robotId)
+    console.log("Robot ID: " + this._robotId)
     console.log("User ID: " + this._userId)
-    
+
     this.socket.on("/", (data: any) => {
       console.log("Connected to the server.", data);
     });
@@ -40,13 +40,14 @@ export class ControllerService {
   }
 
   public turnOn(robot_id: string) {
-    this.socket.off("controller/TurnOnRobot/response");
-
-    this.socket.emit("controller/TurnOnRobot/request", { id: robot_id });
+    // this.socket.off("controller/TurnOnRobot/response");
 
     this.socket.on("controller/TurnOnRobot/response", (data: any) => {
       console.log("Turn On Response Received", data);
+      this.socket.off("controller/TurnOnRobot/response");
     });
+
+    this.socket.emit("controller/TurnOnRobot/request", { id: robot_id });
   }
 
   public turnOff(idInput: string) {
@@ -58,22 +59,23 @@ export class ControllerService {
       console.log("Turn Off Response received", data);
     });
   }
-  
+
   public handleTurnOnResponse(callback: (data: any) => void): void {
     this.socket.on("controller/TurnOnRobot/response", callback);
   }
 
   public useRobot(isUseRobot: boolean): void {
-    this.socket.off("controller/UseRobot/response");
+    // this.socket.off("controller/UseRobot/response");
+    console.log("USE ROBOT PRESSED");
+    this.socket.on("controller/UseRobot/response", (data: any) => {
+      if (isUseRobot) console.log("Use Robot received ", data);
+      else console.log("Un-Use Robot received ", data);
+    });
+
     this.socket.emit("controller/UseRobot/request", {
       id: this._robotId,
       userId: this._userId,
       toUse: isUseRobot,
-    });
-
-    this.socket.on("controller/UseRobot/response", (data: any) => {
-      if (isUseRobot) console.log("Use Robot received ", data);
-      else console.log("Un-Use Robot received ", data);
     });
   }
 

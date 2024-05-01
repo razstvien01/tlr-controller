@@ -26,6 +26,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   redirectBackIfUnAuthenticated();
 
   useEffect(() => {
+    console.log('Controller test', controller);
     if (!controller) {
       //* Create the controller only if it's not already created
       const newController = new ControllerService(
@@ -33,33 +34,36 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         "z5vydzfsluZm0RPqTBVHccrip9i2"
       );
       setController(newController);
+
+      newController.turnOn(params.robot_id);
     }
 
-    return () => {};
+
+    return () => { };
   }, [controller, params.robot_id]);
 
-  useEffect(() => {
-    if (controller) {
-      console.log("Listen for turn on response");
-      controller.handleTurnOnResponse((data: any) => {
-        console.log("Turn On Response Received", data);
-        controller.socket.off("controller/TurnOnRobot/response");
-      });
-    }
+  // useEffect(() => {
+  //   if (controller) {
+  //     console.log("Listen for turn on response");
+  //     controller.handleTurnOnResponse((data: any) => {
+  //       console.log("Turn On Response Received", data);
+  //       controller.socket.off("controller/TurnOnRobot/response");
+  //     });
+  //   }
 
-    return () => {
-      // // Clean up by removing the listener when the component unmounts
-      // controller.socket.off("controller/TurnOnRobot/response");
-    };
-  }, [controller]);
+  //   return () => {
+  //     // // Clean up by removing the listener when the component unmounts
+  //     // controller.socket.off("controller/TurnOnRobot/response");
+  //   };
+  // }, [controller]);
 
-  useEffect(() => {
-    if (controller) {
-      controller.getControl(setControlValuePresent);
-    }
+  // useEffect(() => {
+  //   if (controller) {
+  //     controller.getControl(setControlValuePresent);
+  //   }
 
-    return () => {};
-  }, [controller, isUseRobot, updateControls]);
+  //   return () => { };
+  // }, [controller, isUseRobot, updateControls]);
 
   const useRobot = () => {
     if (controller) {
