@@ -32,6 +32,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       "z5vydzfsluZm0RPqTBVHccrip9i2"
     );
     setController(newController);
+    newController.setGetControlResponse(setControlValuePresent);
 
     newController.turnOn(params.robot_id);
   }
@@ -68,13 +69,13 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   //   };
   // }, [controller]);
 
-  useEffect(() => {
-    if (controller) {
-      controller.getControl(setControlValuePresent);
-    }
+  // useEffect(() => {
+  //   if (controller) {
+  //     controller.getControl(setControlValuePresent);
+  //   }
 
-    return () => { };
-  }, [controller, isUseRobot, updateControls]);
+  //   return () => { };
+  // }, [controller, isUseRobot, updateControls]);
 
   const useRobot = () => {
     if (controller) {
