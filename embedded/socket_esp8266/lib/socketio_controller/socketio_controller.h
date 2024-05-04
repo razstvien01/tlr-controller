@@ -11,10 +11,10 @@ class SocketIOController {
 public:
     SocketIOController(SocketIOclient& socketIOClient);
     ~SocketIOController();
-    void turnOn();
-    void handleTurnOnResponse(const char* payload);
-    void handleControlResponse(const char* payload);
-    void handleGetControlResponse(const char* payload);
+    void turnOnRequest();
+    void turnOnResponse(const char* payload);
+    void controlResponse(const char* payload);
+    void getControlResponse(const char* payload);
 
 private:
     SocketIOclient& socketIOClient;

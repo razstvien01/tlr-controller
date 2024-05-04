@@ -10,11 +10,11 @@ SocketIOController::~SocketIOController() {
 }
 
 
-void SocketIOController::turnOn() {
+void SocketIOController::turnOnRequest() {
     DynamicJsonDocument doc(1024);
     JsonArray array = doc.to<JsonArray>();
     
-    array.add("controller/TurnOnRobot/request");
+    array.add(C_REQ_TURNON_ROBOT);
     
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
@@ -25,19 +25,20 @@ void SocketIOController::turnOn() {
     socketIOClient.sendEVENT(output);
 }
 
-void SocketIOController::handleTurnOnResponse(const char *payload)
+
+void SocketIOController::turnOnResponse(const char *payload)
 {
     Serial.println("Turn On Response Received: ");
     Serial.println(payload);
 }
 
-void SocketIOController::handleControlResponse(const char *payload)
+void SocketIOController::controlResponse(const char *payload)
 {
     Serial.println("Control Robot Response Received: ");
     Serial.println(payload);
 }
 
-void SocketIOController::handleGetControlResponse(const char *payload)
+void SocketIOController::getControlResponse(const char *payload)
 {
     Serial.println("Get Control Response Received: ");
     Serial.println(payload);
