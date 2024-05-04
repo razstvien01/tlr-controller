@@ -22,7 +22,7 @@ void SocketIOController::turnOnRequest()
 
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
-    param1["power"] = 0;
+    param1["power"] = 1;
 
     String output;
     serializeJson(doc, output);
@@ -39,7 +39,7 @@ void SocketIOController::turnOffRequest()
 
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
-    param1["power"] = 1;
+    param1["power"] = 0;
 
     String output;
     serializeJson(doc, output);
@@ -69,10 +69,9 @@ void SocketIOController::getControlRequest(){
 }
 
 //! Response Functions
-
 void SocketIOController::turnOnResponse(const char *payload)
 {
-    Serial.println("Turn On Response Received: ");
+    Serial.println("Turn On Response Received : ");
     Serial.println(payload);
 }
 

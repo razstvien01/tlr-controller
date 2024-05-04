@@ -45,7 +45,24 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-    Serial.printf("[IOc] event name: %s\n", eventName.c_str());
+    
+
+    if (eventName == C_RES_TURNON_ROBOT)
+    {
+      controller.turnOnResponse((char*) payload);
+    }
+    else if (eventName == C_RES_TURNOFF_ROBOT)
+    {
+      controller.turnOffResponse((char*) payload);
+    }
+    else if (eventName == C_RES_GET_CONTROL)
+    {
+      controller.getControlResponse((char*) payload);
+    }
+    else if (eventName == C_RES_CONTROL_ROBOT)
+    {
+      controller.controlRobotResponse((char*) payload);
+    }
 
     //! Message Includes a ID for a ACK (callback)
     if (id)
@@ -79,7 +96,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     Serial.printf("[IOc] get binary: %u\n", length);
     break;
   case sIOtype_BINARY_ACK:
-    Serial.printf("[IOc] get binary ack: %u\n", length);
+    Serial.printf("[IO  c] get binary ack: %u\n", length);
     break;
   }
 }

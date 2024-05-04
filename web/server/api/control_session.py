@@ -16,15 +16,16 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
-		id = data['id']
-		power = data['power']
-  
+		id = data.get('id', '')
+		power = data.get('power', 0)
+		print("Received data: ", data)
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
 		
 		print("id: " + id)
-		print("power: " + power)
+		
+		print("power: " + str(power))
 		print(turnOnResponse)
   
 		control_sessions[id] = ControllerInput(None)
