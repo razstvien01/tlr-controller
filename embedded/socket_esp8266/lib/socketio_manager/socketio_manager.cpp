@@ -1,14 +1,6 @@
 #include "socketio_manager.h"
 #include "secrets.h"
 
-SocketIOManager::SocketIOManager() : controller(socketIO)
-{
-}
-
-SocketIOManager::~SocketIOManager()
-{
-}
-
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
 {
   switch (type)
@@ -28,7 +20,8 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-    Serial.printf("[IOc] get event: %s id: %d\n", payload, id);
+    // Serial.printf("[IOc] get event: %s id: %d\n", payload, id);
+    
     if (id)
     {
       payload = (uint8_t *)sptr;
@@ -45,23 +38,26 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-    
 
-    if (eventName == C_RES_TURNON_ROBOT)
+    if (eventName == C_RES_CONNECT)
     {
-      controller.turnOnResponse((char*) payload);
+      connectResponse(doc[1]);
+    }
+    else if (eventName == C_RES_TURNON_ROBOT)
+    {
+      controller.turnOnResponse((char *)payload);
     }
     else if (eventName == C_RES_TURNOFF_ROBOT)
     {
-      controller.turnOffResponse((char*) payload);
+      controller.turnOffResponse((char *)payload);
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse((char*) payload);
+      controller.getControlResponse((char *)payload);
     }
     else if (eventName == C_RES_CONTROL_ROBOT)
     {
-      controller.controlRobotResponse((char*) payload);
+      controller.controlRobotResponse((char *)payload);
     }
 
     //! Message Includes a ID for a ACK (callback)
@@ -108,7 +104,21 @@ void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
                    { this->onEvent(type, payload, length); });
 }
 
+void SocketIOManager::connectResponse(const JsonObject& obj)
+{
+  const char *message = obj["message"];
+  Serial.println(message);
+}
+
 void SocketIOManager::loop()
 {
   socketIO.loop();
+}
+
+SocketIOManager::SocketIOManager() : controller(socketIO)
+{
+}
+
+SocketIOManager::~SocketIOManager()
+{
 }
