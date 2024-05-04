@@ -77,6 +77,10 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   //   return () => { };
   // }, [controller, isUseRobot, updateControls]);
 
+  useEffect(() => {
+
+  });
+
   const useRobot = () => {
     if (controller) {
       setIsUseRobot((prevState) => !prevState);
