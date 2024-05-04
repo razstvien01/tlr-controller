@@ -6,6 +6,7 @@
 #define C_REQ_GET_CONTROL "controller/GetControl/request"
 
 //* Responses
+#define C_RES_CONNECT "connect"
 #define C_RES_TURNON_ROBOT "controller/TurnOnRobot/response"
 #define C_RES_TURNOFF_ROBOT "controller/TurnOffRobot/response"
 #define C_RES_USE_ROBOT "controller/UseRobot/response"
