@@ -113,7 +113,7 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
 void SocketIOManager::loop()
 {
   socketIO.loop();
-  socketIO.getControlRequest();
+  controller.getControlRequest();
 }
 
 SocketIOManager::SocketIOManager() : controller(socketIO)

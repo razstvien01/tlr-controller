@@ -66,6 +66,8 @@ void SocketIOController::controlRobotRequest()
 
 void SocketIOController::getControlRequest()
 {
+    Serial.println("Get Control Request");
+    
     DynamicJsonDocument doc(1024);
     JsonArray array = doc.to<JsonArray>();
 
@@ -78,6 +80,7 @@ void SocketIOController::getControlRequest()
     serializeJson(doc, output);
 
     socketIOClient.sendEVENT(output);
+    
 }
 
 //! Response Functions

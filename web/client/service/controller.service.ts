@@ -19,8 +19,8 @@ export class ControllerService {
     this._userId = userId;
 
     // this.turnOn(this._robotId);
-    console.log("Robot ID: " + this._robotId)
-    console.log("User ID: " + this._userId)
+    console.log("Robot ID: " + this._robotId);
+    console.log("User ID: " + this._userId);
 
     this.socket.on("/", (data: any) => {
       console.log("Connected to the server.", data);
@@ -36,30 +36,29 @@ export class ControllerService {
     });
 
     this.socket.on("controller/UseRobot/response", (data: any) => {
-      // if (isUseRobot) 
       console.log("Use Robot received ", data);
-      // else console.log("Un-Use Robot received ", data);
     });
 
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Control Robot received ", data);
     });
-
-
-
-    // this.socket.on("controller/ControlRobot/response", (data: any) => {
-    //   console.log("Stop Drive Robot received ", data);
-    // });
+  }
+  
+  public getContolResponseOff(){
+    this.socket.off("controller/GetControl/response");
   }
 
-  public setGetControlResponse(setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>) {
+  public setGetControlResponse(
+    setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
+  ) {
     this.socket.on("controller/GetControl/response", (data: any) => {
-      console.log('Retreived Control ', data)
+      console.log("Retreived Control ", data);
       if (data.statusCode === 404) {
         setControl({ steer: 0, drive: 0 }); // Set default values
       } else {
         const controlObject = { steer: data.Steer, drive: data.Drive };
         setControl(controlObject);
+        console.log("set control")
       }
     });
   }
@@ -77,14 +76,10 @@ export class ControllerService {
   }
 
   public turnOn(robot_id: string) {
-    // this.socket.off("controller/TurnOnRobot/response");
-
     this.socket.emit("controller/TurnOnRobot/request", { id: robot_id });
   }
 
   public turnOff(idInput: string) {
-    // this.socket.off("controller/TurnOffRobot/response");
-
     this.socket.emit("controller/TurnOffRobot/request", { id: idInput });
   }
 
@@ -93,9 +88,6 @@ export class ControllerService {
   }
 
   public useRobot(isUseRobot: boolean): void {
-    // this.socket.off("controller/UseRobot/response");
-    console.log("USE ROBOT PRESSED");
-
     this.socket.emit("controller/UseRobot/request", {
       id: this._robotId,
       userId: this._userId,
@@ -104,8 +96,6 @@ export class ControllerService {
   }
 
   public driveRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
@@ -115,8 +105,6 @@ export class ControllerService {
   }
 
   public stopDriveRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
@@ -126,67 +114,42 @@ export class ControllerService {
   }
 
   public reverseDriveRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
       drive: -1,
       steer: null,
     });
-    // this.socket.on("controller/ControlRobot/response", (data: any) => {
-    //   console.log("Reverse Robot received ", data);
-    // });
   }
 
   public steerRightRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
       drive: null,
       steer: 1,
     });
-
-    // this.socket.on("controller/ControlRobot/response", (data: any) => {
-    //   console.log("Steer Right Robot received ", data);
-    // });
   }
 
   public steerLeftRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
       drive: null,
       steer: -1,
     });
-
-    // this.socket.on("controller/ControlRobot/response", (data: any) => {
-    //   console.log("Steer Left Robot received ", data);
-    // });
   }
 
   public stopSteerRobot() {
-    // this.socket.off("controller/ControlRobot/response");
-
     this.socket.emit("controller/ControlRobot/request", {
       robotId: this._robotId,
       userId: this._userId,
       drive: null,
       steer: 0,
     });
-
-    // this.socket.on("controller/ControlRobot/response", (data: any) => {
-    //   console.log("Stop Steer Robot received ", data);
-    // });
   }
 
   public getControl() {
-    // this.socket.off("controller/GetControl/response");
-
     this.socket.emit("controller/GetControl/request", {
       robotId: this._robotId,
     });

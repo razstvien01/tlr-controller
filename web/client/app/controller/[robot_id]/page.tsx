@@ -16,7 +16,6 @@ import { Toggle } from "@/components/ui/toggle";
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
-  const [lastDateTime, setLastDateTime] = useState(Date.now());
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
     drive: 0,
@@ -26,34 +25,28 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
   redirectBackIfUnAuthenticated();
 
-  if (!controller) {
-    //* Create the controller only if it's not already created
-    const newController = new ControllerService(
-      params.robot_id,
-      "z5vydzfsluZm0RPqTBVHccrip9i2"
-    );
-    setController(newController);
-    newController.setGetControlResponse(setControlValuePresent);
-
-    newController.turnOn(params.robot_id);
-  }
+  useEffect(() => {
+    if (!controller) {
+      //* Create the controller only if it's not already created
+      const newController = new ControllerService(
+        params.robot_id,
+        "z5vydzfsluZm0RPqTBVHccrip9i2"
+      );
+      setController(newController);
+      newController.setGetControlResponse(setControlValuePresent);
+    }
+    return () => {};
+  }, [controller, params.robot_id]);
 
   useEffect(() => {
-    //Set Interval
-    const interval = setInterval(() => {
-      var now = Date.now();
-      var deltaTime = now - lastDateTime;
-      //Use DeltaTime because we are never certain that
-      //the UI thread will finish within 1 second
-      //there will always be difference in render time
-      if (deltaTime > 1000) {
-        setLastDateTime(now);
-        controller?.getControl();
-      }
-    }, 1000)
+    if (controller) {
+      controller.getContolResponseOff();
+      controller.getControl();
+      controller.setGetControlResponse(setControlValuePresent);
+    }
 
-    return () => clearInterval(interval);
-  }, [lastDateTime]);
+    return () => {};
+  }, [controller, isUseRobot, updateControls]);
 
   const useRobot = () => {
     if (controller) {
@@ -92,15 +85,12 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         if (controlValuePresent.steer == -1 || controlValuePresent.steer == 0) {
           steerLeftRobot();
         } else {
-          console.log("Will agi here");
           stopSteerRobot();
         }
       } else {
         if (controlValuePresent.steer == 1 || controlValuePresent.steer == 0) {
-          console.log("Will agi here A");
           steerRightRobot();
         } else {
-          console.log("Will agi here B");
           stopSteerRobot();
         }
       }
@@ -198,10 +188,6 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           <Label className="text-lg">Robot Status: </Label>
           <label className="text-xl font-bold">Hello world</label>
         </div>
-        {/* <div className="flex flex-col p-5 items-center">
-          <Label className="text-lg">Current Controls: </Label>
-          <label className="text-xl font-bold">Hello world</label>
-        </div> */}
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
 
@@ -223,7 +209,6 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               variant="outline"
               size="icon"
               onClick={() => {
-                // steerLeftRobot();
                 steerControlRobot(true);
               }}
             >
