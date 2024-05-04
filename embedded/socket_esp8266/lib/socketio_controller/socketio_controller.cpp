@@ -64,8 +64,20 @@ void SocketIOController::controlRobotRequest()
     socketIOClient.sendEVENT(output);
 }
 
-void SocketIOController::getControlRequest(){
-    
+void SocketIOController::getControlRequest()
+{
+    DynamicJsonDocument doc(1024);
+    JsonArray array = doc.to<JsonArray>();
+
+    array.add(C_REQ_GET_CONTROL);
+
+    JsonObject param1 = array.createNestedObject();
+    param1["robotId"] = RID;
+
+    String output;
+    serializeJson(doc, output);
+
+    socketIOClient.sendEVENT(output);
 }
 
 //! Response Functions

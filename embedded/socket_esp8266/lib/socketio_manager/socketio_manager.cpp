@@ -21,7 +21,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
     // Serial.printf("[IOc] get event: %s id: %d\n", payload, id);
-    
+
     if (id)
     {
       payload = (uint8_t *)sptr;
@@ -104,7 +104,7 @@ void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
                    { this->onEvent(type, payload, length); });
 }
 
-void SocketIOManager::connectResponse(const JsonObject& obj)
+void SocketIOManager::connectResponse(const JsonObject &obj)
 {
   const char *message = obj["message"];
   Serial.println(message);
@@ -113,6 +113,7 @@ void SocketIOManager::connectResponse(const JsonObject& obj)
 void SocketIOManager::loop()
 {
   socketIO.loop();
+  socketIO.getControlRequest();
 }
 
 SocketIOManager::SocketIOManager() : controller(socketIO)
