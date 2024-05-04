@@ -16,6 +16,7 @@ import { Toggle } from "@/components/ui/toggle";
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
+  const [lastDateTime, setLastDateTime] = useState(Date.now());
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
     drive: 0,
@@ -37,49 +38,22 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     newController.turnOn(params.robot_id);
   }
 
-  // useEffect(() => {
-  //   console.log('Controller test', controller);
-  //   if (!controller) {
-  //     //* Create the controller only if it's not already created
-  //     const newController = new ControllerService(
-  //       params.robot_id,
-  //       "z5vydzfsluZm0RPqTBVHccrip9i2"
-  //     );
-  //     setController(newController);
-
-  //     newController.turnOn(params.robot_id);
-  //   }
-
-
-  //   return () => { };
-  // }, [controller, params.robot_id]);
-
-  // useEffect(() => {
-  //   if (controller) {
-  //     console.log("Listen for turn on response");
-  //     controller.handleTurnOnResponse((data: any) => {
-  //       console.log("Turn On Response Received", data);
-  //       controller.socket.off("controller/TurnOnRobot/response");
-  //     });
-  //   }
-
-  //   return () => {
-  //     // // Clean up by removing the listener when the component unmounts
-  //     // controller.socket.off("controller/TurnOnRobot/response");
-  //   };
-  // }, [controller]);
-
-  // useEffect(() => {
-  //   if (controller) {
-  //     controller.getControl(setControlValuePresent);
-  //   }
-
-  //   return () => { };
-  // }, [controller, isUseRobot, updateControls]);
-
   useEffect(() => {
+    //Set Interval
+    const interval = setInterval(() => {
+      var now = Date.now();
+      var deltaTime = now - lastDateTime;
+      //Use DeltaTime because we are never certain that
+      //the UI thread will finish within 1 second
+      //there will always be difference in render time
+      if (deltaTime > 1000) {
+        setLastDateTime(now);
+        controller?.getControl();
+      }
+    }, 1000)
 
-  });
+    return () => clearInterval(interval);
+  }, [lastDateTime]);
 
   const useRobot = () => {
     if (controller) {

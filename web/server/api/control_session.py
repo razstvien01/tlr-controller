@@ -9,7 +9,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
 	def handle_connect():
 		
-		emit('connect', {'message': 'Welcome to the server!'})
+		emit('connected', {'message': 'Welcome to the server!'})
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
 	turnOnResponse = 'controller/TurnOnRobot/response'

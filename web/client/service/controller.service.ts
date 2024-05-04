@@ -54,6 +54,7 @@ export class ControllerService {
 
   public setGetControlResponse(setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>) {
     this.socket.on("controller/GetControl/response", (data: any) => {
+      console.log('Retreived Control ', data)
       if (data.statusCode === 404) {
         setControl({ steer: 0, drive: 0 }); // Set default values
       } else {
@@ -183,9 +184,7 @@ export class ControllerService {
     // });
   }
 
-  public getControl(
-    setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
-  ) {
+  public getControl() {
     // this.socket.off("controller/GetControl/response");
 
     this.socket.emit("controller/GetControl/request", {
