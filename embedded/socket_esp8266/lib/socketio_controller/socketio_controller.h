@@ -13,7 +13,11 @@ public:
     ~SocketIOController();
     void turnOnRequest();
     void turnOnResponse(const char* payload);
-    void controlResponse(const char* payload);
+    void turnOffRequest();
+    void turnOffResponse(const char* payload);
+    void controlRobotRequest();
+    void controlRobotResponse(const char* payload);
+    void getControlRequest();
     void getControlResponse(const char* payload);
 
 private:
