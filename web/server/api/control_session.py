@@ -3,6 +3,7 @@ from flask import request
 from data.controller_input import ControllerInput
 
 control_sessions = {}
+power = ''
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
@@ -16,11 +17,14 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
 		id = data['id']
+		power = data['power']
+  
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
 		
 		print("id: " + id)
+		print("power: " + power)
 		print(turnOnResponse)
   
 		control_sessions[id] = ControllerInput(None)
