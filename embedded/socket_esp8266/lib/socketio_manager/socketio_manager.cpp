@@ -20,7 +20,6 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-    // Serial.printf("[IOc] get event: %s id: %d\n", payload, id);
 
     if (id)
     {
