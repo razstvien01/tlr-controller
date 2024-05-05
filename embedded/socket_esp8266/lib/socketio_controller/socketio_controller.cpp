@@ -84,26 +84,26 @@ void SocketIOController::getControlRequest()
 }
 
 //! Response Functions
-void SocketIOController::turnOnResponse(const char *payload)
+void SocketIOController::turnOnResponse(const JsonObject &obj)
 {
     Serial.println("Turn On Response Received : ");
-    Serial.println(payload);
+    Serial.println(obj);
 }
 
-void SocketIOController::turnOffResponse(const char *payload)
+void SocketIOController::turnOffResponse(const JsonObject &obj)
 {
     Serial.println("Turn Off Response Received: ");
-    Serial.println(payload);
+    Serial.println(obj);
 }
 
-void SocketIOController::controlRobotResponse(const char *payload)
+void SocketIOController::controlRobotResponse(const JsonObject &obj)
 {
     Serial.println("Control Robot Response Received: ");
-    Serial.println(payload);
+    Serial.println(obj);
 }
 
-void SocketIOController::getControlResponse(const char *payload)
+void SocketIOController::getControlResponse(const JsonObject &obj)
 {
     Serial.println("Get Control Response Received: ");
-    Serial.println(payload);
+    Serial.println(obj);
 }

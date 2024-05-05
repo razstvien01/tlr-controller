@@ -45,19 +45,19 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
     else if (eventName == C_RES_TURNON_ROBOT)
     {
-      controller.turnOnResponse((char *)payload);
+      controller.turnOnResponse(doc[1]);
     }
     else if (eventName == C_RES_TURNOFF_ROBOT)
     {
-      controller.turnOffResponse((char *)payload);
+      controller.turnOffResponse(doc[1]);
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse((char *)payload);
+      controller.getControlResponse(doc[1]);
     }
     else if (eventName == C_RES_CONTROL_ROBOT)
     {
-      controller.controlRobotResponse((char *)payload);
+      controller.controlRobotResponse(doc[1]);
     }
 
     //! Message Includes a ID for a ACK (callback)

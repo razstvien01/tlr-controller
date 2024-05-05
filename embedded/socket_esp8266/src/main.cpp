@@ -20,17 +20,17 @@ void setup()
   socketIOManager.begin(SOCKETIO_LOCALHOST, SOCKETIO_LOCALPORT, SOCKETIO_URL);
 }
 
-StaticJsonDocument<200> doc; // Adjust the size as needed
+// StaticJsonDocument<200> doc; // Adjust the size as needed
 
-void sendDataToArduino()
-{
-  // Create and populate the JSON data
-  JsonObject data = doc.to<JsonObject>();
-  data["key"] = "value";  // Add your JSON data here
-  data["source"] = "esp"; // Add the source information
-  serializeJson(data, Serial);
-  Serial.println(); // Add a newline to indicate the end of JSON data
-}
+// void sendDataToArduino()
+// {
+//   // Create and populate the JSON data
+//   JsonObject data = doc.to<JsonObject>();
+//   data["key"] = "value";  // Add your JSON data here
+//   data["source"] = "esp"; // Add the source information
+//   serializeJson(data, Serial);
+//   Serial.println(); // Add a newline to indicate the end of JSON data
+// }
 
 void loop()
 {
