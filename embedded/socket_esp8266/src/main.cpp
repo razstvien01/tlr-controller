@@ -8,13 +8,12 @@
 WifiHelper wifiHelper;
 SocketIOManager socketIOManager;
 
-
 void setup()
 {
   Serial.begin(9600);
   delay(1000);
 
-  //! Connect to WiFi
+  // //! Connect to WiFi
   wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
 
   //! Initialize SocketIOClient

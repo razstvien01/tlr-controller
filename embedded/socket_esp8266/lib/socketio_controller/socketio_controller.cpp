@@ -66,8 +66,6 @@ void SocketIOController::controlRobotRequest()
 
 void SocketIOController::getControlRequest()
 {
-    Serial.println("Get Control Request");
-    
     DynamicJsonDocument doc(1024);
     JsonArray array = doc.to<JsonArray>();
 
@@ -80,30 +78,25 @@ void SocketIOController::getControlRequest()
     serializeJson(doc, output);
 
     socketIOClient.sendEVENT(output);
-    
 }
 
 //! Response Functions
 void SocketIOController::turnOnResponse(const char *payload)
 {
-    Serial.println("Turn On Response Received : ");
     Serial.println(payload);
 }
 
 void SocketIOController::turnOffResponse(const char *payload)
 {
-    Serial.println("Turn Off Response Received: ");
     Serial.println(payload);
 }
 
 void SocketIOController::controlRobotResponse(const char *payload)
 {
-    Serial.println("Control Robot Response Received: ");
     Serial.println(payload);
 }
 
 void SocketIOController::getControlResponse(const char *payload)
 {
-    Serial.println("Get Control Response Received: ");
     Serial.println(payload);
 }
