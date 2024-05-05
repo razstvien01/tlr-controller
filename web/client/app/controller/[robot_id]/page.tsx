@@ -28,16 +28,21 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   useEffect(() => {
     if (!controller) {
       //* Create the controller only if it's not already created
-      const newController = new ControllerService(params.robot_id, "user_id");
+      const newController = new ControllerService(
+        params.robot_id,
+        "z5vydzfsluZm0RPqTBVHccrip9i2"
+      );
       setController(newController);
+      newController.setGetControlResponse(setControlValuePresent);
     }
-
     return () => {};
   }, [controller, params.robot_id]);
 
   useEffect(() => {
     if (controller) {
-      controller.getControl(setControlValuePresent);
+      controller.getContolResponseOff();
+      controller.getControl();
+      controller.setGetControlResponse(setControlValuePresent);
     }
 
     return () => {};
@@ -183,10 +188,6 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           <Label className="text-lg">Robot Status: </Label>
           <label className="text-xl font-bold">Hello world</label>
         </div>
-        {/* <div className="flex flex-col p-5 items-center">
-          <Label className="text-lg">Current Controls: </Label>
-          <label className="text-xl font-bold">Hello world</label>
-        </div> */}
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
 
@@ -208,7 +209,6 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               variant="outline"
               size="icon"
               onClick={() => {
-                // steerLeftRobot();
                 steerControlRobot(true);
               }}
             >

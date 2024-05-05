@@ -3,55 +3,35 @@ from flask import request
 from data.controller_input import ControllerInput
 
 control_sessions = {}
+power = ''
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
 	def handle_connect():
-		client_sid = request.sid
-		print(f"Client connected with session ID: {request.sid}")
-		# socketIO.emit('broadcast_message', {'message': 'A new client has connected'}, room='*')
-		emit('message', {'message': 'Welcome to the server!'})
-		emit('flask_to_client_message', {'message': 'Use Robot response received'}, room=request.sid)
+		
+		emit('connected', {'message': 'Welcome to the server!'})
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
 	turnOnResponse = 'controller/TurnOnRobot/response'
 
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
-		id = data['id']
+		id = data.get('id', '')
+		power = data.get('power', 0)
+		print("Received data: ", data)
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-
+		
+		print("id: " + id)
+		
+		print("power: " + str(power))
+		print(turnOnResponse)
+  
 		control_sessions[id] = ControllerInput(None)
+  
 		emit(turnOnResponse, responseSuccess())
 		
-		print("Will message to the other client")
-		
-		# emit('flask_to_client_message', {'message': 'Use Robot response received'}, room=request.sid)
-
-	# @socketIO.on(turnOnRequest)
-	# def turnOnRobot(data):
-	# 	id = data['id']
-	# 	if id == '':
-	# 		emit(turnOnResponse, response404())
-	# 		return
-		
-	# 	control_sessions[id] = ControllerInput(None)
-
-  #   # Get the other client's session ID
-	# 	other_client_sid = None
-	# 	for sid in control_sessions:
-	# 		if sid != id:
-	# 			other_client_sid = sid
-	# 			break
-	# 	if other_client_sid is not None:
-  #     # Send a message to the other client
-	# 		socket = socketIO.server.get_recent_socket(other_client_sid, room='*')
-	# 		if socket is not None:
-	# 			socket.emit(turnOnResponse, responseSuccess())
-	# 	emit(turnOnResponse, responseSuccess(), room=id)
-
 
 	turnOffRequest = 'controller/TurnOffRobot/request'
 	turnOffResponse = 'controller/TurnOffRobot/response'

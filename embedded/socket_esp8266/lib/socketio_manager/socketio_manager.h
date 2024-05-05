@@ -5,15 +5,21 @@
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
 
-class SocketIOManager {
+#include "socketio_controller.h"
+
+class SocketIOManager
+{
 public:
     SocketIOManager();
-    void begin(const char* host, uint16_t port, const char* path);
+    ~SocketIOManager();
+    void begin(const char *host, uint16_t port, const char *path);
     void loop();
     void onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length);
+    void connectResponse(const JsonObject& obj);
 
 private:
     SocketIOclient socketIO;
+    SocketIOController controller;
 };
 
 #endif

@@ -1,12 +1,13 @@
+#include "secrets.h"
 
 #include <Arduino.h>
-#include "secrets.h"
 
 #include "wifi_helper.h"
 #include "socketio_manager.h"
 
 WifiHelper wifiHelper;
 SocketIOManager socketIOManager;
+
 
 void setup()
 {
@@ -23,7 +24,7 @@ void setup()
 void loop()
 {
   socketIOManager.loop();
-  
+
   if (!wifiHelper.isConnected())
   {
     wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
