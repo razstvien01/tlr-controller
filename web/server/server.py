@@ -8,6 +8,7 @@ import signal
 import firebase_admin
 # from firebase_admin import db;
 from constants import constants
+from firebase_admin import firestore
 
 load_dotenv()
 
@@ -31,12 +32,16 @@ def stop_server(signal, frame):
 
 cred_obj = firebase_admin.credentials.Certificate('key.json')
 default_app = firebase_admin.initialize_app(cred_obj)
-# test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
 
-# for doc in test_ref:
-#     print(f"{doc.id} => {doc.to_dict()}")
+# ERASE THIS AFTER TESTING
+db = firestore.client()
+test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
 
-# print('Test done')
+for doc in test_ref:
+    print(f"{doc.id} => {doc.to_dict()}")
+
+print('Test done')
+# ERASE THIS AFTER TESTING
 
 if __name__ == '__main__':
     print('running server at 5000')

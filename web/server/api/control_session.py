@@ -54,7 +54,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 		db = firestore.client()
 		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
-		doc_ref.set({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
+		doc_ref.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
 
 		emit(turnOffResponse, responseSuccess())
 

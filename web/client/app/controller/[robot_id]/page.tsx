@@ -16,6 +16,8 @@ import { Toggle } from "@/components/ui/toggle";
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
+  const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
+
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
     drive: 0,
@@ -35,7 +37,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
     }
-    return () => {};
+    return () => { };
   }, [controller, params.robot_id]);
 
   useEffect(() => {
@@ -45,8 +47,17 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       controller.setGetControlResponse(setControlValuePresent);
     }
 
-    return () => {};
+    return () => { };
   }, [controller, isUseRobot, updateControls]);
+
+  const toggleRobot = () => {
+    if (!isTurnOnRobot) {
+      controller?.turnOn(params.robot_id);
+    } else {
+      controller?.turnOff(params.robot_id);
+    }
+    setIsTurnOnRobot(!isTurnOnRobot);
+  }
 
   const useRobot = () => {
     if (controller) {
@@ -126,6 +137,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           onPressedChange={useRobot}
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
+        </Toggle>
+        <Toggle
+          className="text-lg ml-auto mr-4 bg-primary"
+          id="toggleTurnOn"
+          variant={"outline"}
+          size={"lg"}
+          onPressedChange={toggleRobot}
+        >
+          {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
         </Toggle>
       </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
