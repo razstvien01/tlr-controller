@@ -12,13 +12,13 @@ public:
     SocketIOController(SocketIOclient& socketIOClient);
     ~SocketIOController();
     void turnOnRequest();
-    void turnOnResponse(const JsonObject &obj);
+    void turnOnResponse(const char *payload);
     void turnOffRequest();
-    void turnOffResponse(const JsonObject &obj);
+    void turnOffResponse(const char *payload);
     void controlRobotRequest();
-    void controlRobotResponse(const JsonObject &obj);
+    void controlRobotResponse(const char *payload);
     void getControlRequest();
-    void getControlResponse(const JsonObject &obj);
+    void getControlResponse(const char *payload);
 
 private:
     SocketIOclient& socketIOClient;

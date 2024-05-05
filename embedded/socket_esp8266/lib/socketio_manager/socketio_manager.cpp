@@ -38,6 +38,8 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
+    
+    JsonObject obj = doc.as<JsonObject>();
 
     if (eventName == C_RES_CONNECT)
     {
@@ -45,19 +47,19 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
     else if (eventName == C_RES_TURNON_ROBOT)
     {
-      controller.turnOnResponse(doc[1]);
+      controller.turnOnResponse((char *) payload);
     }
     else if (eventName == C_RES_TURNOFF_ROBOT)
     {
-      controller.turnOffResponse(doc[1]);
+      controller.turnOffResponse((char *) payload);
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse(doc[1]);
+      controller.getControlResponse((char *) payload);
     }
     else if (eventName == C_RES_CONTROL_ROBOT)
     {
-      controller.controlRobotResponse(doc[1]);
+      controller.controlRobotResponse((char *) payload);
     }
 
     //! Message Includes a ID for a ACK (callback)
