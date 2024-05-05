@@ -34,7 +34,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		#Set to Active in firebase
 		db = firestore.client()
 		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
-		doc_ref.set({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
+		doc_ref.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
 
 		emit(turnOnResponse, responseSuccess())
 		
