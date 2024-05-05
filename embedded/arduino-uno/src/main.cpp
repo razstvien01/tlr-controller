@@ -11,37 +11,40 @@ void setup()
 
 void sendDataToESP()
 {
-  // Create and populate the JSON data
   JsonObject data = doc.to<JsonObject>();
-  data["key"] = "value";      // Add your JSON data here
-  data["source"] = "arduino"; // Add the source information
+  data["key"] = "value";
+  data["source"] = "arduino";
   serializeJson(data, Serial);
-  Serial.println(); // Add a newline to indicate the end of JSON data
+  Serial.println();
 }
 
 void loop()
 {
-  sendDataToESP(); // Send JSON data to the ESP every 5 seconds
+  if (Serial.available()) {
+    String receivedData = Serial.readStringUntil('\n');
+    // Serial.println("Received JSON: " + receivedData); // Debugging: Print the received JSON string
 
-  if (Serial.available())
-  {
-    // Process incoming data from the ESP
-    deserializeJson(doc, Serial);
-    const char *key = doc["key"];
-    if (key)
-    {
-      // Print the received key
-      Serial.print("Received key: ");
-      Serial.println(key);
-
-      // Check if the data is received from the ESP
-      const char *source = doc["source"];
-      if (source && strcmp(source, "esp") == 0)
-      {
-        Serial.println("Data received from ESP8266");
-      }
+    StaticJsonDocument<200> receivedDoc;
+    DeserializationError error = deserializeJson(receivedDoc, receivedData);
+    
+    if (!error) {
+      // Extract the event and payload
+      const char *event = receivedDoc[0];
+      JsonObject payload = receivedDoc[1];
+      
+      // Print the event
+      Serial.print("Event: ");
+      Serial.println(event);
+      
+      // for (JsonPair kv : payload) {
+      //   const char *key = kv.key().c_str();
+      //   const char *value = kv.value().as<const char *>();
+        
+      //   Serial.print("Key: ");
+      //   Serial.print(key);
+      // }
+    } else {
+      Serial.println("JSON Parsing Error");
     }
   }
-
-  delay(1000); // Delay for 5 seconds before sending the next JSON data
 }
