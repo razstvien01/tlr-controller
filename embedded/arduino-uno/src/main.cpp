@@ -1,3 +1,5 @@
+#include "controller_constants.h"
+
 #include <ArduinoJson.h>
 
 StaticJsonDocument<200> doc;
@@ -22,27 +24,39 @@ void loop()
 {
   if (Serial.available()) {
     String receivedData = Serial.readStringUntil('\n');
-    // Serial.println("Received JSON: " + receivedData); // Debugging: Print the received JSON string
+    // Serial.println("Received JSON: " + receivedData);
 
     StaticJsonDocument<200> receivedDoc;
     DeserializationError error = deserializeJson(receivedDoc, receivedData);
     
     if (!error) {
-      // Extract the event and payload
+      //* Extract the event and payload
       const char *event = receivedDoc[0];
       JsonObject payload = receivedDoc[1];
       
-      // Print the event
-      Serial.print("Event: ");
-      Serial.println(event);
+      // Serial.print("Event: ");
+      // Serial.println(event);
       
-      // for (JsonPair kv : payload) {
-      //   const char *key = kv.key().c_str();
-      //   const char *value = kv.value().as<const char *>();
+      if(strcmp(event, C_RES_TURNOFF_ROBOT) == 0){
         
-      //   Serial.print("Key: ");
-      //   Serial.print(key);
-      // }
+      }
+      else if (strcmp(event, C_RES_GET_CONTROL) == 0) {
+        // Serial.println(receivedData);
+        if (payload.containsKey("statusCode")) {
+          int statusCode = payload["statusCode"];
+          Serial.print("Status Code: ");
+          Serial.println(statusCode);
+        } else {
+          int drive = payload["Drive"];
+          int steer = payload["Steer"];
+          
+          Serial.print("Drive: ");
+          Serial.print(drive);
+          Serial.print(", Steer: ");
+          Serial.println(steer);
+        }
+      }
+      
     } else {
       Serial.println("JSON Parsing Error");
     }
