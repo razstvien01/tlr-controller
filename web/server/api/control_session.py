@@ -1,6 +1,8 @@
 from flask_socketio import SocketIO, emit
 from flask import request
 from data.controller_input import ControllerInput
+from firebase_admin import firestore
+from constants import constants
 
 control_sessions = {}
 power = ''
@@ -8,7 +10,6 @@ power = ''
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
 	def handle_connect():
-		
 		emit('connected', {'message': 'Welcome to the server!'})
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
@@ -22,7 +23,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-		
+				
 		print("id: " + id)
 		
 		print("power: " + str(power))
@@ -30,6 +31,11 @@ def configure_controller_sockets(socketIO: SocketIO):
   
 		control_sessions[id] = ControllerInput(None)
   
+		#Set to Active in firebase
+		db = firestore.client()
+		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
+		doc_ref.set({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
+
 		emit(turnOnResponse, responseSuccess())
 		
 
@@ -45,6 +51,11 @@ def configure_controller_sockets(socketIO: SocketIO):
 			return
 		
 		del control_sessions[id]
+
+		db = firestore.client()
+		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
+		doc_ref.set({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
+
 		emit(turnOffResponse, responseSuccess())
 
 

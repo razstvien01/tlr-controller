@@ -5,6 +5,9 @@ from api.control_session import configure_controller_sockets
 from dotenv import load_dotenv
 import os
 import signal
+import firebase_admin
+# from firebase_admin import db;
+from constants import constants
 
 load_dotenv()
 
@@ -25,6 +28,15 @@ def index():
 
 def stop_server(signal, frame):
     socketio.stop()
+
+cred_obj = firebase_admin.credentials.Certificate('key.json')
+default_app = firebase_admin.initialize_app(cred_obj)
+# test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
+
+# for doc in test_ref:
+#     print(f"{doc.id} => {doc.to_dict()}")
+
+# print('Test done')
 
 if __name__ == '__main__':
     print('running server at 5000')
