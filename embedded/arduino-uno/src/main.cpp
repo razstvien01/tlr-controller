@@ -1,18 +1,16 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
-
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup(){
+  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  Serial.println("Hello from Arduino");
+  
+  if(Serial.available()){
+    String data = Serial.readStringUntil('\n');
+    Serial.print("Received from esp8266: ");
+    Serial.println(data);
+  }
+  delay(5000);
 }
