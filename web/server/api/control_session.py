@@ -7,9 +7,15 @@ from constants import constants
 control_sessions = {}
 
 def configure_controller_sockets(socketIO: SocketIO):
+	@socketIO.on('disconnect')
+	def handle_disconnect():
+		print("DISCONNECTED")
+		pass
+  
 	@socketIO.on('connect')
 	def handle_connect():
 		emit('connected', {'message': 'Welcome to the server!'})
+	
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
 	turnOnResponse = 'controller/TurnOnRobot/response'
@@ -26,9 +32,12 @@ def configure_controller_sockets(socketIO: SocketIO):
   
 		#! Updates to Active in firebase
 		db = firestore.client()
-		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
-		doc_ref.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
+		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', id).limit(1)
+		docs = doc_ref.stream()
 
+		for doc in docs:
+			doc.reference.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
+		
 		emit(turnOnResponse, responseSuccess())
 		
 
@@ -46,8 +55,11 @@ def configure_controller_sockets(socketIO: SocketIO):
 		del control_sessions[id]
 
 		db = firestore.client()
-		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
-		doc_ref.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
+		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', id).limit(1)
+		docs = doc_ref.stream()
+		
+		for doc in docs:
+			doc.reference.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
 
 		emit(turnOffResponse, responseSuccess())
 
