@@ -1,4 +1,5 @@
 import { db } from "@/app/firebase";
+import { RobotDataProps } from "@/configs/types";
 import {
   doc,
   getDoc,
@@ -22,7 +23,8 @@ export const GET = async (request: NextRequest, context: any) => {
       });
     }
 
-    const user_data = userDoc.data();
+    const user_data = userDoc.data() as RobotDataProps;
+    user_data.user_id = user_id
 
     return NextResponse.json({
       success: true,

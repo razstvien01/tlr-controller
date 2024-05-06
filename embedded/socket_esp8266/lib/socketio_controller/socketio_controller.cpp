@@ -22,7 +22,6 @@ void SocketIOController::turnOnRequest()
 
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
-    param1["power"] = 1;
 
     String output;
     serializeJson(doc, output);
@@ -39,7 +38,6 @@ void SocketIOController::turnOffRequest()
 
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
-    param1["power"] = 0;
 
     String output;
     serializeJson(doc, output);

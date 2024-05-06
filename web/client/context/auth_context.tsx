@@ -82,7 +82,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       
       const { user } = res;
       const { uid } = user;
-
+      
       const user_data = {
         display_name,
         email_address: email,

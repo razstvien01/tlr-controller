@@ -12,10 +12,18 @@ import {
 import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 import { Toggle } from "@/components/ui/toggle";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { RobotDataProps } from "@/configs/types";
+import { getRobotByID } from "@/service/robots.service";
+import { RobotDataInit } from "@/configs/init";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
+  const [userData, setUserData] = useUserDataAtom();
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
+  const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
+  const [robot, setRobot] = useState<RobotDataProps>(RobotDataInit);
+
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
     drive: 0,
@@ -25,18 +33,35 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
   redirectBackIfUnAuthenticated();
 
+  const fetchRobotByID = async (doc_id: string) => {
+    if (doc_id) {
+      const response = await getRobotByID(doc_id);
+      if (response.success) {
+        setRobot(response.robot_data);
+      }
+    }
+  };
+
   useEffect(() => {
-    if (!controller) {
+    if (params.robot_id) {
+      fetchRobotByID(params.robot_id);
+    }
+
+    return () => {};
+  }, [params.robot_id]);
+
+  useEffect(() => {
+    if (!controller && userData?.user_id && robot?.robot_id) {
       //* Create the controller only if it's not already created
       const newController = new ControllerService(
-        params.robot_id,
-        "z5vydzfsluZm0RPqTBVHccrip9i2"
+        robot?.robot_id,
+        userData.user_id
       );
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
     }
     return () => {};
-  }, [controller, params.robot_id]);
+  }, [controller, userData, robot?.robot_id]);
 
   useEffect(() => {
     if (controller) {
@@ -47,6 +72,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
     return () => {};
   }, [controller, isUseRobot, updateControls]);
+
+  const toggleRobot = () => {
+    if (!isTurnOnRobot) {
+      controller?.turnOn(robot?.robot_id);
+    } else {
+      controller?.turnOff(robot?.robot_id);
+    }
+    setIsTurnOnRobot(!isTurnOnRobot);
+  };
 
   const useRobot = () => {
     if (controller) {
@@ -127,6 +161,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
+        {/* <Toggle
+          className="text-lg ml-auto mr-4 bg-primary"
+          id="toggleTurnOn"
+          variant={"outline"}
+          size={"lg"}
+          onPressedChange={toggleRobot}
+        >
+          {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
+        </Toggle> */}
       </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">

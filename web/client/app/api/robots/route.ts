@@ -21,7 +21,6 @@ import { db } from "@/app/firebase";
 //   return querySnapshot.size > 0;
 // };
 
-
 const checkIfExistsUserEmail = async (email_address: string) => {
   //* Check if the user already exists
   const userQuery = query(
@@ -35,20 +34,22 @@ const checkIfExistsUserEmail = async (email_address: string) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    //* query users collection
-    // const q = collection(db, "robots");
-    const q = query(collection(db, "robots"), orderBy("created_at", "desc"))
+    const url = new URL(request.url);
+    const user_id = url.searchParams.get("user_id");
+    const q = user_id
+      ? query(collection(db, "robots"), where("user_id", "==", user_id), orderBy("created_at", "desc"))
+      : query(collection(db, "robots"), orderBy("created_at", "desc"));
     const querySnapshot = await getDocs(q);
-
+    
     //* extract user data from the query snapshot
     const robots = querySnapshot.docs.map((doc) => ({
       doc_id: doc.id,
       ...doc.data(),
     }));
-
+    
     return NextResponse.json({
       success: true,
-      message: "Robot Fetch Successfully",
+      message: "Robots Fetch Successfully",
       data: robots,
     });
   } catch (error: any) {
@@ -61,16 +62,19 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest, context: any) => {
   try {
     const robot_data = await request.json();
-    const { doc_id, ...other_data } = robot_data
+    const { doc_id, ...other_data } = robot_data;
     // if(await checkIfExistsRobotId(id)){
     //   return NextResponse.json({
     //     succes: false,
     //     message: "Robot is Already Created",
     //   });
     // }
-    
-    await addDoc(collection(db, "robots"), {...other_data, created_at: serverTimestamp()});
-    
+
+    await addDoc(collection(db, "robots"), {
+      ...other_data,
+      created_at: serverTimestamp(),
+    });
+
     return NextResponse.json({
       success: true,
       message: "Robot Registered Successfully",
@@ -84,20 +88,20 @@ export const DELETE = async (request: NextRequest) => {
     const user_data = await request.json();
     const { doc_id, id } = user_data;
     const userDocRef = doc(db, "robots", doc_id);
-    
+
     // if(!(await checkIfExistsRobotId(id))){
     //   return NextResponse.json({
     //     success: false,
     //     message: "Robot Not Found"
     //   });
     // }
-    
+
     //* Delete the document
     await deleteDoc(userDocRef);
 
     return NextResponse.json({
       success: true,
-      message: "Account User Deleted Successfully"
+      message: "Account User Deleted Successfully",
     });
   } catch (error: any) {
     console.log("Error deleting user's data:", error.message);

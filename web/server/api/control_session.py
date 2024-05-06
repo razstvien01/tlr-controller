@@ -1,14 +1,59 @@
 from flask_socketio import SocketIO, emit
 from flask import request
 from data.controller_input import ControllerInput
+from firebase_admin import firestore
+from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
+from constants import constants
 
 control_sessions = {}
-power = ''
+sessions = {}
+
+def update_robot_status(robot_id, status):
+		db = firestore.client()
+		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
+		field_filter = FieldFilter('robot_id', '==', robot_id)
+		query_on_single_field = collection_ref.where(filter=field_filter)
+		docs = query_on_single_field.stream()
+    
+		for doc in docs:
+			doc.reference.update({constants.RobotTableKeys.STATUS: status})
+
+def delete_session_by_id(id, message):
+	sessions_deleted = False
+	sessions_copy = sessions.copy()
+	
+	for sid, session_data in sessions_copy.items():
+		if sessions_deleted:
+			break
+		for key, data in session_data.items():
+			if key == id:
+				print(f"{message}, Session: {sid} with Key: {key}")
+				del sessions[sid][key]
+				if not sessions[sid]:
+					del sessions[sid]
+					sessions_deleted = True
+				break
 
 def configure_controller_sockets(socketIO: SocketIO):
+	@socketIO.on('disconnect')
+	def handle_disconnect():
+		disconnected_sid = request.sid 
+		
+		try:
+			disconnected_id = sessions[disconnected_sid]
+			if isinstance(disconnected_id, dict):
+				disconnected_id_key = next(iter(disconnected_id))
+				
+				if disconnected_id_key in sessions[disconnected_sid]:
+					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
+					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
+					del control_sessions[disconnected_id_key]
+		except KeyError:
+			pass
+	
+  
 	@socketIO.on('connect')
 	def handle_connect():
-		
 		emit('connected', {'message': 'Welcome to the server!'})
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
@@ -16,20 +61,22 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
+		session_key = request.sid
+		sessions[session_key] = {}
+		
 		id = data.get('id', '')
-		power = data.get('power', 0)
-		print("Received data: ", data)
+		
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
 		
-		print("id: " + id)
-		
-		print("power: " + str(power))
-		print(turnOnResponse)
-  
+		print(f"Turning On Robot, Session: {session_key} with Key: {id}")\
+    
+		sessions[session_key][id] = {}
 		control_sessions[id] = ControllerInput(None)
   
+		update_robot_status(id, constants.RobotStatus.ACTIVE)
+		
 		emit(turnOnResponse, responseSuccess())
 		
 
@@ -38,13 +85,18 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(turnOffRequest)
 	def turnOffRobot(data):
-		id = data['id']
+		id = data.get('id', '')
 		
-		if(id not in control_sessions):
+		if id == '':
 			emit(turnOffResponse, response404())
 			return
 		
-		del control_sessions[id]
+		delete_session_by_id(id, "Turning Off Robot")
+		
+		if id in control_sessions:
+			del control_sessions[id]
+		
+		update_robot_status(id, constants.RobotStatus.INACTIVE)
 		emit(turnOffResponse, responseSuccess())
 
 
@@ -60,7 +112,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if(userId == ''):
 			emit(useRobotResponse, response404())
 			return
-
+		
 		if(id not in control_sessions):
 			emit(useRobotResponse, response404())
 			return
@@ -73,7 +125,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			control_sessions[id].AssignedUser = userId
 		else:
 			control_sessions[id].AssignedUser = None
-
+		
 		emit(useRobotResponse, responseSuccess())
 
 	controlRobotRequest = 'controller/ControlRobot/request'
