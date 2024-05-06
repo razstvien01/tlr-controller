@@ -22,7 +22,6 @@ export const getRobots = async () => {
     const response = await axios.get(`/api/robots/`);
     const robot_data = response.data.data;
     
-    console.log("robots:", robot_data)
     return {
       success: true,
       robot_data,
@@ -34,3 +33,26 @@ export const getRobots = async () => {
     };
   }
 };
+
+export const getRobotsByID = async (user_id: string) => {
+  try{
+    const params = {
+      user_id
+    };
+    const response = await axios.get("/api/robots/", {
+      params,
+    });
+    const robot_data = response.data.data;
+    
+    return {
+      success: true,
+      robot_data
+    }
+    
+  } catch(error: any){
+    return {
+      success: false,
+      error: error.response.data,
+    }
+  }
+}
