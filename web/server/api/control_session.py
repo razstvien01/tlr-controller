@@ -2,18 +2,22 @@ from flask_socketio import SocketIO, emit
 from flask import request
 from data.controller_input import ControllerInput
 from firebase_admin import firestore
+from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
 from constants import constants
 
 control_sessions = {}
 sessions = {}
 
 def update_robot_status(robot_id, status):
-    db = firestore.client()
-    doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where(field_path='robot_id', op_string='==', value=robot_id).limit(1)
-    docs = doc_ref.stream()
-
-    for doc in docs:
-        doc.reference.update({constants.RobotTableKeys.STATUS: status})
+		db = firestore.client()
+		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
+		field_filter = FieldFilter('robot_id', '==', robot_id)
+		query_on_single_field = collection_ref.where(filter=field_filter)
+		docs = query_on_single_field.stream()
+    
+		for doc in docs:
+			doc.reference.update({constants.RobotTableKeys.STATUS: status})
+    
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
@@ -28,7 +32,8 @@ def configure_controller_sockets(socketIO: SocketIO):
 				if disconnected_id_key in sessions[disconnected_sid]:
 					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
 					del sessions[disconnected_sid][disconnected_id_key]
-					del sessions[disconnected_id_key]
+					del control_sessions[disconnected_id_key]
+					print(f"DISCONNECTED Session ID: {disconnected_sid}, Key: {disconnected_id_key}")
 		except KeyError:
 			pass
 	
@@ -36,16 +41,16 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
 	def handle_connect():
 		emit('connected', {'message': 'Welcome to the server!'})
-		sessions[request.sid] = {}
-		print("Session ID: "+ request.sid)
-	
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
 	turnOnResponse = 'controller/TurnOnRobot/response'
 
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
-		print("TurnOnRobot")
+		session_key = request.sid
+		sessions[session_key] = {}
+		
+		print(f"Turning On Robot, Session: {session_key}")
 		id = data.get('id', '')
 		
 		if id == '':
