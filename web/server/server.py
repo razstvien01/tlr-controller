@@ -33,16 +33,6 @@ def stop_server(signal, frame):
 cred_obj = firebase_admin.credentials.Certificate('key.json')
 default_app = firebase_admin.initialize_app(cred_obj)
 
-# ERASE THIS AFTER TESTING
-db = firestore.client()
-test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
-
-for doc in test_ref:
-    print(f"{doc.id} => {doc.to_dict()}")
-
-print('Test done')
-# ERASE THIS AFTER TESTING
-
 if __name__ == '__main__':
     print('running server at 5000')
     signal.signal(signal.SIGINT, stop_server)
