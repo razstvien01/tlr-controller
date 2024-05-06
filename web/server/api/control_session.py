@@ -5,7 +5,6 @@ from firebase_admin import firestore
 from constants import constants
 
 control_sessions = {}
-power = ''
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('connect')
@@ -18,20 +17,14 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
 		id = data.get('id', '')
-		power = data.get('power', 0)
-		print("Received data: ", data)
+		
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-				
-		print("id: " + id)
 		
-		print("power: " + str(power))
-		print(turnOnResponse)
-  
 		control_sessions[id] = ControllerInput(None)
   
-		#Set to Active in firebase
+		#! Updates to Active in firebase
 		db = firestore.client()
 		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).document(id)
 		doc_ref.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
