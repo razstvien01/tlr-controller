@@ -6,9 +6,6 @@ from dotenv import load_dotenv
 import os
 import signal
 import firebase_admin
-# from firebase_admin import db;
-from constants import constants
-from firebase_admin import firestore
 
 load_dotenv()
 
