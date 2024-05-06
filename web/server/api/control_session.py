@@ -9,7 +9,7 @@ sessions = {}
 
 def update_robot_status(robot_id, status):
     db = firestore.client()
-    doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', robot_id).limit(1)
+    doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where(field_path='robot_id', op_string='==', value=robot_id).limit(1)
     docs = doc_ref.stream()
 
     for doc in docs:
@@ -18,24 +18,20 @@ def update_robot_status(robot_id, status):
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
 	def handle_disconnect():
-		print("Disconnected")
-		
 		disconnected_sid = request.sid 
-		print(request.sid)
-		if disconnected_sid in sessions:
+		
+		try:
 			disconnected_id = sessions[disconnected_sid]
-			
 			if isinstance(disconnected_id, dict):
 				disconnected_id_key = next(iter(disconnected_id))
-				print(f"DISCONNECTED: {disconnected_id_key}")
-    
+				
 				if disconnected_id_key in sessions[disconnected_sid]:
 					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
 					del sessions[disconnected_sid][disconnected_id_key]
-				else:
-					print(f"Session ID {disconnected_sid} not found in control_sessions.")
-		else:
-				print("Disconnected client not found in socket_id_to_id.")
+					del sessions[disconnected_id_key]
+		except KeyError:
+			pass
+	
   
 	@socketIO.on('connect')
 	def handle_connect():
