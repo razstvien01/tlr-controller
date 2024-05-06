@@ -17,7 +17,22 @@ def update_robot_status(robot_id, status):
     
 		for doc in docs:
 			doc.reference.update({constants.RobotTableKeys.STATUS: status})
-    
+
+def delete_session_by_id(id, message):
+	sessions_deleted = False
+	sessions_copy = sessions.copy()
+	
+	for sid, session_data in sessions_copy.items():
+		if sessions_deleted:
+			break
+		for key, data in session_data.items():
+			if key == id:
+				print(f"{message}, Session: {sid} with Key: {key}")
+				del sessions[sid][key]
+				if not sessions[sid]:
+					del sessions[sid]
+					sessions_deleted = True
+				break
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
@@ -31,9 +46,8 @@ def configure_controller_sockets(socketIO: SocketIO):
 				
 				if disconnected_id_key in sessions[disconnected_sid]:
 					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
-					del sessions[disconnected_sid][disconnected_id_key]
+					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
 					del control_sessions[disconnected_id_key]
-					print(f"DISCONNECTED Session ID: {disconnected_sid}, Key: {disconnected_id_key}")
 		except KeyError:
 			pass
 	
@@ -50,15 +64,17 @@ def configure_controller_sockets(socketIO: SocketIO):
 		session_key = request.sid
 		sessions[session_key] = {}
 		
-		print(f"Turning On Robot, Session: {session_key}")
 		id = data.get('id', '')
 		
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-		sessions[request.sid][id] = {}
-		control_sessions[id] = ControllerInput(None)
 		
+		print(f"Turning On Robot, Session: {session_key} with Key: {id}")\
+    
+		sessions[session_key][id] = {}
+		control_sessions[id] = ControllerInput(None)
+  
 		update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
@@ -75,9 +91,11 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(turnOffResponse, response404())
 			return
 		
-		# ! must loop the seesion, if it has that id then delete that session
-		del sessions[request.sid][id]
-		del control_sessions[id]
+		delete_session_by_id(id, "Turning Off Robot")
+		
+		if id in control_sessions:
+			del control_sessions[id]
+		
 		update_robot_status(id, constants.RobotStatus.INACTIVE)
 		emit(turnOffResponse, responseSuccess())
 
@@ -92,20 +110,14 @@ def configure_controller_sockets(socketIO: SocketIO):
 		toUse = data['toUse']
 		
 		if(userId == ''):
-			print('A')
 			emit(useRobotResponse, response404())
 			return
- 
-		print(id)
-		print('Control Sessions: ' + str(control_sessions))
-
+		
 		if(id not in control_sessions):
-			print('B')
 			emit(useRobotResponse, response404())
 			return
 
 		if(control_sessions[id].AssignedUser != None and toUse):
-			print('C')
 			emit(useRobotResponse, response404())
 			return
 
