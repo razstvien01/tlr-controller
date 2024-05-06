@@ -56,3 +56,19 @@ export const getRobotsByID = async (user_id: string) => {
     }
   }
 }
+
+export const getRobotByID = async (robot_id: string) => {
+  try{
+    const response = await axios.get(`/api/robots/${robot_id}`)
+    const robot_data = response.data.robot_data
+    return {
+      success: true,
+      robot_data
+    }
+  } catch(error: any){
+    return {
+      success: false,
+      error: error.response.data
+    }
+  }
+}
