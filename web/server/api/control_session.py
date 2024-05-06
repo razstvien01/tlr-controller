@@ -5,16 +5,43 @@ from firebase_admin import firestore
 from constants import constants
 
 control_sessions = {}
+sessions = {}
+
+def update_robot_status(robot_id, status):
+    db = firestore.client()
+    doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', robot_id).limit(1)
+    docs = doc_ref.stream()
+
+    for doc in docs:
+        doc.reference.update({constants.RobotTableKeys.STATUS: status})
 
 def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
 	def handle_disconnect():
-		print("DISCONNECTED")
-		pass
+		print("Disconnected")
+		
+		disconnected_sid = request.sid 
+		print(request.sid)
+		if disconnected_sid in sessions:
+			disconnected_id = sessions[disconnected_sid]
+			
+			if isinstance(disconnected_id, dict):
+				disconnected_id_key = next(iter(disconnected_id))
+				print(f"DISCONNECTED: {disconnected_id_key}")
+    
+				if disconnected_id_key in sessions[disconnected_sid]:
+					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
+					del sessions[disconnected_sid][disconnected_id_key]
+				else:
+					print(f"Session ID {disconnected_sid} not found in control_sessions.")
+		else:
+				print("Disconnected client not found in socket_id_to_id.")
   
 	@socketIO.on('connect')
 	def handle_connect():
 		emit('connected', {'message': 'Welcome to the server!'})
+		sessions[request.sid] = {}
+		print("Session ID: "+ request.sid)
 	
 	
 	turnOnRequest = 'controller/TurnOnRobot/request'
@@ -22,21 +49,16 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
+		print("TurnOnRobot")
 		id = data.get('id', '')
 		
 		if id == '':
 			emit(turnOnResponse, response404())
 			return
-		
+		sessions[request.sid][id] = {}
 		control_sessions[id] = ControllerInput(None)
-  
-		#! Updates to Active in firebase
-		db = firestore.client()
-		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', id).limit(1)
-		docs = doc_ref.stream()
-
-		for doc in docs:
-			doc.reference.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.ACTIVE})
+		
+		update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
 		
@@ -46,21 +68,16 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(turnOffRequest)
 	def turnOffRobot(data):
-		id = data['id']
+		id = data.get('id', '')
 		
-		if(id not in control_sessions):
+		if id == '':
 			emit(turnOffResponse, response404())
 			return
 		
+		# ! must loop the seesion, if it has that id then delete that session
+		del sessions[request.sid][id]
 		del control_sessions[id]
-
-		db = firestore.client()
-		doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', id).limit(1)
-		docs = doc_ref.stream()
-		
-		for doc in docs:
-			doc.reference.update({constants.RobotTableKeys.STATUS: constants.RobotStatus.INACTIVE})
-
+		update_robot_status(id, constants.RobotStatus.INACTIVE)
 		emit(turnOffResponse, responseSuccess())
 
 
@@ -74,14 +91,20 @@ def configure_controller_sockets(socketIO: SocketIO):
 		toUse = data['toUse']
 		
 		if(userId == ''):
+			print('A')
 			emit(useRobotResponse, response404())
 			return
+ 
+		print(id)
+		print('Control Sessions: ' + str(control_sessions))
 
 		if(id not in control_sessions):
+			print('B')
 			emit(useRobotResponse, response404())
 			return
 
 		if(control_sessions[id].AssignedUser != None and toUse):
+			print('C')
 			emit(useRobotResponse, response404())
 			return
 
@@ -89,7 +112,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			control_sessions[id].AssignedUser = userId
 		else:
 			control_sessions[id].AssignedUser = None
-
+		
 		emit(useRobotResponse, responseSuccess())
 
 	controlRobotRequest = 'controller/ControlRobot/request'
