@@ -1,4 +1,3 @@
-"use client";
 
 import { Button } from "../ui/button";
 import {
@@ -93,9 +92,10 @@ export function AddRobotDialog({
     }
   }, [showToast, toastParams]);
   
-  // Function to handle form submission with async image URL fetching.
   const handleSubmit = async () => {
     setIsSave(true)
+    robotData.user_id = userData.user_id;
+    
     const res = await addRobot(robotData)
     if(res.success){
       setHasSubmitted(true)
