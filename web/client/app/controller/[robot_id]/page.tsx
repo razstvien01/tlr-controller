@@ -12,8 +12,10 @@ import {
 import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 import { Toggle } from "@/components/ui/toggle";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
+  const [userData, setUserData] = useUserDataAtom();
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
@@ -32,13 +34,13 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       //* Create the controller only if it's not already created
       const newController = new ControllerService(
         params.robot_id,
-        "z5vydzfsluZm0RPqTBVHccrip9i2"
+        userData.user_id,
       );
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
     }
     return () => { };
-  }, [controller, params.robot_id]);
+  }, [controller, params.robot_id, userData]);
 
   useEffect(() => {
     if (controller) {
@@ -138,7 +140,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
-        <Toggle
+        {/* <Toggle
           className="text-lg ml-auto mr-4 bg-primary"
           id="toggleTurnOn"
           variant={"outline"}
@@ -146,7 +148,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           onPressedChange={toggleRobot}
         >
           {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
-        </Toggle>
+        </Toggle> */}
       </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">
