@@ -19,7 +19,7 @@ export default function Robots() {
   const [userData, setUserData] = useUserDataAtom();
 
   const fetchRobots = async () => {
-    if (userData.user_id) {
+    if (userData?.user_id) {
       const response = await getRobotsByID(userData.user_id);
       setRobots(response.robot_data);
     }
@@ -29,7 +29,7 @@ export default function Robots() {
     fetchRobots();
 
     return () => {};
-  }, [successAdd, userData.user_id]);
+  }, [successAdd, userData?.user_id]);
 
   return (
     <>
