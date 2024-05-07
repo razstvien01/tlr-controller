@@ -35,6 +35,24 @@ def delete_session_by_id(id, message):
 				break
 
 def configure_controller_sockets(socketIO: SocketIO):
+	sensorInfoRequest = 'sensor/SensorInfo/request'
+	sensorInfoResponse = 'sensor/SensorInfo/response'
+
+	@socketIO.on(sensorInfoRequest)
+	def handle_feedback(data):
+		robot_id = data['robot_id']
+		message = data['message']
+		
+		if not robot_id:
+			emit(sensorInfoResponse, response404)
+			return
+		
+		print('Received Feedback from ESP')
+		print('Message: ' + message)
+		
+		emit(sensorInfoResponse, {'sucess': True, 'message': message})
+	
+  
 	@socketIO.on('disconnect')
 	def handle_disconnect():
 		disconnected_sid = request.sid 
