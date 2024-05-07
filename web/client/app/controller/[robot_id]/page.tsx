@@ -73,6 +73,22 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     return () => {};
   }, [controller, isUseRobot, updateControls]);
 
+  // useEffect(() => {
+  //   if (controller) {
+  //     controller.getSensorInfoOff();
+  //     controller.getSensorInfo();
+  //     controller.setGetSensorInfoResponse(robot, setRobot);
+  //   }
+
+  //   return () => {};
+  // }, [controller, robot]);
+  
+  if (controller) {
+    // controller.getSensorInfoOff();
+    // controller.getSensorInfo();
+    controller.setGetSensorInfoResponse(robot, setRobot);
+  }
+
   const toggleRobot = () => {
     if (!isTurnOnRobot) {
       controller?.turnOn(robot?.robot_id);
@@ -229,7 +245,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
         <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Robot Status: </Label>
-          <label className="text-xl font-bold">Hello world</label>
+          <label className="text-xl font-bold">{robot.sensor_info}</label>
         </div>
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
