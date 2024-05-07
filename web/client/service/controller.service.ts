@@ -1,3 +1,4 @@
+import { RobotDataProps } from "@/configs/types";
 import { Dispatch, SetStateAction } from "react";
 import { Socket, io } from "socket.io-client";
 
@@ -31,6 +32,10 @@ export class ControllerService {
       // this.socket.off("controller/TurnOnRobot/response");
     });
 
+    this.socket.on("sensor/SensorInfo/response", (data: any) => {
+      console.log("Sensor Info Response Received", data);
+    });
+
     this.socket.on("controller/TurnOffRobot/response", (data: any) => {
       console.log("Turn Off Response received", data);
     });
@@ -42,11 +47,33 @@ export class ControllerService {
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Control Robot received ", data);
     });
+
+    // this.socket.on("sensor/SensorInfo/response", (data: any) => {
+    //   console.log("Data received: ", data)
+    // })
   }
-  
-  public getContolResponseOff(){
+
+  public getContolResponseOff() {
     this.socket.off("controller/GetControl/response");
   }
+
+  public getSensorInfoOff() {
+    this.socket.off("sensor/SensorInfo/response");
+  }
+
+  public setGetSensorInfoResponse(
+    robot: RobotDataProps,
+    setRobot: Dispatch<SetStateAction<RobotDataProps>>
+  ) {
+    this.socket.on("sensor/SensorInfo/response", (data: any) => {
+      console.log("Retrieved Sensor Info", data);
+      if (data.statusCode !== 404 && data.message !== '') {
+        console.log(data.message);
+        setRobot({ ...robot, sensor_info: data.message });
+      }
+    });
+  }
+  
 
   public setGetControlResponse(
     setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
@@ -58,7 +85,6 @@ export class ControllerService {
       } else {
         const controlObject = { steer: data.Steer, drive: data.Drive };
         setControl(controlObject);
-        console.log("set control")
       }
     });
   }
@@ -152,6 +178,11 @@ export class ControllerService {
   public getControl() {
     this.socket.emit("controller/GetControl/request", {
       robotId: this._robotId,
+    });
+  }
+  public getSensorInfo() {
+    this.socket.emit("sensor/SensorInfo/request", {
+      robot_id: this._robotId,
     });
   }
 }
