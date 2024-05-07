@@ -5,6 +5,9 @@
 #define C_REQ_CONTROL_ROBOT "controller/ControlRobot/request"
 #define C_REQ_GET_CONTROL "controller/GetControl/request"
 
+//* Sensor Request
+#define S_REQ_SENSOR_INFO "sensor/SensorInfo/request"
+
 //* Responses
 #define C_RES_CONNECT "connected"
 #define C_RES_TURNON_ROBOT "controller/TurnOnRobot/response"
