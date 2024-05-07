@@ -40,17 +40,17 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on(sensorInfoRequest)
 	def handle_feedback(data):
-		robot_id = data['robot_id']
-		message = data['message']
+		robot_id = data.get('robot_id', '')
+		message = data.get('message', '')
 		
-		if not robot_id:
-			emit(sensorInfoResponse, response404)
+		if robot_id == '' or message == '':
+			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
 			return
 		
 		print('Received Feedback from ESP')
 		print('Message: ' + message)
 		
-		emit(sensorInfoResponse, {'sucess': True, 'message': message})
+		emit(sensorInfoResponse, {'success': True, 'message': message})
 	
   
 	@socketIO.on('disconnect')
