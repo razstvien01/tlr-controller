@@ -37,7 +37,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-    
+
     JsonObject obj = doc.as<JsonObject>();
 
     if (eventName == C_RES_CONNECT)
@@ -46,19 +46,19 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
     else if (eventName == C_RES_TURNON_ROBOT)
     {
-      controller.turnOnResponse((char *) payload);
+      controller.turnOnResponse((char *)payload);
     }
     else if (eventName == C_RES_TURNOFF_ROBOT)
     {
-      controller.turnOffResponse((char *) payload);
+      controller.turnOffResponse((char *)payload);
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse((char *) payload);
+      controller.getControlResponse((char *)payload);
     }
     else if (eventName == C_RES_CONTROL_ROBOT)
     {
-      controller.controlRobotResponse((char *) payload);
+      controller.controlRobotResponse((char *)payload);
     }
 
     //! Message Includes a ID for a ACK (callback)
@@ -111,10 +111,32 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
   Serial.println(message);
 }
 
+void SocketIOManager::handleReceivedData()
+{
+  String receivedData = Serial.readStringUntil('\n');
+  StaticJsonDocument<200> receivedDoc;
+  DeserializationError error = deserializeJson(receivedDoc, receivedData);
+
+  if (!error)
+  {
+    const char *key = receivedDoc["key"];
+    const char *source = receivedDoc["message"];
+    
+    Serial.print("Key: ");
+    Serial.println(key);
+    Serial.print("Info: ");
+    Serial.println(source);
+  }
+}
+
 void SocketIOManager::loop()
 {
   socketIO.loop();
   controller.getControlRequest();
+
+  if(Serial.available()){
+    handleReceivedData();
+  }
 }
 
 SocketIOManager::SocketIOManager() : controller(socketIO)
