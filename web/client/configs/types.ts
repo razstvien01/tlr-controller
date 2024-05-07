@@ -15,4 +15,5 @@ export interface RobotDataProps {
   status: string
   doc_id: string
   user_id: string
+  sensor_info: string
 }
