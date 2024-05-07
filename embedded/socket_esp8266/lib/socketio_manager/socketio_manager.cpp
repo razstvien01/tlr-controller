@@ -116,7 +116,6 @@ void SocketIOManager::sendDataToServer(const char* message){
   JsonArray array = doc.to<JsonArray>();
   array.add(S_REQ_SENSOR_INFO);
   
-  // "sensor/SensorInfo/request"
   JsonObject data = array.createNestedObject();
   
   data["robot_id"] = RID;

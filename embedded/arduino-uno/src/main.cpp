@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 
 StaticJsonDocument<200> doc;
+bool toggleTest = true;
 
 void setup()
 {
@@ -10,15 +11,13 @@ void setup()
   delay(1000);
 }
 
-void handleControlEvent(JsonObject payload) {
-  if (payload.containsKey("statusCode")) {
-    int statusCode = payload["statusCode"];
-    Serial.print("Status Code: ");
-    Serial.println(statusCode);
-  } else {
+void handleControlEvent(JsonObject payload)
+{
+  if (!payload.containsKey("statusCode"))
+  {
     int drive = payload["Drive"];
     int steer = payload["Steer"];
-    
+
     Serial.print("Drive: ");
     Serial.print(drive);
     Serial.print(", Steer: ");
@@ -26,21 +25,28 @@ void handleControlEvent(JsonObject payload) {
   }
 }
 
-void handleReceivedData() {
+void handleReceivedData()
+{
   String receivedData = Serial.readStringUntil('\n');
   StaticJsonDocument<200> receivedDoc;
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
 
-  if (!error) {
+  if (!error)
+  {
     const char *event = receivedDoc[0];
     JsonObject payload = receivedDoc[1];
 
-    if (strcmp(event, C_RES_TURNOFF_ROBOT) == 0) {
+    if (strcmp(event, C_RES_TURNOFF_ROBOT) == 0)
+    {
       // Handle turn off robot event
-    } else if (strcmp(event, C_RES_GET_CONTROL) == 0) {
+    }
+    else if (strcmp(event, C_RES_GET_CONTROL) == 0)
+    {
       handleControlEvent(payload);
     }
-  } else {
+  }
+  else
+  {
     Serial.println("JSON Parsing Error");
   }
 }
@@ -56,8 +62,14 @@ void sendDataToESP()
 
 void loop()
 {
+  if (toggleTest)
+  {
+    sendDataToESP();
+    toggleTest = false;
+  }
   sendDataToESP();
-  if (Serial.available()) {
+  if (Serial.available())
+  {
     handleReceivedData();
   }
 }
