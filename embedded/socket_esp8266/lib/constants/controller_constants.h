@@ -7,6 +7,7 @@
 
 //* Sensor Request
 #define S_REQ_SENSOR_INFO "sensor/SensorInfo/request"
+#define S_REQ_SENSOR_UPDATE "sensor/SensorUpdate/request"
 
 //* Responses
 #define C_RES_CONNECT "connected"

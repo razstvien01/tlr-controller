@@ -54,7 +54,7 @@ void SocketIOController::controlRobotRequest()
 
     JsonObject param1 = array.createNestedObject();
     param1["id"] = RID;
-    
+
     String output;
     serializeJson(doc, output);
 

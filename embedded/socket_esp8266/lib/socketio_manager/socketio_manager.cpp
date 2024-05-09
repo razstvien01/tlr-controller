@@ -111,19 +111,20 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
   Serial.println(message);
 }
 
-void SocketIOManager::sendDataToServer(const char* message){
+void SocketIOManager::sendDataToServer(const char *message)
+{
   DynamicJsonDocument doc(1024);
   JsonArray array = doc.to<JsonArray>();
-  array.add(S_REQ_SENSOR_INFO);
-  
+  array.add(S_REQ_SENSOR_UPDATE);
+
   JsonObject data = array.createNestedObject();
-  
+
   data["robot_id"] = RID;
   data["message"] = message;
-  
+
   String output;
   serializeJson(doc, output);
-  
+
   socketIO.sendEVENT(output);
 }
 
@@ -137,7 +138,7 @@ void SocketIOManager::handleReceivedData()
   {
     const char *key = receivedDoc["key"];
     const char *message = receivedDoc["message"];
-    
+
     sendDataToServer(message);
   }
 }
@@ -147,7 +148,8 @@ void SocketIOManager::loop()
   socketIO.loop();
   controller.getControlRequest();
 
-  if(Serial.available()){
+  if (Serial.available())
+  {
     handleReceivedData();
   }
 }

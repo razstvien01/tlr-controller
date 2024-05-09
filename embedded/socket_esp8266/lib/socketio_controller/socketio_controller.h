@@ -7,9 +7,10 @@
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
 
-class SocketIOController {
+class SocketIOController
+{
 public:
-    SocketIOController(SocketIOclient& socketIOClient);
+    SocketIOController(SocketIOclient &socketIOClient);
     ~SocketIOController();
     void turnOnRequest();
     void turnOnResponse(const char *payload);
@@ -21,7 +22,7 @@ public:
     void getControlResponse(const char *payload);
 
 private:
-    SocketIOclient& socketIOClient;
+    SocketIOclient &socketIOClient;
 };
 
 #endif

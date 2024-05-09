@@ -1,6 +1,8 @@
 from flask_socketio import SocketIO, emit
 from flask import request
 from data.controller_input import ControllerInput
+from data.robot_data import RobotData
+from data.sensor_input import SensorInput
 from firebase_admin import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
 from constants import constants
@@ -41,18 +43,32 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(sensorInfoRequest)
 	def handle_feedback(data):
 		robot_id = data.get('robot_id', '')
-		message = data.get('message', '')
 		
 		if robot_id == '':
 			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
 			return
 		
+		print('Checking Sensors from ESP')
+		
+		emit(sensorInfoResponse, control_sessions[robot_id].Sensor.serializable())
+	
+	sensorUpdateRequest = 'sensor/SensorUpdate/request'
+	sensorUpdateResponse = 'sensor/SensorUpdate/response'
+
+	@socketIO.on(sensorUpdateRequest)
+	def sensorUpdate(data):
+		robot_id = data.get('robot_id', '')
+		message = data.get('message', '')
+		
+		if robot_id == '':
+			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
+			return
+		control_sessions[robot_id].Sensor.Message = message
+
 		print('Received Feedback from ESP')
 		print('Message: ' + message)
-		
-		emit(sensorInfoResponse, {'success': True, 'message': message})
-	
-  
+		emit(sensorUpdateResponse, responseSuccess())
+
 	@socketIO.on('disconnect')
 	def handle_disconnect():
 		disconnected_sid = request.sid 
@@ -91,7 +107,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		print(f"Turning On Robot, Session: {session_key} with Key: {id}")\
     
 		sessions[session_key][id] = {}
-		control_sessions[id] = ControllerInput(None)
+		control_sessions[id] = RobotData(None)
   
 		update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
@@ -171,10 +187,10 @@ def configure_controller_sockets(socketIO: SocketIO):
 			return
 
 		if(drive != None):
-			session.Drive = drive
+			session.Control.Drive = drive
 
 		if(steer != None):
-			session.Steer = steer
+			session.Control.Steer = steer
 
 		emit(controlRobotResponse, {'success': True, 'drive': drive, 'steer': steer})
 
@@ -199,7 +215,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(getControlResponse, response404())
 			return
 
-		emit(getControlResponse, control_session.serializable())
+		emit(getControlResponse, control_session.Control.serializable())
 
 	
 def response404():
