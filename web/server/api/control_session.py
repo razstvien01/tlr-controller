@@ -43,7 +43,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		robot_id = data.get('robot_id', '')
 		message = data.get('message', '')
 		
-		if robot_id == '' or message == '':
+		if robot_id == '':
 			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
 			return
 		
