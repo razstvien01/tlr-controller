@@ -48,7 +48,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       fetchRobotByID(params.robot_id);
     }
 
-    return () => {};
+    return () => { };
   }, [params.robot_id]);
 
   useEffect(() => {
@@ -61,9 +61,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
       newController.setGetSensorInfoResponse(robot, setRobot);
-      
+
     }
-    return () => {};
+    return () => { };
   }, [controller, userData, robot?.robot_id, robot]);
 
   useEffect(() => {
@@ -73,15 +73,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       controller.setGetControlResponse(setControlValuePresent);
     }
 
-    return () => {};
+    return () => { };
   }, [controller, isUseRobot, updateControls]);
-  
+
   useEffect(() => {
     //Set Interval
     const interval = setInterval(() => {
       var now = Date.now();
       var deltaTime = now - lastDateTime;
-      
+
       if (deltaTime > 1000) {
         setLastDateTime(now);
         controller?.getSensorInfoOff();

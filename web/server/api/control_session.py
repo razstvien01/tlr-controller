@@ -45,7 +45,15 @@ def configure_controller_sockets(socketIO: SocketIO):
 		robot_id = data.get('robot_id', '')
 		
 		if robot_id == '':
-			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
+			emit(sensorInfoResponse, response404())
+			return
+		
+		if(robot_id not in control_sessions):
+			emit(sensorInfoResponse, response404())
+			return
+
+		if(control_sessions[robot_id].AssignedUser == None):
+			emit(sensorInfoResponse, response404())
 			return
 		
 		print('Checking Sensors from ESP')
@@ -61,8 +69,17 @@ def configure_controller_sockets(socketIO: SocketIO):
 		message = data.get('message', '')
 		
 		if robot_id == '':
-			emit(sensorInfoResponse, {'statusCode': 404, 'message': 'Not Found'})
+			emit(sensorUpdateResponse, response404())
 			return
+		
+		if(robot_id not in control_sessions):
+			emit(sensorUpdateResponse, response404())
+			return
+
+		if(control_sessions[robot_id].AssignedUser == None):
+			emit(sensorUpdateResponse, response404())
+			return
+
 		control_sessions[robot_id].Sensor.Message = message
 
 		print('Received Feedback from ESP')
