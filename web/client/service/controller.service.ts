@@ -18,8 +18,7 @@ export class ControllerService {
     this._socket = io(this.socketURL);
     this._robotId = robotId;
     this._userId = userId;
-
-    // this.turnOn(this._robotId);
+    
     console.log("Robot ID: " + this._robotId);
     console.log("User ID: " + this._userId);
 
@@ -47,10 +46,7 @@ export class ControllerService {
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Control Robot received ", data);
     });
-
-    // this.socket.on("sensor/SensorInfo/response", (data: any) => {
-    //   console.log("Data received: ", data)
-    // })
+    
   }
 
   public getContolResponseOff() {
@@ -65,6 +61,7 @@ export class ControllerService {
     robot: RobotDataProps,
     setRobot: Dispatch<SetStateAction<RobotDataProps>>
   ) {
+    console.log('setGetSensorInfoResponse')
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
       console.log("Retrieved Sensor Info", data);
       if (data.statusCode !== 404 && data.message !== '') {
