@@ -9,9 +9,9 @@
 WifiHelper wifiHelper;
 SocketIOManager socketIOManager;
 
-void pingServer()
+void pingServer(const char* host)
 {
-  if (Ping.ping(SOCKETIO_HOST, 5))
+  if (Ping.ping(host, 5))
   {
     Serial.println("Can now ping the socketio host");
   }
@@ -29,7 +29,7 @@ void setup()
   // //! Connect to WiFi
   wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
   
-  pingServer();
+  pingServer(SOCKETIO_HOST);
 
   //! Initialize SocketIOClient
   socketIOManager.begin(SOCKETIO_LOCALHOST, SOCKETIO_LOCALPORT, SOCKETIO_URL);
@@ -38,7 +38,7 @@ void setup()
 void loop()
 {
 
-  // socketIOManager.loop();
+  socketIOManager.loop();
 
   if (!wifiHelper.isConnected())
   {
