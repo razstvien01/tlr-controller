@@ -23,6 +23,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
   const [robot, setRobot] = useState<RobotDataProps>(RobotDataInit);
+  const [lastDateTime, setLastDateTime] = useState(Date.now());
 
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
@@ -72,22 +73,23 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
     return () => {};
   }, [controller, isUseRobot, updateControls]);
-
-  // useEffect(() => {
-  //   if (controller) {
-  //     controller.getSensorInfoOff();
-  //     controller.getSensorInfo();
-  //     controller.setGetSensorInfoResponse(robot, setRobot);
-  //   }
-
-  //   return () => {};
-  // }, [controller, robot]);
   
-  if (controller) {
-    // controller.getSensorInfoOff();
-    // controller.getSensorInfo();
-    controller.setGetSensorInfoResponse(robot, setRobot);
-  }
+  useEffect(() => {
+    //Set Interval
+    const interval = setInterval(() => {
+      var now = Date.now();
+      var deltaTime = now - lastDateTime;
+      
+      if (deltaTime > 1000) {
+        setLastDateTime(now);
+        controller?.getSensorInfoOff();
+        controller?.getSensorInfo();
+        controller?.setGetSensorInfoResponse(robot, setRobot)
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [controller, lastDateTime, robot]);
 
   const toggleRobot = () => {
     if (!isTurnOnRobot) {
