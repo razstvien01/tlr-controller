@@ -60,9 +60,11 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       );
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
+      newController.setGetSensorInfoResponse(robot, setRobot);
+      
     }
     return () => {};
-  }, [controller, userData, robot?.robot_id]);
+  }, [controller, userData, robot?.robot_id, robot]);
 
   useEffect(() => {
     if (controller) {
@@ -83,7 +85,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       if (deltaTime > 1000) {
         setLastDateTime(now);
         controller?.getSensorInfoOff();
-        controller?.getSensorInfo();
+        // controller?.getSensorInfo();
         controller?.setGetSensorInfoResponse(robot, setRobot)
       }
     }, 1000);
@@ -247,7 +249,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
         <div className="flex flex-col p-5 items-center">
           <Label className="text-lg">Robot Status: </Label>
-          <label className="text-xl font-bold">{robot.sensor_info}</label>
+          <label className="text-xl font-bold">{robot?.sensor_info}</label>
         </div>
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
