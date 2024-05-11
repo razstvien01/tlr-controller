@@ -63,7 +63,7 @@ export class ControllerService {
   ) {
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
       // console.log("Retrieved Sensor Info", data);
-      if (data.statusCode !== 404 && data.Message !== '') {
+      if (data.statusCode !== 404 && data.Message !== '' && data.Message != null) {
         // console.log(data.message);
         console.log("AAAAAAAAAAAAAAA Info", data);
         console.log(data.Message)
