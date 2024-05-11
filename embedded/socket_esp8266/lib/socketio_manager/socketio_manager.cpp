@@ -7,6 +7,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
   case sIOtype_DISCONNECT:
     Serial.printf("[IOc] Disconnected!\n");
+    wifiClientSecure.stop();
     break;
   case sIOtype_CONNECT:
     Serial.printf("[IOc] Connected to url: %s\n", payload);
@@ -99,6 +100,22 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
 
 void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
 {
+  int retries = 6;
+  while (!wifiClientSecure.connect(host, port) && (retries-- > 0))
+  {
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println();
+  if (!wifiClientSecure.connected())
+  {
+    Serial.println("Failed to connect");
+    wifiClientSecure.stop();
+    return;
+  }
+
+  Serial.println(wifiClientSecure.available());
+
   socketIO.begin(host, port, path);
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->onEvent(type, payload, length); });

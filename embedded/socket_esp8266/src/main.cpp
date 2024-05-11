@@ -8,7 +8,6 @@
 WifiHelper wifiHelper;
 SocketIOManager socketIOManager;
 
-
 void setup()
 {
   Serial.begin(9600);
