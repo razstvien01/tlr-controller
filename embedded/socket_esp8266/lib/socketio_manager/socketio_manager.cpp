@@ -21,7 +21,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-
+    
     if (id)
     {
       payload = (uint8_t *)sptr;
@@ -101,23 +101,25 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
 
 void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
 {
-  int retries = 6;
-  while (!wifiClientSecure.connect(host, port) && (retries-- > 0))
-  {
-    Serial.print(".");
-    delay(1000);
-  }
-  Serial.println();
-  if (!wifiClientSecure.connected())
-  {
-    Serial.println("Failed to connect");
-    wifiClientSecure.stop();
-    return;
-  }
-
-  Serial.println(wifiClientSecure.available());
-
-  socketIO.begin(host, port, path);
+  // wifiClientSecure.setCertStore();
+  // int retries = 6;
+  // while (!wifiClientSecure.connect(host, port) && (retries-- > 0))
+  // {
+  //   Serial.print(".");
+  //   delay(1000);
+  // }
+  // Serial.println();
+  // if (!wifiClientSecure.connected())
+  // {
+  //   Serial.println("Failed to connect");
+  //   wifiClientSecure.stop();
+  //   return;
+  // }
+  
+  
+  // Serial.println(wifiClientSecure.available());
+  
+  socketIO.beginSSL(host, port, path);
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->onEvent(type, payload, length); });
 }
