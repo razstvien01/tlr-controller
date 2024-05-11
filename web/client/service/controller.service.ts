@@ -15,7 +15,8 @@ export class ControllerService {
         "NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables."
       );
     }
-    this._socket = io(this.socketURL, { transports : ['websocket'] });
+    this._socket = io(this.socketURL, { transports: ['websocket', 'polling', 'flashsocket'] });
+    
     this._robotId = robotId;
     this._userId = userId;
     
