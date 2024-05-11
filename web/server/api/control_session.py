@@ -81,9 +81,11 @@ def configure_controller_sockets(socketIO: SocketIO):
 			return
 
 		control_sessions[robot_id].Sensor.Message = message
-
-		print('Received Feedback from ESP')
-		print('Message: ' + message)
+		
+		if message:
+			print('Received Feedback from ESP')
+			print('Message: ' + message)
+		
 		emit(sensorUpdateResponse, responseSuccess())
 
 	@socketIO.on('disconnect')
@@ -124,7 +126,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		print(f"Turning On Robot, Session: {session_key} with Key: {id}")\
     
 		sessions[session_key][id] = {}
-		control_sessions[id] = RobotData(None)
+		control_sessions[id] = RobotData()
   
 		update_robot_status(id, constants.RobotStatus.ACTIVE)
 		

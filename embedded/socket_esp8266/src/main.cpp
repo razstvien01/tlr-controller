@@ -29,7 +29,7 @@ void setup()
   // //! Connect to WiFi
   wifiHelper.wifiConnect(WIFI_SSID, WIFI_PASSWORD);
   
-  pingServer(SOCKETIO_HOST);
+  // pingServer(SOCKETIO_HOST);
 
   //! Initialize SocketIOClient
   socketIOManager.begin(SOCKETIO_LOCALHOST, SOCKETIO_LOCALPORT, SOCKETIO_URL);

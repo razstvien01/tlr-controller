@@ -61,16 +61,17 @@ export class ControllerService {
     robot: RobotDataProps,
     setRobot: Dispatch<SetStateAction<RobotDataProps>>
   ) {
-    console.log('setGetSensorInfoResponse')
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
-      console.log("Retrieved Sensor Info", data);
-      if (data.statusCode !== 404 && data.message !== '') {
-        console.log(data.message);
-        setRobot({ ...robot, sensor_info: data.message });
+      // console.log("Retrieved Sensor Info", data);
+      if (data.statusCode !== 404 && data.Message !== '') {
+        // console.log(data.message);
+        console.log("AAAAAAAAAAAAAAA Info", data);
+        console.log(data.Message)
+        setRobot({ ...robot, sensor_info: data.Message });
       }
     });
   }
-  
+    
 
   public setGetControlResponse(
     setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>

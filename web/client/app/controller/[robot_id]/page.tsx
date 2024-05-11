@@ -84,9 +84,8 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
       if (deltaTime > 1000) {
         setLastDateTime(now);
-        controller?.getSensorInfoOff();
-        // controller?.getSensorInfo();
-        controller?.setGetSensorInfoResponse(robot, setRobot)
+        controller?.getSensorInfo();
+        
       }
     }, 1000);
 
@@ -247,7 +246,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           </Label>
         </div>
 
-        <div className="flex flex-col p-5 items-center">
+        <div className="flex flex-col p-5 items-center text-wrap">
           <Label className="text-lg">Robot Status: </Label>
           <label className="text-xl font-bold">{robot?.sensor_info}</label>
         </div>

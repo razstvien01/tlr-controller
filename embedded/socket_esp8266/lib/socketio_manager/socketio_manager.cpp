@@ -133,12 +133,14 @@ void SocketIOManager::handleReceivedData()
   String receivedData = Serial.readStringUntil('\n');
   StaticJsonDocument<200> receivedDoc;
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  
 
   if (!error)
   {
     const char *key = receivedDoc["key"];
     const char *message = receivedDoc["message"];
-
+    Serial.println(receivedData);
+    
     sendDataToServer(message);
   }
 }
