@@ -21,7 +21,6 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-    // Serial.printf("[IOc] get event: %s id: %d\n", payload, id);
 
     if (id)
     {
@@ -39,6 +38,8 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
+
+    JsonObject obj = doc.as<JsonObject>();
 
     if (eventName == C_RES_CONNECT)
     {
@@ -127,10 +128,49 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
   Serial.println(message);
 }
 
+void SocketIOManager::sendDataToServer(const char *message)
+{
+  DynamicJsonDocument doc(1024);
+  JsonArray array = doc.to<JsonArray>();
+  array.add(S_REQ_SENSOR_UPDATE);
+
+  JsonObject data = array.createNestedObject();
+
+  data["robot_id"] = RID;
+  data["message"] = message;
+
+  String output;
+  serializeJson(doc, output);
+
+  socketIO.sendEVENT(output);
+}
+
+void SocketIOManager::handleReceivedData()
+{
+  String receivedData = Serial.readStringUntil('\n');
+  StaticJsonDocument<200> receivedDoc;
+  DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  
+
+  if (!error)
+  {
+    const char *key = receivedDoc["key"];
+    const char *message = receivedDoc["message"];
+    Serial.println(receivedData);
+    
+    sendDataToServer(message);
+  }
+}
+
 void SocketIOManager::loop()
 {
   socketIO.loop();
   controller.getControlRequest();
+
+  if (Serial.available())
+  {
+    handleReceivedData();
+  }
 }
 
 SocketIOManager::SocketIOManager() : controller(socketIO)

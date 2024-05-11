@@ -5,6 +5,8 @@
 #include <SocketIOclient.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
+
+#include "controller_constants.h"
 #include "socketio_controller.h"
 
 class SocketIOManager
@@ -16,6 +18,8 @@ public:
     void loop();
     void onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length);
     void connectResponse(const JsonObject &obj);
+    void handleReceivedData();
+    void sendDataToServer(const char *message);
 
 private:
     SocketIOclient socketIO;

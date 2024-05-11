@@ -12,10 +12,19 @@ import {
 import { ControllerService } from "@/service/controller.service";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
 import { Toggle } from "@/components/ui/toggle";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { RobotDataProps } from "@/configs/types";
+import { getRobotByID } from "@/service/robots.service";
+import { RobotDataInit } from "@/configs/init";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
+  const [userData, setUserData] = useUserDataAtom();
   const [controller, setController] = useState<ControllerService | null>(null);
   const [isUseRobot, setIsUseRobot] = useState(false);
+  const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
+  const [robot, setRobot] = useState<RobotDataProps>(RobotDataInit);
+  const [lastDateTime, setLastDateTime] = useState(Date.now());
+
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
     drive: 0,
@@ -25,18 +34,37 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
   redirectBackIfUnAuthenticated();
 
+  const fetchRobotByID = async (doc_id: string) => {
+    if (doc_id) {
+      const response = await getRobotByID(doc_id);
+      if (response.success) {
+        setRobot(response.robot_data);
+      }
+    }
+  };
+
   useEffect(() => {
-    if (!controller) {
+    if (params.robot_id) {
+      fetchRobotByID(params.robot_id);
+    }
+
+    return () => { };
+  }, [params.robot_id]);
+
+  useEffect(() => {
+    if (!controller && userData?.user_id && robot?.robot_id) {
       //* Create the controller only if it's not already created
       const newController = new ControllerService(
-        params.robot_id,
-        "z5vydzfsluZm0RPqTBVHccrip9i2"
+        robot?.robot_id,
+        userData.user_id
       );
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
+      newController.setGetSensorInfoResponse(robot, setRobot);
+
     }
-    return () => {};
-  }, [controller, params.robot_id]);
+    return () => { };
+  }, [controller, userData, robot?.robot_id, robot]);
 
   useEffect(() => {
     if (controller) {
@@ -45,8 +73,33 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       controller.setGetControlResponse(setControlValuePresent);
     }
 
-    return () => {};
+    return () => { };
   }, [controller, isUseRobot, updateControls]);
+
+  useEffect(() => {
+    //Set Interval
+    const interval = setInterval(() => {
+      var now = Date.now();
+      var deltaTime = now - lastDateTime;
+
+      if (deltaTime > 1000) {
+        setLastDateTime(now);
+        controller?.getSensorInfo();
+        
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [controller, lastDateTime, robot]);
+
+  const toggleRobot = () => {
+    if (!isTurnOnRobot) {
+      controller?.turnOn(robot?.robot_id);
+    } else {
+      controller?.turnOff(robot?.robot_id);
+    }
+    setIsTurnOnRobot(!isTurnOnRobot);
+  };
 
   const useRobot = () => {
     if (controller) {
@@ -127,6 +180,15 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
+        {/* <Toggle
+          className="text-lg ml-auto mr-4 bg-primary"
+          id="toggleTurnOn"
+          variant={"outline"}
+          size={"lg"}
+          onPressedChange={toggleRobot}
+        >
+          {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
+        </Toggle> */}
       </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">
@@ -184,9 +246,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           </Label>
         </div>
 
-        <div className="flex flex-col p-5 items-center">
+        <div className="flex flex-col p-5 items-center text-wrap">
           <Label className="text-lg">Robot Status: </Label>
-          <label className="text-xl font-bold">Hello world</label>
+          <label className="text-xl font-bold">{robot?.sensor_info}</label>
         </div>
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>

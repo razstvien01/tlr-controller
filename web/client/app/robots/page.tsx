@@ -7,27 +7,30 @@ import { Separator } from "@/components/ui/separator";
 import { AddRobotDialog } from "@/components/dialogs/add-robot-dialog";
 import Link from "next/link";
 import RobotCard from "@/components/robot-card";
-import { getRobots } from "@/service/robots.service";
+import { getRobots, getRobotsByID } from "@/service/robots.service";
 import { RobotDataProps } from "@/configs/types";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { TPH2 } from "@/components/typography/tp-h2";
 
 export default function Robots() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [successAdd, setSuccessAdd] = useState<boolean>(false);
-  const [robots, setRobots] = useState<RobotDataProps[]>([])
-  
-  const fetchRobots = async () =>{
-    const response = await getRobots()
-    setRobots(response.robot_data)
-  }
-  
-  useEffect(() => {
-    fetchRobots()
-  
-    return () => {
-      
+  const [robots, setRobots] = useState<RobotDataProps[]>([]);
+  const [userData, setUserData] = useUserDataAtom();
+
+  const fetchRobots = async () => {
+    if (userData?.user_id) {
+      const response = await getRobotsByID(userData.user_id);
+      setRobots(response.robot_data);
     }
-  }, [successAdd])
-  
+  };
+
+  useEffect(() => {
+    fetchRobots();
+
+    return () => {};
+  }, [successAdd, userData?.user_id]);
+
   return (
     <>
       <AddRobotDialog
@@ -55,11 +58,15 @@ export default function Robots() {
 
         <div className="relative justify-center items-center">
           <div className="grid grid-cols-4">
-            {robots.map((robot: RobotDataProps) => (
-              <Link key={robot.robot_id} href={`/controller/${robot.doc_id}`}>
-                <RobotCard robot={robot}/>
-              </Link>
-            ))}
+            {robots?.length > 0 ? (
+              robots?.map((robot: RobotDataProps) => (
+                <Link key={robot.robot_id} href={`/controller/${robot.doc_id}`}>
+                  <RobotCard robot={robot} />
+                </Link>
+              ))
+            ) : (
+              <TPH2>No Robots Found</TPH2>
+            )}
           </div>
         </div>
         <Separator className="my-4" />

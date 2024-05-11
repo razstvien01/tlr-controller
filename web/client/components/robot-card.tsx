@@ -41,10 +41,10 @@ export default function RobotCard({ robot }: RobotCardProps) {
         <p className="text-lg font-semibold">Status:</p>
         <p
           className={`pl-2 text-lg font-semibold mb-2 ${
-            robot.status === "online" ? "text-green-500" : "text-red-500"
+            robot.status === "active" ? "text-green-500" : "text-red-500"
           }`}
         >
-          {robot.status}
+          {robot.status.charAt(0).toUpperCase() + robot.status.substring(1)}
         </p>
       </CardContent>
       <CardFooter>

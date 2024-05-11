@@ -5,6 +5,7 @@ from api.control_session import configure_controller_sockets
 from dotenv import load_dotenv
 import os
 import signal
+import firebase_admin
 
 load_dotenv()
 
@@ -25,6 +26,9 @@ def index():
 
 def stop_server(signal, frame):
     socketio.stop()
+
+cred_obj = firebase_admin.credentials.Certificate('key.json')
+default_app = firebase_admin.initialize_app(cred_obj)
 
 if __name__ == '__main__':
     print('running server at 5000')
