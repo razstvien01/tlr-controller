@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = secret_key
 cors = CORS(app)
 
 socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
-
+    
 configure_controller_sockets(socketio)
 
 @app.route('/')
