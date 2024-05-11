@@ -62,9 +62,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       newController.setGetControlResponse(setControlValuePresent);
       newController.setGetSensorInfoResponse(robot, setRobot);
     }
-    return () => {
-      controller?.socket.close();
-    };
+    return () => {};
   }, [controller, userData, robot?.robot_id, robot]);
 
   useEffect(() => {
