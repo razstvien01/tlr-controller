@@ -23,7 +23,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-    
+
     if (id)
     {
       payload = (uint8_t *)sptr;
@@ -40,7 +40,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-    
+
     if (eventName == C_RES_CONNECT)
     {
       connectResponse(doc[1]);
@@ -55,12 +55,30 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse((char *)payload);
+      JsonObject response = doc[1];
+
+      // Check if the response contains a "statusCode" field
+      if (response.containsKey("statusCode"))
+      {
+
+        String formattedPayload = String(1) + ", " + String(0) + ", " + String(0) + ", " + String(0);
+
+        controller.controlRobotResponse(formattedPayload.c_str());
+      }
+      else
+      {
+        int steer = response["Steer"].as<int>();
+        int drive = response["Drive"].as<int>();
+
+        String formattedPayload = String(1) + ", " + String(1) + ", " + String(drive) + ", " + String(steer);
+
+        controller.controlRobotResponse(formattedPayload.c_str());
+      }
     }
-    else if (eventName == C_RES_CONTROL_ROBOT)
-    {
-      controller.controlRobotResponse((char *)payload);
-    }
+    // else if (eventName == C_RES_CONTROL_ROBOT)
+    // {
+    //   controller.controlRobotResponse((char *)payload);
+    // }
 
     //! Message Includes a ID for a ACK (callback)
     if (id)
@@ -115,10 +133,9 @@ void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
   //   wifiClientSecure.stop();
   //   return;
   // }
-  
-  
+
   // Serial.println(wifiClientSecure.available());
-  
+
   socketIO.beginSSL(host, port, path);
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->onEvent(type, payload, length); });
@@ -152,13 +169,11 @@ void SocketIOManager::handleReceivedData()
   String receivedData = Serial.readStringUntil('\n');
   StaticJsonDocument<200> receivedDoc;
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
-  
 
   if (!error)
   {
-    const char *key = receivedDoc["key"];
     const char *message = receivedDoc["message"];
-    
+
     sendDataToServer(message);
   }
 }
