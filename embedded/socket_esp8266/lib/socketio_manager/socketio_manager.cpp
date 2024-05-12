@@ -145,11 +145,11 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
 
 void SocketIOManager::sendDataToServer(const char *message)
 {
-  DynamicJsonDocument doc(1024);
+  JsonDocument doc;
   JsonArray array = doc.to<JsonArray>();
   array.add(S_REQ_SENSOR_UPDATE);
 
-  JsonObject data = array.createNestedObject();
+  JsonObject data = array.add<JsonObject>();
 
   data["robot_id"] = RID;
   data["message"] = message;
@@ -163,7 +163,7 @@ void SocketIOManager::sendDataToServer(const char *message)
 void SocketIOManager::handleReceivedData()
 {
   String receivedData = Serial.readStringUntil('\n');
-  StaticJsonDocument<200> receivedDoc;
+  JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
 
   if (!error)
