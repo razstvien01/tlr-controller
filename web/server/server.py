@@ -15,9 +15,13 @@ secret_key = os.getenv('SECRET_KEY', '')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 
-cors = CORS(app, resources={r"/api/*": {"origins": "https://tlr-controller.vercel.app"}})
+# cors = CORS(app, resources={r"/api/*": {"origins": "https://tlr-controller.vercel.app"}})
 
-socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="https://tlr-controller.vercel.app")
+# socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="https://tlr-controller.vercel.app")
+
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
 
 configure_controller_sockets(socketio)
 
