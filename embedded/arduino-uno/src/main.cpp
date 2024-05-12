@@ -4,7 +4,7 @@
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
 }
 
@@ -30,13 +30,12 @@ void handleReceivedData()
     //* Anhi ka kuha ug data sa steer and drive
     int steer = values[2];
     int drive = values[3];
-    
   }
 }
 
 void sendDataToESP(const char* robotStatusInMessage)
 {
-  StaticJsonDocument<200> doc;
+  JsonDocument doc;
   JsonObject data = doc.to<JsonObject>();
   data["message"] = robotStatusInMessage;
   serializeJson(data, Serial);
