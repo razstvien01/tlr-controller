@@ -250,7 +250,13 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
 
         <div className="flex flex-col justify-start pt-5 text-wrap">
           <Label className="text-lg self-center">Robot Status: </Label>
-          <Label className="mt-2 justify-start self-center">Online</Label>
+          <Label
+            className="mt-2 justify-start self-center"
+            style={{ color: robot?.status === "active" ? "green" : "red" }}
+          >
+            {robot?.status}
+          </Label>
+
           <Label className="mt-2 justify-start">{robot?.sensor_info}</Label>
         </div>
         <div className="flex flex-col items-center pr-20 mb-2">
