@@ -11,43 +11,48 @@ void setup()
   delay(1000);
 }
 
-void handleControlEvent(JsonObject payload)
+bool isFormatCorrect(const String &str)
 {
-  if (!payload.containsKey("statusCode"))
-  {
-    int drive = payload["Drive"];
-    int steer = payload["Steer"];
+  char buffer[50];
 
-    Serial.print("Drive: ");
-    Serial.print(drive);
-    Serial.print(", Steer: ");
-    Serial.println(steer);
-  }
+  sprintf(buffer, "%d, %d, %d, %d", str.toInt(), str.toInt(), str.toInt(), str.toInt());
+
+  return strcmp(buffer, str.c_str()) == 0;
 }
 
 void handleReceivedData()
 {
-  String receivedData = Serial.readStringUntil('\n');
-  StaticJsonDocument<200> receivedDoc;
-  DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  String line = Serial.readStringUntil('\n');
+  // Serial.println("Received data: " + line);
 
-  if (!error)
+  // if (!isFormatCorrect(line))
+  // {
+  //   // Data is not in the expected format. Not handling.
+  //   Serial.println("Not Correct format");
+  //   return;
+  // }
+
+  int values[4];
+  int index = 0;
+  char lineCopy[256];
+  line.toCharArray(lineCopy, sizeof(lineCopy));
+  char *token = strtok(lineCopy, ",");
+
+  while (token != NULL)
   {
-    const char *event = receivedDoc[0];
-    JsonObject payload = receivedDoc[1];
-
-    if (strcmp(event, C_RES_TURNOFF_ROBOT) == 0)
-    {
-      // Handle turn off robot event
-    }
-    else if (strcmp(event, C_RES_GET_CONTROL) == 0)
-    {
-      handleControlEvent(payload);
-    }
+    values[index++] = atoi(token);
+    token = strtok(NULL, ",");
   }
-  else
+
+  if (values[0] == 1)
   {
-    Serial.println("JSON Parsing Error");
+    int steer = values[2];
+    int drive = values[3];
+    
+    Serial.print("Drive ");
+    Serial.print(steer);
+    Serial.print(", Steer ");
+    Serial.println(drive);
   }
 }
 
@@ -62,12 +67,7 @@ void sendDataToESP()
 
 void loop()
 {
-  if (toggleTest)
-  {
-    sendDataToESP();
-    toggleTest = false;
-  }
-  sendDataToESP();
+  // sendDataToESP();
   if (Serial.available())
   {
     handleReceivedData();
