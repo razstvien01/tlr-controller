@@ -100,7 +100,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 				if disconnected_id_key in sessions[disconnected_sid]:
 					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
 					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
-					del control_sessions[disconnected_id_key]
+					# del control_sessions[disconnected_id_key]
 		except KeyError:
 			pass
 	
