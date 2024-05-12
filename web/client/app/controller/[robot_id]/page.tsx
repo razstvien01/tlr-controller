@@ -178,7 +178,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
-        {/* <Toggle
+        <Toggle
           className="text-lg ml-auto mr-4 bg-primary"
           id="toggleTurnOn"
           variant={"outline"}
@@ -186,7 +186,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           onPressedChange={toggleRobot}
         >
           {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
-        </Toggle> */}
+        </Toggle>
       </div>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">
