@@ -28,7 +28,8 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     {
       payload = (uint8_t *)sptr;
     }
-    DynamicJsonDocument doc(JSON_DOC_SIZE);
+    // Use JsonDocument instead of DynamicJsonDocument
+    JsonDocument doc;
 
     DeserializationError error = deserializeJson(doc, payload, length);
 
@@ -60,7 +61,6 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
       // Check if the response contains a "statusCode" field
       if (response.containsKey("statusCode"))
       {
-
         String formattedPayload = String(1) + ", " + String(0) + ", " + String(0) + ", " + String(0);
 
         controller.controlRobotResponse(formattedPayload.c_str());
@@ -75,23 +75,19 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
         controller.controlRobotResponse(formattedPayload.c_str());
       }
     }
-    // else if (eventName == C_RES_CONTROL_ROBOT)
-    // {
-    //   controller.controlRobotResponse((char *)payload);
-    // }
 
     //! Message Includes a ID for a ACK (callback)
     if (id)
     {
       //* creat JSON message for Socket.IO (ack)
-      DynamicJsonDocument docOut(JSON_DOC_SIZE);
+      JsonDocument docOut;
       JsonArray array = docOut.to<JsonArray>();
 
       //* add payload (parameters) for the ack (callback function)
       JsonObject param1 = array.add<JsonObject>();
       param1["now"] = millis();
 
-      //* JSON to String (Serializion)
+      //* JSON to String (Serialization)
       String output;
       output += id;
 
