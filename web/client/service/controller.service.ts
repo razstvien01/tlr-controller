@@ -19,21 +19,15 @@ export class ControllerService {
       transports: ["websocket", "polling", "flashsocket"],
     });
     
-    // this._socket = io(this.socketURL);
-
     this._robotId = robotId;
     this._userId = userId;
-
-    console.log("Robot ID: " + this._robotId);
-    console.log("User ID: " + this._userId);
-
+  
     this.socket.on("/", (data: any) => {
       console.log("Connected to the server.", data);
     });
 
     this.socket.on("controller/TurnOnRobot/response", (data: any) => {
       console.log("Turn On Response Received", data);
-      // this.socket.off("controller/TurnOnRobot/response");
     });
 
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
