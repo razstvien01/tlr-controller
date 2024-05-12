@@ -2,72 +2,50 @@
 
 #include <ArduinoJson.h>
 
-StaticJsonDocument<200> doc;
-bool toggleTest = true;
-
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
 }
 
-void handleControlEvent(JsonObject payload)
-{
-  if (!payload.containsKey("statusCode"))
-  {
-    int drive = payload["Drive"];
-    int steer = payload["Steer"];
-
-    Serial.print("Drive: ");
-    Serial.print(drive);
-    Serial.print(", Steer: ");
-    Serial.println(steer);
-  }
-}
 
 void handleReceivedData()
 {
-  String receivedData = Serial.readStringUntil('\n');
-  StaticJsonDocument<200> receivedDoc;
-  DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  String line = Serial.readStringUntil('\n');
+  
+  int values[4];
+  int index = 0;
+  char lineCopy[256];
+  line.toCharArray(lineCopy, sizeof(lineCopy));
+  char *token = strtok(lineCopy, ",");
 
-  if (!error)
+  while (token != NULL)
   {
-    const char *event = receivedDoc[0];
-    JsonObject payload = receivedDoc[1];
-
-    if (strcmp(event, C_RES_TURNOFF_ROBOT) == 0)
-    {
-      // Handle turn off robot event
-    }
-    else if (strcmp(event, C_RES_GET_CONTROL) == 0)
-    {
-      handleControlEvent(payload);
-    }
+    values[index++] = atoi(token);
+    token = strtok(NULL, ",");
   }
-  else
+
+  if (values[0] == 1)
   {
-    Serial.println("JSON Parsing Error");
+    //* Anhi ka kuha ug data sa steer and drive
+    int steer = values[2];
+    int drive = values[3];
   }
 }
 
-void sendDataToESP()
+void sendDataToESP(const char* robotStatusInMessage)
 {
+  JsonDocument doc;
   JsonObject data = doc.to<JsonObject>();
-  data["key"] = "Sensor Info";
-  data["message"] = "BLAH BLAH BLAH BLAH";
+  data["message"] = robotStatusInMessage;
   serializeJson(data, Serial);
   Serial.println();
 }
 
 void loop()
 {
-  if (toggleTest)
-  {
-    sendDataToESP();
-    toggleTest = false;
-  }
-  sendDataToESP();
+  //* Use this function to send the robot status to the web app
+  sendDataToESP("Natumba ang robot");
   if (Serial.available())
   {
     handleReceivedData();

@@ -1,6 +1,8 @@
 #include "socketio_manager.h"
 #include "secrets.h"
 
+const int JSON_DOC_SIZE = 1024;
+
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
 {
   switch (type)
@@ -21,12 +23,13 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
   {
     char *sptr = NULL;
     int id = strtol((char *)payload, &sptr, 10);
-    
+
     if (id)
     {
       payload = (uint8_t *)sptr;
     }
-    DynamicJsonDocument doc(1024);
+    // Use JsonDocument instead of DynamicJsonDocument
+    JsonDocument doc;
 
     DeserializationError error = deserializeJson(doc, payload, length);
 
@@ -38,8 +41,6 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-
-    JsonObject obj = doc.as<JsonObject>();
 
     if (eventName == C_RES_CONNECT)
     {
@@ -55,25 +56,38 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
     else if (eventName == C_RES_GET_CONTROL)
     {
-      controller.getControlResponse((char *)payload);
-    }
-    else if (eventName == C_RES_CONTROL_ROBOT)
-    {
-      controller.controlRobotResponse((char *)payload);
+      JsonObject response = doc[1];
+
+      // Check if the response contains a "statusCode" field
+      if (response.containsKey("statusCode"))
+      {
+        String formattedPayload = String(1) + ", " + String(0) + ", " + String(0) + ", " + String(0);
+
+        controller.controlRobotResponse(formattedPayload.c_str());
+      }
+      else
+      {
+        int steer = response["Steer"].as<int>();
+        int drive = response["Drive"].as<int>();
+
+        String formattedPayload = String(1) + ", " + String(1) + ", " + String(drive) + ", " + String(steer);
+
+        controller.controlRobotResponse(formattedPayload.c_str());
+      }
     }
 
     //! Message Includes a ID for a ACK (callback)
     if (id)
     {
       //* creat JSON message for Socket.IO (ack)
-      DynamicJsonDocument docOut(1024);
+      JsonDocument docOut;
       JsonArray array = docOut.to<JsonArray>();
 
       //* add payload (parameters) for the ack (callback function)
-      JsonObject param1 = array.createNestedObject();
+      JsonObject param1 = array.add<JsonObject>();
       param1["now"] = millis();
 
-      //* JSON to String (Serializion)
+      //* JSON to String (Serialization)
       String output;
       output += id;
 
@@ -115,10 +129,9 @@ void SocketIOManager::begin(const char *host, uint16_t port, const char *path)
   //   wifiClientSecure.stop();
   //   return;
   // }
-  
-  
+
   // Serial.println(wifiClientSecure.available());
-  
+
   socketIO.beginSSL(host, port, path);
   socketIO.onEvent([this](socketIOmessageType_t type, uint8_t *payload, size_t length)
                    { this->onEvent(type, payload, length); });
@@ -132,11 +145,11 @@ void SocketIOManager::connectResponse(const JsonObject &obj)
 
 void SocketIOManager::sendDataToServer(const char *message)
 {
-  DynamicJsonDocument doc(1024);
+  JsonDocument doc;
   JsonArray array = doc.to<JsonArray>();
   array.add(S_REQ_SENSOR_UPDATE);
 
-  JsonObject data = array.createNestedObject();
+  JsonObject data = array.add<JsonObject>();
 
   data["robot_id"] = RID;
   data["message"] = message;
@@ -150,15 +163,12 @@ void SocketIOManager::sendDataToServer(const char *message)
 void SocketIOManager::handleReceivedData()
 {
   String receivedData = Serial.readStringUntil('\n');
-  StaticJsonDocument<200> receivedDoc;
+  JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
-  
 
   if (!error)
   {
-    const char *key = receivedDoc["key"];
     const char *message = receivedDoc["message"];
-    Serial.println(receivedData);
     
     sendDataToServer(message);
   }
