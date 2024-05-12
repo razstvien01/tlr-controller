@@ -66,7 +66,6 @@ export class ControllerService {
     setRobot: Dispatch<SetStateAction<RobotDataProps>>
   ) {
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
-      // console.log("Retrieved Sensor Info", data);
       if (data.statusCode !== 404 && data.Message !== "" && data.Message) {
         
         setRobot({ ...robot, sensor_info: data.Message });
