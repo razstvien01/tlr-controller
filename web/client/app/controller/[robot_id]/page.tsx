@@ -17,8 +17,6 @@ import { RobotDataProps } from "@/configs/types";
 import { getRobotByID } from "@/service/robots.service";
 import { RobotDataInit } from "@/configs/init";
 import { TPH1 } from "@/components/typography/tp-h1";
-import { TPH2 } from "@/components/typography/tp-h2";
-import { TPP } from "@/components/typography/tp-p";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [userData, setUserData] = useUserDataAtom();
