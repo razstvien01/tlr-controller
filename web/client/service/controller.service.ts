@@ -15,11 +15,15 @@ export class ControllerService {
         "NEXT_PUBLIC_SOCKET_URL is not defined in the environment variables."
       );
     }
-    this._socket = io(this.socketURL, { transports: ['websocket', 'polling', 'flashsocket'] });
+    // this._socket = io(this.socketURL, {
+    //   transports: ["websocket", "polling", "flashsocket"],
+    // });
     
+    this._socket = io(this.socketURL);
+
     this._robotId = robotId;
     this._userId = userId;
-    
+
     console.log("Robot ID: " + this._robotId);
     console.log("User ID: " + this._userId);
 
@@ -47,7 +51,6 @@ export class ControllerService {
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Control Robot received ", data);
     });
-    
   }
 
   public getContolResponseOff() {
@@ -64,15 +67,14 @@ export class ControllerService {
   ) {
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
       // console.log("Retrieved Sensor Info", data);
-      if (data.statusCode !== 404 && data.Message !== '') {
+      if (data.statusCode !== 404 && data.Message !== "") {
         // console.log(data.message);
         console.log("AAAAAAAAAAAAAAA Info", data);
-        console.log(data.Message)
+        console.log(data.Message);
         setRobot({ ...robot, sensor_info: data.Message });
       }
     });
   }
-    
 
   public setGetControlResponse(
     setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
