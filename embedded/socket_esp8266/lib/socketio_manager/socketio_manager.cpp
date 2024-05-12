@@ -1,6 +1,8 @@
 #include "socketio_manager.h"
 #include "secrets.h"
 
+const int JSON_DOC_SIZE = 1024;
+
 void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
 {
   switch (type)
@@ -26,7 +28,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     {
       payload = (uint8_t *)sptr;
     }
-    DynamicJsonDocument doc(1024);
+    DynamicJsonDocument doc(JSON_DOC_SIZE);
 
     DeserializationError error = deserializeJson(doc, payload, length);
 
@@ -38,9 +40,7 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     }
 
     String eventName = doc[0];
-
-    JsonObject obj = doc.as<JsonObject>();
-
+    
     if (eventName == C_RES_CONNECT)
     {
       connectResponse(doc[1]);
@@ -66,11 +66,11 @@ void SocketIOManager::onEvent(socketIOmessageType_t type, uint8_t *payload, size
     if (id)
     {
       //* creat JSON message for Socket.IO (ack)
-      DynamicJsonDocument docOut(1024);
+      DynamicJsonDocument docOut(JSON_DOC_SIZE);
       JsonArray array = docOut.to<JsonArray>();
 
       //* add payload (parameters) for the ack (callback function)
-      JsonObject param1 = array.createNestedObject();
+      JsonObject param1 = array.add<JsonObject>();
       param1["now"] = millis();
 
       //* JSON to String (Serializion)
@@ -158,7 +158,6 @@ void SocketIOManager::handleReceivedData()
   {
     const char *key = receivedDoc["key"];
     const char *message = receivedDoc["message"];
-    Serial.println(receivedData);
     
     sendDataToServer(message);
   }

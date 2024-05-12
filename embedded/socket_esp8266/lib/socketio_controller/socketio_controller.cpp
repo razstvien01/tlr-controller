@@ -77,23 +77,25 @@ void SocketIOController::getControlRequest()
     socketIOClient.sendEVENT(output);
 }
 
+void printResponse(const char* payload) {
+    Serial.println(payload);
+    Serial.flush();
+}
+
 //! Response Functions
-void SocketIOController::turnOnResponse(const char *payload)
-{
-    Serial.println(payload);
+
+void SocketIOController::turnOnResponse(const char* payload) {
+    printResponse(payload);
 }
 
-void SocketIOController::turnOffResponse(const char *payload)
-{
-    Serial.println(payload);
+void SocketIOController::turnOffResponse(const char* payload) {
+    printResponse(payload);
 }
 
-void SocketIOController::controlRobotResponse(const char *payload)
-{
-    Serial.println(payload);
+void SocketIOController::controlRobotResponse(const char* payload) {
+    printResponse(payload);
 }
 
-void SocketIOController::getControlResponse(const char *payload)
-{
-    Serial.println(payload);
+void SocketIOController::getControlResponse(const char* payload) {
+    printResponse(payload);
 }
