@@ -44,6 +44,7 @@ void sendDataToESP(const char* robotStatusInMessage)
 
 void loop()
 {
+  //* Use this function to send the robot status to the web app
   sendDataToESP("Natumba ang robot");
   if (Serial.available())
   {
