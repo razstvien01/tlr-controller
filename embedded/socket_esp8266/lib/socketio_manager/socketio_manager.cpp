@@ -158,7 +158,6 @@ void SocketIOManager::sendDataToServer(const char *message)
   serializeJson(doc, output);
 
   socketIO.sendEVENT(output);
-  Serial.println("Successfully sent the data.");
 }
 
 void SocketIOManager::handleReceivedData()
