@@ -46,7 +46,7 @@ export class ControllerService {
       console.log("Control Robot received ", data);
     });
     this.socket.on("controller/OnOffInfo/response", (data: any) => {
-      console.log("Power Robot received ", data);
+      // console.log("Power Robot received ", data);
     });
   }
 
@@ -59,8 +59,10 @@ export class ControllerService {
   }
   
   public setRobotPowerInfoResponse(setPower: Dispatch<SetStateAction<boolean>>) {
+    console.log('setting')
     this.socket.on("controller/OnOffInfo/response", (data: any) => {
-      if (data.statusCode !== 404 && data.Code && data.Code == 1) {
+      console.log("Power Robot received ", data);
+      if (data.statusCode !== 404 && data.Power && data.Power == 1) {
         setPower(true)
       } else{
         setPower(false)

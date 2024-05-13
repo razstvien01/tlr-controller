@@ -64,6 +64,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if(robot_id not in control_sessions):
 			emit(robotOnOffInfoResponse, response404())
 			return
+
 		
 		emit(robotOnOffInfoResponse, {"Power": control_sessions[robot_id].Power})
 		
@@ -124,7 +125,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 				if disconnected_id_key in sessions[disconnected_sid]:
 					# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
 					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
-					del control_sessions[disconnected_id_key]
+					# del control_sessions[disconnected_id_key]
 		except KeyError:
 			pass
   
@@ -226,7 +227,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 		session = control_sessions[robotId]
 
-		if(session.AssignedUser != userId):
+		if(control_sessions[robotId].AssignedUser != userId):
 			emit(controlRobotResponse, response404())
 			return
 
