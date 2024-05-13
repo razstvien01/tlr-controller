@@ -38,14 +38,14 @@ export default function RobotCard({ robot }: RobotCardProps) {
       </div>
 
       <CardContent className="p-4 flex flex-row">
-        <p className="text-lg font-semibold">Status:</p>
-        <p
+        <p className="text-lg font-semibold">robot?.location</p>
+        {/* <p
           className={`pl-2 text-lg font-semibold mb-2 ${
             robot.status === "active" ? "text-green-500" : "text-red-500"
           }`}
         >
           {robot.status.charAt(0).toUpperCase() + robot.status.substring(1)}
-        </p>
+        </p> */}
       </CardContent>
       <CardFooter>
         <p className="text-gray-600 mb-4">

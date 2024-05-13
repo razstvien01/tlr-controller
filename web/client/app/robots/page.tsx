@@ -60,7 +60,7 @@ export default function Robots() {
           <div className="grid grid-cols-4">
             {robots?.length > 0 ? (
               robots?.map((robot: RobotDataProps) => (
-                <Link key={robot.robot_id} href={`/controller/${robot.doc_id}`}>
+                <Link key={robot.robot_id} href={`/controller/${robot?.doc_id}`}>
                   <RobotCard robot={robot} />
                 </Link>
               ))
