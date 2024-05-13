@@ -195,6 +195,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           variant={"outline"}
           size={"lg"}
           onPressedChange={useRobot}
+          disabled={!power}
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
@@ -224,24 +225,31 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             className="mb-3 text-lg border-primary"
             variant="outline"
             size="icon"
+            disabled={!power}
           >
             <ChevronUpIcon className="h-4 w-4" />
           </Button>
           <div className="flex flex-row justify-between h-12 text-xl gap-3 mb-3">
             <Button
+              disabled={!power}
               className="text-lg border-primary"
               variant="outline"
               size="icon"
             >
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
-            <Button className="text-lg border-primary" variant={"destructive"}>
+            <Button
+              className="text-lg border-primary"
+              disabled={!power}
+              variant={"destructive"}
+            >
               Reset
             </Button>
             <Button
               className="text-lg border-primary"
               variant="outline"
               size="icon"
+              disabled={!power}
             >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
@@ -250,6 +258,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             className="text-lg border-primary"
             variant="outline"
             size="icon"
+            disabled={!power}
           >
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
@@ -294,7 +303,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             onClick={() => {
               driveRobot();
             }}
-            disabled={controlValuePresent.drive === 1}
+            disabled={controlValuePresent.drive === 1 || !power}
           >
             <ChevronUpIcon className="h-4 w-4" />
           </Button>
@@ -308,7 +317,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 steerControlRobot(true);
               }}
-              disabled={controlValuePresent.steer === -1}
+              disabled={controlValuePresent.steer === -1 || !power}
             >
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
@@ -320,6 +329,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 stopRobot();
               }}
+              disabled={!power}
             >
               Stop
             </Button>
@@ -332,7 +342,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 steerControlRobot(false);
               }}
-              disabled={controlValuePresent.steer === 1}
+              disabled={controlValuePresent.steer === 1 || !power}
             >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
@@ -346,7 +356,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             onClick={() => {
               reverseDriveRobot();
             }}
-            disabled={controlValuePresent.drive === -1}
+            disabled={controlValuePresent.drive === -1 || !power}
           >
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
