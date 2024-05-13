@@ -85,19 +85,19 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
 	def handle_disconnect():
 		pass
-		# disconnected_sid = request.sid 
+		disconnected_sid = request.sid 
 		
-		# try:
-		# 	disconnected_id = sessions[disconnected_sid]
-		# 	if isinstance(disconnected_id, dict):
-		# 		disconnected_id_key = next(iter(disconnected_id))
+		try:
+			disconnected_id = sessions[disconnected_sid]
+			if isinstance(disconnected_id, dict):
+				disconnected_id_key = next(iter(disconnected_id))
 				
-		# 		if disconnected_id_key in sessions[disconnected_sid]:
-		# 			# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
-		# 			delete_session_by_id(disconnected_id_key, "DISCONNECTED")
-		# 			# del control_sessions[disconnected_id_key]
-		# except KeyError:
-		# 	pass
+				if disconnected_id_key in sessions[disconnected_sid]:
+					# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
+					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
+					del control_sessions[disconnected_id_key]
+		except KeyError:
+			pass
   
 	@socketIO.on('connect')
 	def handle_connect():
@@ -109,7 +109,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
 		session_key = request.sid
-		# sessions[session_key] = {}
+		sessions[session_key] = {}
 		
 		id = data.get('id', '')
 		
@@ -117,12 +117,12 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(turnOnResponse, response404())
 			return
 		
-		print(f"Turning On Robot, Session: {session_key} with Key: {id}")\
+		print(f"Turning On Robot, Session: {session_key} with Key: {id}")
     
-		# sessions[session_key][id] = {}
+		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
   
-		# update_robot_status(id, constants.RobotStatus.ACTIVE)
+		update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
 		
