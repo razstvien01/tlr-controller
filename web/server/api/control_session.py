@@ -56,17 +56,12 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(robotOnOffInfoRequest)
 	def robotOnOffInfo(data):
 		robot_id = data.get('robot_id', '')
-  
 		
 		if robot_id == '':
 			emit(robotOnOffInfoResponse, response404())
 			return
 		
 		if(robot_id not in control_sessions):
-			emit(robotOnOffInfoResponse, response404())
-			return
-		
-		if(control_sessions[robot_id].AssignedUser == None):
 			emit(robotOnOffInfoResponse, response404())
 			return
 		
