@@ -137,7 +137,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
   
-		asyncio.run(update_robot_status(id, constants.RobotStatus.ACTIVE))
+		# update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
 		
