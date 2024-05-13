@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import os
 import signal
 import firebase_admin
+from firebase_admin import db;
+from constants import constants
 
 load_dotenv()
 
@@ -32,6 +34,13 @@ try:
     cred_obj = firebase_admin.credentials.Certificate(key)
     default_app = firebase_admin.initialize_app(cred_obj)
     print("Successfully initializing Firebase")
+    
+    test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
+
+    for doc in test_ref:
+        print(f"{doc.id} => {doc.to_dict()}")
+
+    print('Test done')
 except Exception as e:
     print("Error initializing Firebase:", e)
 
