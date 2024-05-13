@@ -8,6 +8,7 @@ import signal
 import firebase_admin
 from firebase_admin import db;
 from constants import constants
+from firebase_admin import firestore
 
 load_dotenv()
 
@@ -35,6 +36,8 @@ try:
     default_app = firebase_admin.initialize_app(cred_obj)
     print("Successfully initializing Firebase")
     
+    # ERASE THIS AFTER TESTING
+    db = firestore.client()
     test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
 
     for doc in test_ref:
