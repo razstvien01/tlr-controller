@@ -5,4 +5,5 @@ class RobotData:
 	def __init__(self):
 		self.Control = ControllerInput()
 		self.Sensor = SensorInput()
+		self.Power = 1
 		self.AssignedUser = None
