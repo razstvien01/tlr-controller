@@ -3,23 +3,12 @@ from flask import request
 # from data.controller_input import ControllerInput
 from data.robot_data import RobotData
 # from data.sensor_input import SensorInput
-from firebase_admin import firestore
+# from firebase_admin import firestore
 # from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
-from constants import constants
+# from constants import constants
 
 control_sessions = {}
 sessions = {}
-
-def update_robot_status(robot_id, status):
-		try:
-			db = firestore.client()
-			doc_ref = db.collection(constants.FirebaseTables.ROBOTS).where('robot_id', '==', robot_id).limit(1)
-			docs = doc_ref.stream()
-
-			for doc in docs:
-					doc.reference.update({constants.RobotTableKeys.STATUS: status})
-		except Exception as e:
-			print(f"An error occured: {e}")
 
 # async def update_robot_status(robot_id, status):
 # 	try:
@@ -117,7 +106,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 				disconnected_id_key = next(iter(disconnected_id))
 				
 				if disconnected_id_key in sessions[disconnected_sid]:
-					update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
+					# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
 					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
 					del control_sessions[disconnected_id_key]
 		except KeyError:
@@ -146,7 +135,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
   
-		update_robot_status(id, constants.RobotStatus.ACTIVE)
+		# update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
 		
@@ -167,7 +156,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if id in control_sessions:
 			del control_sessions[id]
 		
-		update_robot_status(id, constants.RobotStatus.INACTIVE)
+		# update_robot_status(id, constants.RobotStatus.INACTIVE)
 		emit(turnOffResponse, responseSuccess())
 
 
