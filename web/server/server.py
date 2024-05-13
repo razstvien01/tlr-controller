@@ -5,10 +5,10 @@ from api.control_session import configure_controller_sockets
 from dotenv import load_dotenv
 import os
 import signal
-import firebase_admin
-from firebase_admin import db;
-from constants import constants
-from firebase_admin import firestore
+# import firebase_admin
+# from firebase_admin import db;
+# from constants import constants
+# from firebase_admin import firestore
 
 load_dotenv()
 
@@ -31,21 +31,22 @@ def index():
 def stop_server(signal, frame):
     socketio.stop()
 
-try:
-    cred_obj = firebase_admin.credentials.Certificate(key)
-    default_app = firebase_admin.initialize_app(cred_obj)
-    print("Successfully initializing Firebase")
+# try:
+#     cred_obj = firebase_admin.credentials.Certificate(key)
+#     default_app = firebase_admin.initialize_app(cred_obj)
+#     print("Successfully initializing Firebase")
     
-    # ERASE THIS AFTER TESTING
-    db = firestore.client()
-    test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
+#     # ERASE THIS AFTER TESTING
 
-    for doc in test_ref:
-        print(f"{doc.id} => {doc.to_dict()}")
+#     db = firestore.client()
+#     test_ref = db.collection(constants.FirebaseTables.ROBOTS).stream()
 
-    print('Test done')
-except Exception as e:
-    print("Error initializing Firebase:", e)
+#     for doc in test_ref:
+#         print(f"{doc.id} => {doc.to_dict()}")
+
+#     print('Test done')
+# except Exception as e:
+#     print("Error initializing Firebase:", e)
 
 if __name__ == '__main__':
     print('running server at 5000')

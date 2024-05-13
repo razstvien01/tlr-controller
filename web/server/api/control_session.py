@@ -1,37 +1,37 @@
 from flask_socketio import SocketIO, emit
 from flask import request
-from data.controller_input import ControllerInput
+# from data.controller_input import ControllerInput
 from data.robot_data import RobotData
-from data.sensor_input import SensorInput
-from firebase_admin import firestore
-from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
-from constants import constants
+# from data.sensor_input import SensorInput
+# from firebase_admin import firestore
+# from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
+# from constants import constants
 
 control_sessions = {}
 sessions = {}
 
-async def update_robot_status(robot_id, status):
-	try:
-		print("Updating Robot Status")
-		db = firestore.client()
-		print(robot_id)
-		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
-		print('B')
-		field_filter = firestore.FieldFilter('robot_id', '==', robot_id)
-		print('C')
-		query_on_single_field = collection_ref.where(filter=field_filter)
-		print('D')
-		docs = query_on_single_field.stream()
-		print('E')
-		for doc in docs:
-			print('F')
-			result = await doc.reference.update({constants.RobotTableKeys.STATUS: status})
-			if result.error_code == 0:
-				print("Update successful for document: ", doc.id)
-			else:
-				print("Update failed for document: ", doc.id, "with error:", result.error_message)
-	except Exception as e:
-		print(f"An error occured: {e}")
+# async def update_robot_status(robot_id, status):
+# 	try:
+# 		print("Updating Robot Status")
+# 		db = firestore.client()
+# 		print(robot_id)
+# 		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
+# 		print('B')
+# 		field_filter = firestore.FieldFilter('robot_id', '==', robot_id)
+# 		print('C')
+# 		query_on_single_field = collection_ref.where(filter=field_filter)
+# 		print('D')
+# 		docs = query_on_single_field.stream()
+# 		print('E')
+# 		for doc in docs:
+# 			print('F')
+# 			result = await doc.reference.update({constants.RobotTableKeys.STATUS: status})
+# 			if result.error_code == 0:
+# 				print("Update successful for document: ", doc.id)
+# 			else:
+# 				print("Update failed for document: ", doc.id, "with error:", result.error_message)
+# 	except Exception as e:
+# 		print(f"An error occured: {e}")
 
 def delete_session_by_id(id, message):
 	sessions_deleted = False
