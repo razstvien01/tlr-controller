@@ -16,7 +16,7 @@ async def update_robot_status(robot_id, status):
 	try:
 		print("Updating Robot Status")
 		db = firestore.client()
-		print('A')
+		print(robot_id)
 		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
 		print('B')
 		field_filter = firestore.FieldFilter('robot_id', '==', robot_id)
@@ -27,7 +27,11 @@ async def update_robot_status(robot_id, status):
 		print('E')
 		for doc in docs:
 			print('F')
-			await doc.reference.update({constants.RobotTableKeys.STATUS: status})
+			result = await doc.reference.update({constants.RobotTableKeys.STATUS: status})
+			if result.error_code == 0:
+				print("Update successful for document: ", doc.id)
+			else:
+				print("Update failed for document: ", doc.id, "with error:", result.error_message)
 	except Exception as e:
 		print(f"An error occured: {e}")
 
