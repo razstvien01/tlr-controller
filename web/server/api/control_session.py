@@ -11,14 +11,23 @@ control_sessions = {}
 sessions = {}
 
 def update_robot_status(robot_id, status):
+	try:
+		print("Updating Robot Status")
 		db = firestore.client()
+		print('A')
 		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
+		print('B')
 		field_filter = FieldFilter('robot_id', '==', robot_id)
+		print('C')
 		query_on_single_field = collection_ref.where(filter=field_filter)
+		print('D')
 		docs = query_on_single_field.stream()
-    
+		print('E')
 		for doc in docs:
+			print('F')
 			doc.reference.update({constants.RobotTableKeys.STATUS: status})
+	except Exception as e:
+		print(f"An error occured: {e}")
 
 def delete_session_by_id(id, message):
 	sessions_deleted = False
