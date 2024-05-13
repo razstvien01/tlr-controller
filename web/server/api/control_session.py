@@ -60,12 +60,16 @@ def configure_controller_sockets(socketIO: SocketIO):
 		
 		if robot_id == '':
 			emit(robotOnOffInfoResponse, response404())
+			return
 		
 		if(robot_id not in control_sessions):
 			emit(robotOnOffInfoResponse, response404())
+			return
 		
 		if(control_sessions[robot_id].AssignedUser == None):
 			emit(robotOnOffInfoResponse, response404())
+			return
+		
 		emit(robotOnOffInfoResponse, control_sessions[robot_id].Power.serializable())
 		
 	sensorInfoRequest = 'sensor/SensorInfo/request'
