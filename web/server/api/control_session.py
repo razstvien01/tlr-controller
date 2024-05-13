@@ -155,9 +155,7 @@ def configure_controller_sockets(socketIO: SocketIO):
     
 		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
-  
-		control_sessions[id].Power.Code = 1
-  
+		
 		# update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
