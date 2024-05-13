@@ -56,8 +56,6 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(sensorInfoResponse, response404())
 			return
 		
-		print('Checking Sensors from ESP')
-		
 		emit(sensorInfoResponse, control_sessions[robot_id].Sensor.serializable())
 	
 	sensorUpdateRequest = 'sensor/SensorUpdate/request'
@@ -81,10 +79,6 @@ def configure_controller_sockets(socketIO: SocketIO):
 			return
 
 		control_sessions[robot_id].Sensor.Message = message
-		
-		if message:
-			print('Received Feedback from ESP')
-			print('Message: ' + message)
 		
 		emit(sensorUpdateResponse, responseSuccess())
 
