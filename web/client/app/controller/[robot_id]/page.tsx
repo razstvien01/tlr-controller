@@ -24,7 +24,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [isUseRobot, setIsUseRobot] = useState(false);
   const [isTurnOnRobot, setIsTurnOnRobot] = useState(false);
   const [robot, setRobot] = useState<RobotDataProps>(RobotDataInit);
-  const [lastDateTime, setLastDateTime] = useState(Date.now());
+  const [lastDateTimePower, setLastDateTimePower] = useState(Date.now());
+  const [lastDateTimeSensor, setLastDateTimeSensor] = useState(Date.now());
+  const [power, setPower] = useState<boolean>(false);
 
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
@@ -62,6 +64,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       setController(newController);
       newController.setGetControlResponse(setControlValuePresent);
       newController.setGetSensorInfoResponse(robot, setRobot);
+      newController.setRobotPowerInfoResponse(setPower);
     }
     return () => {};
   }, [controller, userData, robot?.robot_id, robot]);
@@ -77,19 +80,33 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   }, [controller, isUseRobot, updateControls]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      var now = Date.now();
+      var deltaTime = now - lastDateTimePower;
+
+      if (deltaTime > 1000) {
+        setLastDateTimePower(now);
+        controller?.getPowerInfo();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [controller, lastDateTimePower, robot]);
+
+  useEffect(() => {
     //Set Interval
     const interval = setInterval(() => {
       var now = Date.now();
-      var deltaTime = now - lastDateTime;
+      var deltaTime = now - lastDateTimeSensor;
 
       if (deltaTime > 1000) {
-        setLastDateTime(now);
+        setLastDateTimeSensor(now);
         controller?.getSensorInfo();
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [controller, lastDateTime, robot]);
+  }, [controller, lastDateTimeSensor, robot]);
 
   const toggleRobot = () => {
     if (!isTurnOnRobot) {

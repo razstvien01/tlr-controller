@@ -50,6 +50,24 @@ def delete_session_by_id(id, message):
 				break
 
 def configure_controller_sockets(socketIO: SocketIO):
+	robotOnOffInfoRequest = 'controller/OnOffInfo/request'
+	robotOnOffInfoResponse = 'controller/OnOffInfo/response'
+	
+	@socketIO.on(robotOnOffInfoRequest)
+	def robotOnOffInfo(data):
+		robot_id = data.get('robot_id', '')
+  
+		
+		if robot_id == '':
+			emit(robotOnOffInfoResponse, response404())
+		
+		if(robot_id not in control_sessions):
+			emit(robotOnOffInfoResponse, response404())
+		
+		if(control_sessions[robot_id].AssignedUser == None):
+			emit(robotOnOffInfoResponse, response404())
+		emit(robotOnOffInfoResponse, control_sessions[robot_id].Power.serializable())
+		
 	sensorInfoRequest = 'sensor/SensorInfo/request'
 	sensorInfoResponse = 'sensor/SensorInfo/response'
 
@@ -97,7 +115,6 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 	@socketIO.on('disconnect')
 	def handle_disconnect():
-		pass
 		disconnected_sid = request.sid 
 		
 		try:
@@ -135,6 +152,8 @@ def configure_controller_sockets(socketIO: SocketIO):
 		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
   
+		control_sessions[id].Power.Code = 1
+  
 		# update_robot_status(id, constants.RobotStatus.ACTIVE)
 		
 		emit(turnOnResponse, responseSuccess())
@@ -157,6 +176,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			del control_sessions[id]
 		
 		# update_robot_status(id, constants.RobotStatus.INACTIVE)
+		
 		emit(turnOffResponse, responseSuccess())
 
 
@@ -183,6 +203,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 
 		if(toUse):
 			control_sessions[id].AssignedUser = userId
+			
 		else:
 			control_sessions[id].AssignedUser = None
 		

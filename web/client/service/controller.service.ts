@@ -18,10 +18,10 @@ export class ControllerService {
     this._socket = io(this.socketURL, {
       transports: ["websocket", "polling", "flashsocket"],
     });
-    
+
     this._robotId = robotId;
     this._userId = userId;
-  
+
     this.socket.on("/", (data: any) => {
       console.log("Connected to the server.", data);
     });
@@ -45,6 +45,9 @@ export class ControllerService {
     this.socket.on("controller/ControlRobot/response", (data: any) => {
       console.log("Control Robot received ", data);
     });
+    this.socket.on("controller/OnOffInfo/response", (data: any) => {
+      console.log("Power Robot received ", data);
+    });
   }
 
   public getContolResponseOff() {
@@ -54,6 +57,16 @@ export class ControllerService {
   public getSensorInfoOff() {
     this.socket.off("sensor/SensorInfo/response");
   }
+  
+  public setRobotPowerInfoResponse(setPower: Dispatch<SetStateAction<boolean>>) {
+    this.socket.on("controller/OnOffInfo/response", (data: any) => {
+      if (data.statusCode !== 404 && data.Code && data.Code == 1) {
+        setPower(true)
+      } else{
+        setPower(false)
+      }
+    });
+  }
 
   public setGetSensorInfoResponse(
     robot: RobotDataProps,
@@ -61,7 +74,6 @@ export class ControllerService {
   ) {
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
       if (data.statusCode !== 404 && data.Message !== "" && data.Message) {
-        
         setRobot({ ...robot, sensor_info: data.Message });
       }
     });
@@ -174,6 +186,11 @@ export class ControllerService {
   }
   public getSensorInfo() {
     this.socket.emit("sensor/SensorInfo/request", {
+      robot_id: this._robotId,
+    });
+  }
+  public getPowerInfo() {
+    this.socket.emit("controller/OnOffInfo/request", {
       robot_id: this._robotId,
     });
   }
