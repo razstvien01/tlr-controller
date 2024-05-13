@@ -70,7 +70,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(robotOnOffInfoResponse, response404())
 			return
 		
-		emit(robotOnOffInfoResponse, control_sessions[robot_id].Power.serializable())
+		emit(robotOnOffInfoResponse, {"Power": control_sessions[robot_id].Power})
 		
 	sensorInfoRequest = 'sensor/SensorInfo/request'
 	sensorInfoResponse = 'sensor/SensorInfo/response'
