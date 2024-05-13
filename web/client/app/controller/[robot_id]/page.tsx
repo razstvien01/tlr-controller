@@ -17,6 +17,7 @@ import { RobotDataProps } from "@/configs/types";
 import { getRobotByID } from "@/service/robots.service";
 import { RobotDataInit } from "@/configs/init";
 import { TPH1 } from "@/components/typography/tp-h1";
+import { robotSituations } from "@/configs/constants";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [userData, setUserData] = useUserDataAtom();
@@ -262,6 +263,16 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             Drive: {controlValuePresent.drive}
           </Label>
         </div>
+        <div className="flex flex-col justify-start pt-5 text-wrap">
+          <Label className="text-lg self-center">Robot Situation: </Label>
+
+          <Label className="mt-2 justify-start">
+            {robot?.sensor_info &&
+              robotSituations[
+                robot?.sensor_info as keyof typeof robotSituations
+              ]}
+          </Label>
+        </div>
 
         <div className="flex flex-col justify-start pt-5 text-wrap">
           <Label className="text-lg self-center">Robot Status: </Label>
@@ -269,10 +280,8 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
             className="mt-2 justify-start self-center text-lg"
             style={{ color: power ? "green" : "red" }}
           >
-            {power ? 'Active': 'Inactive'}
+            {power ? "Active" : "Inactive"}
           </Label>
-
-          <Label className="mt-2 justify-start">{robot?.sensor_info}</Label>
         </div>
         <div className="flex flex-col items-center pr-20 mb-2">
           <h3 className="font-semibold mb-2 ">Move Robot</h3>
