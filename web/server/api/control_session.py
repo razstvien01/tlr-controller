@@ -177,9 +177,9 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(useRobotResponse, response404())
 			return
 
-		if(control_sessions[id].AssignedUser != None and toUse):
-			emit(useRobotResponse, response404())
-			return
+		# if(control_sessions[id].AssignedUser != None and toUse):
+		# 	emit(useRobotResponse, response404())
+		# 	return
 
 		if(toUse):
 			control_sessions[id].AssignedUser = userId
