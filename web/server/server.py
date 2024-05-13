@@ -17,7 +17,7 @@ app.config['SECRET_KEY'] = secret_key
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode='gevent', cors_allowed_origins="*", timeout=60)
 
 configure_controller_sockets(socketio)
 
