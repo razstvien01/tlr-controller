@@ -6,6 +6,7 @@ from data.sensor_input import SensorInput
 from firebase_admin import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
 from constants import constants
+import asyncio
 
 control_sessions = {}
 sessions = {}
@@ -131,7 +132,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
   
-		update_robot_status(id, constants.RobotStatus.ACTIVE)
+		asyncio.run(update_robot_status(id, constants.RobotStatus.ACTIVE))
 		
 		emit(turnOnResponse, responseSuccess())
 		
