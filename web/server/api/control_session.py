@@ -6,8 +6,6 @@ from data.sensor_input import SensorInput
 from firebase_admin import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
 from constants import constants
-import asyncio
-from google.cloud import firestore
 
 control_sessions = {}
 sessions = {}
