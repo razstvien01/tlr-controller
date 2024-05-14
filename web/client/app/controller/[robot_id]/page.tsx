@@ -18,6 +18,7 @@ import { getRobotByID } from "@/service/robots.service";
 import { RobotDataInit } from "@/configs/init";
 import { TPH1 } from "@/components/typography/tp-h1";
 import { robotSituations } from "@/configs/constants";
+import { LogSheet } from "@/components/log-sheet";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [userData, setUserData] = useUserDataAtom();
@@ -28,6 +29,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [lastDateTimePower, setLastDateTimePower] = useState(Date.now());
   const [lastDateTimeSensor, setLastDateTimeSensor] = useState(Date.now());
   const [power, setPower] = useState<boolean>(false);
+  const [logs, setLogs] = useState<string[] | undefined>([]);
 
   const [controlValuePresent, setControlValuePresent] = useState({
     steer: 0,
@@ -69,6 +71,16 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
     return () => {};
   }, [controller, userData, robot?.robot_id, robot]);
+
+  useEffect(() => {
+    const updateLogs = () => {
+      setLogs(controller?.getMessages());
+    };
+
+    const interval = setInterval(updateLogs, 1000);
+
+    return () => clearInterval(interval);
+  }, [controller]);
 
   useEffect(() => {
     if (controller) {
@@ -199,6 +211,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
         >
           {isUseRobot ? "Un-Use Robot" : "Use Robot"}
         </Toggle>
+        <LogSheet logs={logs} />
         {/* <Toggle
           className="text-lg ml-auto mr-4 bg-primary"
           id="toggleTurnOn"
@@ -317,7 +330,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 steerControlRobot(true);
               }}
-              disabled={controlValuePresent.steer === -1 || !power || !isUseRobot}
+              disabled={
+                controlValuePresent.steer === -1 || !power || !isUseRobot
+              }
             >
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
@@ -329,7 +344,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 stopRobot();
               }}
-              disabled={!power || !isUseRobot }
+              disabled={!power || !isUseRobot}
             >
               Stop
             </Button>
@@ -342,7 +357,9 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 steerControlRobot(false);
               }}
-              disabled={controlValuePresent.steer === 1 || !power || !isUseRobot}
+              disabled={
+                controlValuePresent.steer === 1 || !power || !isUseRobot
+              }
             >
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
