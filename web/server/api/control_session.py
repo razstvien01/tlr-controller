@@ -57,9 +57,9 @@ def configure_controller_sockets(socketIO: SocketIO):
 	def robotOnOffInfo(data):
 		robot_id = data.get('robot_id', '')
   
-		print(robot_id)
-		print(control_sessions)
-		print(sessions)
+		print('robot_id:', robot_id)
+		print('control_sessions:', control_sessions)
+		print('sessions:', sessions)
 		
 		if robot_id == '':
 			emit(robotOnOffInfoResponse, response404())
