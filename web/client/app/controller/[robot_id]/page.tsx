@@ -1,7 +1,7 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   ChevronRightIcon,
@@ -16,9 +16,10 @@ import { useUserDataAtom } from "@/hooks/user-data-atom";
 import { RobotDataProps } from "@/configs/types";
 import { getRobotByID } from "@/service/robots.service";
 import { RobotDataInit } from "@/configs/init";
-import { TPH1 } from "@/components/typography/tp-h1";
 import { robotSituations } from "@/configs/constants";
 import { LogSheet } from "@/components/log-sheet";
+import { TPH2 } from "@/components/typography/tp-h2";
+import { useToast } from "@/components/ui/use-toast";
 
 const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   const [userData, setUserData] = useUserDataAtom();
@@ -37,6 +38,11 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
   });
 
   const [updateControls, setUpdateControls] = useState(false);
+
+  const { toast } = useToast();
+
+  const [toastTrigOn, setToastTrigOn] = useState(false);
+  const [toastTrigOff, setToastTrigOff] = useState(false);
 
   redirectBackIfUnAuthenticated();
 
@@ -71,6 +77,30 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
     return () => {};
   }, [controller, userData, robot?.robot_id, robot]);
+
+  useEffect(() => {
+    if (power && !toastTrigOn) {
+      toast({
+        variant: "default",
+        title: "The robot is now online.",
+        description: "Someone turned on the robot.",
+      });
+      setToastTrigOn(true);
+      setToastTrigOff(false);
+    }
+
+    if (!power && !toastTrigOff) {
+      toast({
+        variant: "destructive",
+        title: "The robot is now offline.",
+        description: "The robot is out of reach.",
+      });
+      setToastTrigOn(false);
+      setToastTrigOff(true);
+    }
+
+    return () => {};
+  }, [power, toastTrigOn, toast, toastTrigOff]);
 
   useEffect(() => {
     const updateLogs = () => {
@@ -137,6 +167,20 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
       stopSteerRobot();
       controller.useRobot(!isUseRobot);
       setUpdateControls((prevState) => !prevState);
+
+      if (!isUseRobot) {
+        toast({
+          variant: "default",
+          title: "Use Robot",
+          description: "You can now control the robot.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Un-Use Robot",
+          description: "You can't control the robot.",
+        });
+      }
     }
   };
 
@@ -197,10 +241,21 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
     }
   };
 
+  const maskRobotId = (robotId: string) => {
+    if (robotId.length <= 6) {
+      return robotId;
+    }
+    const start = robotId.substring(0, 3);
+    const end = robotId.substring(robotId.length - 3);
+    const masked = "*".repeat(robotId.length - 6);
+
+    return `${start}${masked}${end}`;
+  };
+
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex flex-row p-5 items-right justify-end">
-        <TPH1>{robot?.robot_name}</TPH1>
+      <div className="flex flex-row pt-5 pr-5 pl-5 *:items-right justify-end">
+        <TPH2>{robot?.robot_name}</TPH2>
         <Toggle
           className="text-lg ml-auto mr-4 bg-primary"
           id="toggleUse"
@@ -222,6 +277,8 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
           {!isTurnOnRobot ? "Turn On Robot" : "Turn Off Robot"}
         </Toggle> */}
       </div>
+      <h2 className="pl-5">Key: {maskRobotId(robot?.robot_id)}</h2>
+      <h2 className="pl-5">Location: {robot?.location}</h2>
       <div className="flex justify-between bg-slate-500 w-full h-full mr-2 ml-2">
         <div className="w-2/3 border border-black justify-center">
           <h1 className="text-center">ROBOT CAMERA</h1>
