@@ -4,8 +4,8 @@ export enum USER_QUERY {
 }
 
 export const MAIN_COMPONENTS: Record<string, string> = {
-  DASHBOARD: "DASHBOARD",
-  PROJECTS: "ROBOTS",
+  // DASHBOARD: "DASHBOARD",
+  // PROJECTS: "ROBOTS",
 };
 
 export const robotSituations = {
