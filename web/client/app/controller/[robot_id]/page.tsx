@@ -329,7 +329,7 @@ const RobotControllerPage = ({ params }: { params: { robot_id: string } }) => {
               onClick={() => {
                 stopRobot();
               }}
-              disabled={!power}
+              disabled={!power || !isUseRobot }
             >
               Stop
             </Button>
