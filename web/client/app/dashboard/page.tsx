@@ -1,43 +1,79 @@
 "use client";
 
-import React, { useEffect } from "react";
-
-import { useUserDataAtom } from "@/hooks/user-data-atom";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { UserAuth } from "@/context/auth_context";
+import { AddRobotDialog } from "@/components/dialogs/add-robot-dialog";
 import Link from "next/link";
+import RobotCard from "@/components/robot-card";
+import { getRobots, getRobotsByID } from "@/service/robots.service";
+import { RobotDataProps } from "@/configs/types";
+import { useUserDataAtom } from "@/hooks/user-data-atom";
+import { TPH2 } from "@/components/typography/tp-h2";
 import { redirectBackIfUnAuthenticated } from "@/utility/utility";
-import Head from "next/head";
 
-export default function Dashboard() {
-  const [currentUser, setCurrentUser] = useUserDataAtom();
-
+export default function Robots() {
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [successAdd, setSuccessAdd] = useState<boolean>(false);
+  const [robots, setRobots] = useState<RobotDataProps[]>([]);
+  const [userData, setUserData] = useUserDataAtom();
+  
   redirectBackIfUnAuthenticated();
+  
+  const fetchRobots = async () => {
+    if (userData?.user_id) {
+      const response = await getRobotsByID(userData.user_id);
+      setRobots(response.robot_data);
+    }
+  };
 
-  // Dummy data for robot cards (replace this with your actual data)
-  const robotCards = [
-    { id: "robot1", name: "Robot 1" },
-    { id: "robot2", name: "Robot 2" },
-    { id: "robot3", name: "Robot 3" },
-  ];
+  useEffect(() => {
+    fetchRobots();
+
+    return () => {};
+  }, [successAdd, userData?.user_id]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen ">
-      <Head>
-        <title>Telepresence Robot Controller - Dashboard</title>
-        <meta
-          name="description"
-          content="Dashboard for Telepresence Robot Controller"
-        />
-      </Head>
+    <>
+      <AddRobotDialog
+        showDialog={showDialog}
+        setShowDialog={setShowDialog}
+        setSuccessAdd={setSuccessAdd}
+      />
+      <div className="h-full px-4 py-6 lg:px-8 justify-center min-h-screen">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Robot List
+            </h2>
+            <p className="text-sm text-muted-foreground">List of robots</p>
+          </div>
 
-      <main className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-        CONTENTS HERE
-        {/* Your dashboard content goes here */}
-      </main>
-    </div>
+          <div className="ml-auto mr-4">
+            <Button onClick={() => setShowDialog(!showDialog)}>
+              <PlusIcon className="mr-2 h-4 w-4" />
+              Register a Robot
+            </Button>
+          </div>
+        </div>
+        <Separator className="my-4" />
+
+        <div className="relative justify-center items-center">
+          <div className="grid grid-cols-4">
+            {robots?.length > 0 ? (
+              robots?.map((robot: RobotDataProps) => (
+                <Link key={robot.robot_id} href={`/controller/${robot?.doc_id}`}>
+                  <RobotCard robot={robot} />
+                </Link>
+              ))
+            ) : (
+              <TPH2>No Robots Found</TPH2>
+            )}
+          </div>
+        </div>
+        <Separator className="my-4" />
+      </div>
+    </>
   );
 }
