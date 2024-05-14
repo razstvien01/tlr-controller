@@ -32,7 +32,7 @@ export function LogSheet({ logs }: { logs: string[] | undefined }) {
               .reverse()
               .map((log, index) => (
                 <div key={index} className="p-2 border-b border-gray-300">
-                  {log}
+                  {(index + 1) + ": " + log}
                 </div>
               ))}
           </div>
