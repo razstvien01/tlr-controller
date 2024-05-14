@@ -7,6 +7,7 @@ export class ControllerService {
   private _robotId: string | undefined;
   private _socket: Socket | undefined;
   private _userId: string | undefined;
+  private _messages: string[] = [];
 
   constructor(robotId: string, userId: string) {
     this.socketURL = process.env.NEXT_PUBLIC_SOCKET_URL;
@@ -23,31 +24,43 @@ export class ControllerService {
     this._userId = userId;
 
     this.socket.on("/", (data: any) => {
-      console.log("Connected to the server.", data);
+      this.addMessage("Connected to the server. " + JSON.stringify(data));
     });
 
     this.socket.on("controller/TurnOnRobot/response", (data: any) => {
-      console.log("Turn On Response Received", data);
+      this.addMessage("Turn On Response Received: " + JSON.stringify(data));
     });
 
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
-      console.log("Sensor Info Response Received", data);
+      this.addMessage("Sensor Info Response Received: " + JSON.stringify(data));
     });
 
     this.socket.on("controller/TurnOffRobot/response", (data: any) => {
-      console.log("Turn Off Response received", data);
+      this.addMessage("Turn Off Response Received: " + JSON.stringify(data));
     });
 
     this.socket.on("controller/UseRobot/response", (data: any) => {
-      console.log("Use Robot received ", data);
+      this.addMessage("Use Robot Response Received: " + JSON.stringify(data));
     });
 
     this.socket.on("controller/ControlRobot/response", (data: any) => {
-      console.log("Control Robot received ", data);
+      this.addMessage(
+        "Control Robot Response Received: " + JSON.stringify(data)
+      );
     });
+
     this.socket.on("controller/OnOffInfo/response", (data: any) => {
-      // console.log("Power Robot received ", data);
+      this.addMessage("Power Robot Response Received: " + JSON.stringify(data));
     });
+  }
+
+  private addMessage(message: string) {
+    if (this._messages.length >= 50) this._messages.shift();
+    this._messages.push(message);
+  }
+
+  public getMessages(): string[] {
+    return this._messages;
   }
 
   public getContolResponseOff() {
@@ -57,15 +70,16 @@ export class ControllerService {
   public getSensorInfoOff() {
     this.socket.off("sensor/SensorInfo/response");
   }
-  
-  public setRobotPowerInfoResponse(setPower: Dispatch<SetStateAction<boolean>>) {
-    console.log('setting')
+
+  public setRobotPowerInfoResponse(
+    setPower: Dispatch<SetStateAction<boolean>>
+  ) {
     this.socket.on("controller/OnOffInfo/response", (data: any) => {
-      console.log("Power Robot received ", data);
+      this.addMessage("Power Robot received: " + JSON.stringify(data));
       if (data.statusCode !== 404 && data.Power && data.Power == 1) {
-        setPower(true)
-      } else{
-        setPower(false)
+        setPower(true);
+      } else {
+        setPower(false);
       }
     });
   }
@@ -75,6 +89,7 @@ export class ControllerService {
     setRobot: Dispatch<SetStateAction<RobotDataProps>>
   ) {
     this.socket.on("sensor/SensorInfo/response", (data: any) => {
+      this.addMessage("Sensor Info received: " + JSON.stringify(data));
       if (data.statusCode !== 404 && data.Message !== "" && data.Message) {
         setRobot({ ...robot, sensor_info: data.Message });
       }
@@ -85,7 +100,7 @@ export class ControllerService {
     setControl: Dispatch<SetStateAction<{ steer: number; drive: number }>>
   ) {
     this.socket.on("controller/GetControl/response", (data: any) => {
-      console.log("Retreived Control ", data);
+      this.addMessage("Retrieved Control: " + JSON.stringify(data));
       if (data.statusCode === 404) {
         setControl({ steer: 0, drive: 0 }); // Set default values
       } else {
