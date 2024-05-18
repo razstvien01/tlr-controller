@@ -165,10 +165,14 @@ void SocketIOManager::handleReceivedData()
   String receivedData = Serial.readStringUntil('\n');
   JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  Serial.print("Received Data");
+  Serial.println(receivedData);
 
   if (!error)
   {
     const char *message = receivedDoc["message"];
+    
+    Serial.println(message);
     
     sendDataToServer(message);
   }
@@ -179,7 +183,7 @@ void SocketIOManager::loop()
   socketIO.loop();
   controller.getControlRequest();
 
-  if (Serial.available())
+  if (Serial1.available())
   {
     handleReceivedData();
   }
