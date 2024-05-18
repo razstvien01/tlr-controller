@@ -33,7 +33,7 @@ void handleReceivedData()
   }
 }
 
-void sendDataToESP(const char robotStatusInMessage)
+void sendDataToESP(const char *robotStatusInMessage)
 {
   JsonDocument doc;
   JsonObject data = doc.to<JsonObject>();
@@ -45,7 +45,7 @@ void sendDataToESP(const char robotStatusInMessage)
 void loop()
 {
   //* Use this function to send the robot status to the web app
-  sendDataToESP(0x41); //! 'A'
+  sendDataToESP("A"); //! 'A'
   if (Serial.available())
   {
     handleReceivedData();
