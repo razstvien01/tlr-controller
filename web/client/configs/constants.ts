@@ -9,6 +9,7 @@ export const MAIN_COMPONENTS: Record<string, string> = {
 };
 
 export const robotSituations = {
+  "-1": "Could not find a valid MPU6050 sensor, check wiring!",
   "0": "Stop",
   "1": "Reverse",
   "2": "Left Turn",
