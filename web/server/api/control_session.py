@@ -260,14 +260,15 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if(robotId not in control_sessions):
 			emit(getControlResponse, response404())
 			return
+		
+		
+		
 
-		control_session = control_sessions[robotId]
-
-		if(control_session.AssignedUser == None):
+		if(control_sessions[robotId].AssignedUser == None):
 			emit(getControlResponse, response404())
 			return
 
-		emit(getControlResponse, control_session.Control.serializable())
+		emit(getControlResponse, control_sessions[robotId].Control.serializable())
 
 	
 def response404():
