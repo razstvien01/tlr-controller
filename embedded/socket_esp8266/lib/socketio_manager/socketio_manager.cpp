@@ -165,8 +165,6 @@ void SocketIOManager::handleReceivedData()
   String receivedData = Serial.readStringUntil('\n');
   JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
   DeserializationError error = deserializeJson(receivedDoc, receivedData);
-  Serial.print("Received Data");
-  Serial.println(receivedData);
 
   if (!error)
   {
