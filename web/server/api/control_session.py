@@ -90,9 +90,9 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(sensorInfoResponse, response404())
 			return
 
-		if(control_sessions[robot_id].AssignedUser == None):
-			emit(sensorInfoResponse, response404())
-			return
+		# if(control_sessions[robot_id].AssignedUser == None):
+		# 	emit(sensorInfoResponse, response404())
+		# 	return
 		
 		emit(sensorInfoResponse, control_sessions[robot_id].Sensor.serializable())
 	
@@ -112,9 +112,9 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(sensorUpdateResponse, response404())
 			return
 
-		if(control_sessions[robot_id].AssignedUser == None):
-			emit(sensorUpdateResponse, response404())
-			return
+		# if(control_sessions[robot_id].AssignedUser == None):
+		# 	emit(sensorUpdateResponse, response404())
+		# 	return
 
 		control_sessions[robot_id].Sensor.Message = message
 		
