@@ -59,7 +59,7 @@ def configure_controller_sockets(socketIO: SocketIO):
   
 		print('robot_id:', robot_id)
 		print('control_sessions:', control_sessions)
-		# print('sessions:', sessions)
+		print('sessions:', sessions)
 		
 		if robot_id == '':
 			emit(robotOnOffInfoResponse, response404())
@@ -123,18 +123,18 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on('disconnect')
 	def handle_disconnect():
 		disconnected_sid = request.sid 
-		pass
-		# try:
-		# 	disconnected_id = sessions[disconnected_sid]
-		# 	if isinstance(disconnected_id, dict):
-		# 		disconnected_id_key = next(iter(disconnected_id))
+		
+		try:
+			disconnected_id = sessions[disconnected_sid]
+			if isinstance(disconnected_id, dict):
+				disconnected_id_key = next(iter(disconnected_id), None)
 				
-		# 		if disconnected_id_key in sessions[disconnected_sid]:
-		# 			# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
-		# 			delete_session_by_id(disconnected_id_key, "DISCONNECTED")
-		# 			del control_sessions[disconnected_id_key]
-		# except KeyError:
-		# 	pass
+				if disconnected_id_key and disconnected_id_key in sessions[disconnected_sid]:
+					# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
+					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
+					del control_sessions[disconnected_id_key]
+		except KeyError:
+			pass
   
 	@socketIO.on('connect')
 	def handle_connect():
@@ -146,7 +146,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 	@socketIO.on(turnOnRequest)
 	def turnOnRobot(data):
 		session_key = request.sid
-		# sessions[session_key] = {}
+		sessions[session_key] = {}
 		
 		id = data.get('id', '')
 		
@@ -156,7 +156,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 		
 		print(f"Turning On Robot, Session: {session_key} with Key: {id}")
     
-		# sessions[session_key][id] = {}
+		sessions[session_key][id] = {}
 		control_sessions[id] = RobotData()
 		
 		# update_robot_status(id, constants.RobotStatus.ACTIVE)
@@ -175,7 +175,7 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(turnOffResponse, response404())
 			return
 		
-		# delete_session_by_id(id, "Turning Off Robot")
+		delete_session_by_id(id, "Turning Off Robot")
 		
 		if id in control_sessions:
 			del control_sessions[id]
@@ -232,17 +232,17 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(controlRobotResponse, response404())
 			return
 
-		# session = control_sessions[robotId]
+		session = control_sessions[robotId]
 
-		if(control_sessions[robotId].AssignedUser != userId):
+		if(session.AssignedUser != userId):
 			emit(controlRobotResponse, response404())
 			return
 
 		if(drive != None):
-			control_sessions[robotId].Control.Drive = drive
+			session.Control.Drive = drive
 
 		if(steer != None):
-			control_sessions[robotId].Control.Steer = steer
+			session.Control.Steer = steer
 
 		emit(controlRobotResponse, {'success': True, 'drive': drive, 'steer': steer})
 
@@ -260,15 +260,14 @@ def configure_controller_sockets(socketIO: SocketIO):
 		if(robotId not in control_sessions):
 			emit(getControlResponse, response404())
 			return
-		
-		
-		if(control_sessions[robotId].AssignedUser == None):
+
+		control_session = control_sessions[robotId]
+
+		if(control_session.AssignedUser == None):
 			emit(getControlResponse, response404())
 			return
- 
-		print(control_sessions[robotId].Control)
 
-		emit(getControlResponse, control_sessions[robotId].Control.serializable())
+		emit(getControlResponse, control_session.Control.serializable())
 
 	
 def response404():
