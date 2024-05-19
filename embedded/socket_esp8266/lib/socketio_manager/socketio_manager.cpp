@@ -188,7 +188,7 @@ void SocketIOManager::handleReceivedData()
   //   sendDataToServer(message);
   // }
   String receivedData = Serial.readStringUntil('\n');
-  Serial.println(receivedData);
+  receivedData.trim();
   if(receivedData.startsWith("1 : ")){
     String robotInfo = receivedData.substring(4);
     sendDataToServer(robotInfo);
