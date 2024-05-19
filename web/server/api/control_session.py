@@ -262,11 +262,11 @@ def configure_controller_sockets(socketIO: SocketIO):
 			return
 		
 		
-		
-
 		if(control_sessions[robotId].AssignedUser == None):
 			emit(getControlResponse, response404())
 			return
+ 
+		print(control_sessions[robotId].Control)
 
 		emit(getControlResponse, control_sessions[robotId].Control.serializable())
 
