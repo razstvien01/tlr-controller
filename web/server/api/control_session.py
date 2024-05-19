@@ -232,17 +232,17 @@ def configure_controller_sockets(socketIO: SocketIO):
 			emit(controlRobotResponse, response404())
 			return
 
-		session = control_sessions[robotId]
+		# session = control_sessions[robotId]
 
-		if(session.AssignedUser != userId):
+		if(control_sessions[robotId].AssignedUser != userId):
 			emit(controlRobotResponse, response404())
 			return
 
 		if(drive != None):
-			session.Control.Drive = drive
+			control_sessions[robotId].Control.Drive = drive
 
 		if(steer != None):
-			session.Control.Steer = steer
+			control_sessions[robotId].Control.Steer = steer
 
 		emit(controlRobotResponse, {'success': True, 'drive': drive, 'steer': steer})
 
