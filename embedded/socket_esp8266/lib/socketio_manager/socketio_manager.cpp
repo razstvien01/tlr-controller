@@ -160,19 +160,38 @@ void SocketIOManager::sendDataToServer(const char *message)
   socketIO.sendEVENT(output);
 }
 
+void SocketIOManager::sendDataToServer(String message){
+  JsonDocument doc;
+  JsonArray array = doc.to<JsonArray>();
+  array.add(S_REQ_SENSOR_UPDATE);
+  JsonObject data = array.add<JsonObject>();
+  
+  data["robot_id"] = RID;
+  data["message"] = message;
+  
+  String output;
+  serializeJson(doc, output);
+  
+  socketIO.sendEVENT(output);
+}
+
 void SocketIOManager::handleReceivedData()
 {
-  String receivedData = Serial.readStringUntil('\n');
-  JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
-  DeserializationError error = deserializeJson(receivedDoc, receivedData);
+  // String receivedData = Serial.readStringUntil('\n');
+  // // String receivedData = espSerial.readStringUntil('\n');
+  // JsonDocument receivedDoc; // Use JsonDocument instead of StaticJsonDocument
+  // DeserializationError error = deserializeJson(receivedDoc, receivedData);
 
-  if (!error)
-  {
-    const char *message = receivedDoc["message"];
-    
-    Serial.println(message);
-    
-    sendDataToServer(message);
+  // if (!error)
+  // {
+  //   const char *message = receivedDoc["message"];
+  //   sendDataToServer(message);
+  // }
+  String receivedData = Serial.readStringUntil('\n');
+  Serial.println(receivedData);
+  if(receivedData.startsWith("1 : ")){
+    String robotInfo = receivedData.substring(4);
+    sendDataToServer(robotInfo);
   }
 }
 
@@ -181,7 +200,8 @@ void SocketIOManager::loop()
   socketIO.loop();
   controller.getControlRequest();
 
-  if (Serial1.available())
+  if (Serial.available())
+  // if (espSerial.available())
   {
     handleReceivedData();
   }
@@ -193,4 +213,5 @@ SocketIOManager::SocketIOManager() : controller(socketIO)
 
 SocketIOManager::~SocketIOManager()
 {
+  // espSerial.begin(115200);
 }

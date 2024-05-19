@@ -6,6 +6,10 @@
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 
+// #include <SoftwareSerial.h>
+
+// SoftwareSerial espSerial(D4, D5);
+
 #include "controller_constants.h"
 #include "socketio_controller.h"
 
@@ -20,7 +24,7 @@ public:
     void connectResponse(const JsonObject &obj);
     void handleReceivedData();
     void sendDataToServer(const char *message);
-
+    void sendDataToServer(String message);
 private:
     SocketIOclient socketIO;
     SocketIOController controller;
