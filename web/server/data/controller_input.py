@@ -9,3 +9,5 @@ class ControllerInput:
 			'Drive': self.Drive,
 		}
 		
+	def __str__(self):
+		return f"Steer: {self.Steer}, Drive: {self.Drive}"
