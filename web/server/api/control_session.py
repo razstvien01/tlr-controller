@@ -1,277 +1,131 @@
 from flask_socketio import SocketIO, emit
 from flask import request
-# from data.controller_input import ControllerInput
 from data.robot_data import RobotData
-# from data.sensor_input import SensorInput
-# from firebase_admin import firestore
-# from google.cloud.firestore_v1.base_query import FieldFilter, BaseCompositeFilter
-# from constants import constants
 
 control_sessions = {}
 sessions = {}
 
-# async def update_robot_status(robot_id, status):
-# 	try:
-# 		print("Updating Robot Status")
-# 		db = firestore.client()
-# 		print(robot_id)
-# 		collection_ref = db.collection(constants.FirebaseTables.ROBOTS)
-# 		print('B')
-# 		field_filter = firestore.FieldFilter('robot_id', '==', robot_id)
-# 		print('C')
-# 		query_on_single_field = collection_ref.where(filter=field_filter)
-# 		print('D')
-# 		docs = ff.stream()
-# 		print('E')
-# 		for doc in docs:
-# 			print('F')
-# 			result = await doc.reference.update({constants.RobotTableKeys.STATUS: status})
-# 			if result.error_code == 0:
-# 				print("Update successful for document: ", doc.id)
-# 			else:
-# 				print("Update failed for document: ", doc.id, "with error:", result.error_message)
-# 	except Exception as e:
-# 		print(f"An error occured: {e}")
-
 def delete_session_by_id(id, message):
-	sessions_deleted = False
-	sessions_copy = sessions.copy()
-	
-	for sid, session_data in sessions_copy.items():
-		if sessions_deleted:
-			break
-		for key, data in session_data.items():
-			if key == id:
-				print(f"{message}, Session: {sid} with Key: {key}")
-				del sessions[sid][key]
-				if not sessions[sid]:
-					del sessions[sid]
-					sessions_deleted = True
-				break
+    for sid, session_data in sessions.items():
+        if id in session_data:
+            print(f"{message}, Session: {sid} with Key: {id}")
+            del session_data[id]
+            if not session_data:
+                del sessions[sid]
+            return
 
 def configure_controller_sockets(socketIO: SocketIO):
-	robotOnOffInfoRequest = 'controller/OnOffInfo/request'
-	robotOnOffInfoResponse = 'controller/OnOffInfo/response'
-	
-	@socketIO.on(robotOnOffInfoRequest)
-	def robotOnOffInfo(data):
-		robot_id = data.get('robot_id', '')
-  
-		print('robot_id:', robot_id)
-		print('control_sessions:', control_sessions)
-		print('sessions:', sessions)
-		
-		if robot_id == '':
-			emit(robotOnOffInfoResponse, response404())
-			return
-		
-		if(robot_id not in control_sessions):
-			emit(robotOnOffInfoResponse, response404())
-			return
-		
-		# if(control_sessions[robot_id].AssignedUser == None):
-		# 	emit(robotOnOffInfoResponse, response404())
-		# 	return
-		
-		emit(robotOnOffInfoResponse, {"Power": control_sessions[robot_id].Power})
-		
-	sensorInfoRequest = 'sensor/SensorInfo/request'
-	sensorInfoResponse = 'sensor/SensorInfo/response'
+    @socketIO.on('controller/OnOffInfo/request')
+    def robotOnOffInfo(data):
+        robot_id = data.get('robot_id', '')
+        if robot_id == '' or robot_id not in control_sessions:
+            emit('controller/OnOffInfo/response', response404())
+            return
 
-	@socketIO.on(sensorInfoRequest)
-	def handle_feedback(data):
-		robot_id = data.get('robot_id', '')
-		
-		if robot_id == '':
-			emit(sensorInfoResponse, response404())
-			return
-		
-		if(robot_id not in control_sessions):
-			emit(sensorInfoResponse, response404())
-			return
+        emit('controller/OnOffInfo/response', {"Power": control_sessions[robot_id].Power})
 
-		# if(control_sessions[robot_id].AssignedUser == None):
-		# 	emit(sensorInfoResponse, response404())
-		# 	return
-		
-		emit(sensorInfoResponse, control_sessions[robot_id].Sensor.serializable())
-	
-	sensorUpdateRequest = 'sensor/SensorUpdate/request'
-	sensorUpdateResponse = 'sensor/SensorUpdate/response'
+    @socketIO.on('sensor/SensorInfo/request')
+    def handle_feedback(data):
+        robot_id = data.get('robot_id', '')
+        if robot_id == '' or robot_id not in control_sessions:
+            emit('sensor/SensorInfo/response', response404())
+            return
 
-	@socketIO.on(sensorUpdateRequest)
-	def sensorUpdate(data):
-		robot_id = data.get('robot_id', '')
-		message = data.get('message', '')
-		
-		if robot_id == '':
-			emit(sensorUpdateResponse, response404())
-			return
-		
-		if(robot_id not in control_sessions):
-			emit(sensorUpdateResponse, response404())
-			return
+        emit('sensor/SensorInfo/response', control_sessions[robot_id].Sensor.serializable())
 
-		# if(control_sessions[robot_id].AssignedUser == None):
-		# 	emit(sensorUpdateResponse, response404())
-		# 	return
+    @socketIO.on('sensor/SensorUpdate/request')
+    def sensorUpdate(data):
+        robot_id = data.get('robot_id', '')
+        message = data.get('message', '')
+        if robot_id == '' or robot_id not in control_sessions:
+            emit('sensor/SensorUpdate/response', response404())
+            return
 
-		control_sessions[robot_id].Sensor.Message = message
-		
-		emit(sensorUpdateResponse, responseSuccess())
+        control_sessions[robot_id].Sensor.Message = message
+        emit('sensor/SensorUpdate/response', responseSuccess())
 
-	@socketIO.on('disconnect')
-	def handle_disconnect():
-		disconnected_sid = request.sid 
-		
-		try:
-			disconnected_id = sessions[disconnected_sid]
-			if isinstance(disconnected_id, dict):
-				disconnected_id_key = next(iter(disconnected_id), None)
-				
-				if disconnected_id_key and disconnected_id_key in sessions[disconnected_sid]:
-					# update_robot_status(disconnected_id_key, constants.RobotStatus.INACTIVE)
-					delete_session_by_id(disconnected_id_key, "DISCONNECTED")
-					del control_sessions[disconnected_id_key]
-		except KeyError:
-			pass
-  
-	@socketIO.on('connect')
-	def handle_connect():
-		emit('connected', {'message': 'Welcome to the server!'})
-	
-	turnOnRequest = 'controller/TurnOnRobot/request'
-	turnOnResponse = 'controller/TurnOnRobot/response'
+    @socketIO.on('disconnect')
+    def handle_disconnect():
+        disconnected_sid = request.sid
+        if disconnected_sid in sessions:
+            disconnected_id = next(iter(sessions[disconnected_sid]), None)
+            if disconnected_id:
+                delete_session_by_id(disconnected_id, "DISCONNECTED")
+                control_sessions.pop(disconnected_id, None)
 
-	@socketIO.on(turnOnRequest)
-	def turnOnRobot(data):
-		session_key = request.sid
-		sessions[session_key] = {}
-		
-		id = data.get('id', '')
-		
-		if id == '':
-			emit(turnOnResponse, response404())
-			return
-		
-		print(f"Turning On Robot, Session: {session_key} with Key: {id}")
-    
-		sessions[session_key][id] = {}
-		control_sessions[id] = RobotData()
-		
-		# update_robot_status(id, constants.RobotStatus.ACTIVE)
-		
-		emit(turnOnResponse, responseSuccess())
-		
+    @socketIO.on('connect')
+    def handle_connect():
+        emit('connected', {'message': 'Welcome to the server!'})
 
-	turnOffRequest = 'controller/TurnOffRobot/request'
-	turnOffResponse = 'controller/TurnOffRobot/response'
+    @socketIO.on('controller/TurnOnRobot/request')
+    def turnOnRobot(data):
+        session_key = request.sid
+        id = data.get('id', '')
+        if id == '':
+            emit('controller/TurnOnRobot/response', response404())
+            return
 
-	@socketIO.on(turnOffRequest)
-	def turnOffRobot(data):
-		id = data.get('id', '')
-		
-		if id == '':
-			emit(turnOffResponse, response404())
-			return
-		
-		delete_session_by_id(id, "Turning Off Robot")
-		
-		if id in control_sessions:
-			del control_sessions[id]
-		
-		# update_robot_status(id, constants.RobotStatus.INACTIVE)
-		
-		emit(turnOffResponse, responseSuccess())
+        sessions[session_key] = {id: {}}
+        control_sessions[id] = RobotData()
+        emit('controller/TurnOnRobot/response', responseSuccess())
 
+    @socketIO.on('controller/TurnOffRobot/request')
+    def turnOffRobot(data):
+        id = data.get('id', '')
+        if id == '':
+            emit('controller/TurnOffRobot/response', response404())
+            return
 
-	useRobotRequest = 'controller/UseRobot/request'
-	useRobotResponse = 'controller/UseRobot/response'
+        delete_session_by_id(id, "Turning Off Robot")
+        control_sessions.pop(id, None)
+        emit('controller/TurnOffRobot/response', responseSuccess())
 
-	@socketIO.on(useRobotRequest)
-	def useRobot(data):
-		id = data['id']
-		userId = data['userId']
-		toUse = data['toUse']
-		
-		if(userId == ''):
-			emit(useRobotResponse, response404())
-			return
-		
-		if(id not in control_sessions):
-			emit(useRobotResponse, response404())
-			return
+    @socketIO.on('controller/UseRobot/request')
+    def useRobot(data):
+        id = data['id']
+        userId = data['userId']
+        toUse = data['toUse']
+        if userId == '' or id not in control_sessions:
+            emit('controller/UseRobot/response', response404())
+            return
 
-		# if(control_sessions[id].AssignedUser != None and toUse):
-		# 	emit(useRobotResponse, response404())
-		# 	return
+        control_sessions[id].AssignedUser = userId if toUse else None
+        emit('controller/UseRobot/response', responseSuccess())
 
-		if(toUse):
-			control_sessions[id].AssignedUser = userId
-			
-		else:
-			control_sessions[id].AssignedUser = None
-		
-		emit(useRobotResponse, responseSuccess())
+    @socketIO.on('controller/ControlRobot/request')
+    def controlRobot(data):
+        userId = data['userId']
+        robotId = data['robotId']
+        drive = data['drive']
+        steer = data['steer']
 
-	controlRobotRequest = 'controller/ControlRobot/request'
-	controlRobotResponse = 'controller/ControlRobot/response'
+        if userId == '' or robotId not in control_sessions:
+            emit('controller/ControlRobot/response', response404())
+            return
 
-	@socketIO.on(controlRobotRequest)
-	def controlRobot(data):
-		userId = data['userId']
-		robotId = data['robotId']
-		drive = data['drive']
-		steer = data['steer']
+        session = control_sessions[robotId]
+        if session.AssignedUser != userId:
+            emit('controller/ControlRobot/response', response404())
+            return
 
-		if(userId == ''):
-			emit(controlRobotResponse, response404())
-			return
+        if drive is not None:
+            session.Control.Drive = drive
+        if steer is not None:
+            session.Control.Steer = steer
 
-		if(robotId not in control_sessions):
-			emit(controlRobotResponse, response404())
-			return
+        emit('controller/ControlRobot/response', {'success': True, 'drive': drive, 'steer': steer})
 
-		session = control_sessions[robotId]
+    @socketIO.on('controller/GetControl/request')
+    def getControl(data):
+        robotId = data['robotId']
+        if robotId == '' or robotId not in control_sessions or control_sessions[robotId].AssignedUser is None:
+            emit('controller/GetControl/response', response404())
+            return
 
-		if(session.AssignedUser != userId):
-			emit(controlRobotResponse, response404())
-			return
+        emit('controller/GetControl/response', control_sessions[robotId].Control.serializable())
 
-		if(drive != None):
-			session.Control.Drive = drive
-
-		if(steer != None):
-			session.Control.Steer = steer
-
-		emit(controlRobotResponse, {'success': True, 'drive': drive, 'steer': steer})
-
-	getControlRequest = 'controller/GetControl/request'
-	getControlResponse = 'controller/GetControl/response'
-
-	@socketIO.on(getControlRequest)
-	def getControl(data):
-		robotId = data['robotId']
-
-		if(robotId == ''):
-			emit(getControlResponse, response404())
-			return
-
-		if(robotId not in control_sessions):
-			emit(getControlResponse, response404())
-			return
-
-		control_session = control_sessions[robotId]
-
-		if(control_session.AssignedUser == None):
-			emit(getControlResponse, response404())
-			return
-
-		emit(getControlResponse, control_session.Control.serializable())
-
-	
 def response404():
-	return {'statusCode': 404 }
+    return {'statusCode': 404}
 
 def responseSuccess():
-	return {'success': True}
+    return {'success': True}
