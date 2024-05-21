@@ -164,7 +164,7 @@ def configure_controller_sockets(socketIO: SocketIO):
             emit('controller/GetControl/response', response404())
             return
 
-        logger.info(f'Sending control data {control_sessions[robotId].Control.Drive}, {control_sessions[robotId].Control.Steer} for robot_id: {robotId}')
+        logger.info(f'Sending control data {control_sessions[robotId].Control.serializable()} for robot_id: {robotId}')
         emit('controller/GetControl/response', control_sessions[robotId].Control.serializable())
 
 def response404():
