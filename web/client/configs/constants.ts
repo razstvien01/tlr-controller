@@ -19,11 +19,9 @@ export const robotSituations = {
   "6": "Cliff Left",
   "7": "Cliff Right",
   "9": "Forward",
-  "A": "Ahead",
-  "B": "Behind",
-  "C": "left",
-  "D": "Right",
-  "E": "Low Hanging Front",
-  "F": "Low Hanging Rear",
+  "A": "Obstacle Ahead",
+  "B": "Obstacle Behind",
+  "C": "Obstacle left",
+  "D": "Obstacle Right",
   "Z": "Gravitational acceleration is no longer on Z Axis"
 };
