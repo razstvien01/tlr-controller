@@ -39,7 +39,7 @@ int steer = 0, drive = 0;
 float timeStep = 0.01;
 float pitch = 0, roll = 0, yaw = 0;
 byte leftS = 100, rightS = 90;
-bool stop = false;
+bool stop = false; // Flag to indicate if movement should be stopped
 
 void setup()
 {
@@ -71,23 +71,9 @@ void setup()
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
-  //* Use this function to send the robot status to the web app
-  // sendDataToESP("Natumba ang robot"); example for sending the status of the robot
-  // Serial.print("Printing information...");
-
-  // FOR TESTING FOR MOTORS
-  // forward();
-  // delay(500);
-  // stopMotors();
-  // delay(500);
-  // backward();
-  // delay(500);
-  // stopMotors();
-  // delay(500);
   readVCSELSensors();
   // readMPU6050();
-  readUltrasonicSensors();
+  // readUltrasonicSensors();
 
   if (Serial.available())
   {
@@ -117,8 +103,6 @@ void handleReceivedData() // receives data while in loop
   String line = Serial.readStringUntil('\n');
   if (line.length() > 13 || !(line.startsWith("1, 0,") || line.startsWith("1, 1,")))
   {
-    // Serial.println(line);
-    // Serial.println(line.length());
     return;
   }
 
@@ -140,31 +124,14 @@ void handleReceivedData() // receives data while in loop
 
     drive = values[2]; // values sent
     steer = values[3]; // values sent
-    // Serial.println(line);
-    // Serial.print("Steer: ");
-    // Serial.print(steer);
-    // Serial.print(", Drive: ");
-    // Serial.println(drive);
 
-    // stop = shouldWeStop();
+    readUltrasonicSensors(); // Check ultrasonic sensors before moving
 
-    // if(stop){
-    //   drive = 0;
-    //   steer = 0;
-    // }
-
-    // switch (drive)
-    // {
-    // case -1:
-    //   backward();
-    //   break;
-    // case 0:
-    //   stopMotors();
-    //   break;
-    // case 1:
-    //   forward();
-    //   break;
-    // }
+    if (stop)
+    { // If obstacle detected, don't execute movement commands
+      stopMotors();
+      return;
+    }
 
     switch (steer)
     {
@@ -191,121 +158,6 @@ void handleReceivedData() // receives data while in loop
     }
   }
 }
-
-// void processLine(const char *line)
-// {
-//     // Create a temporary, modifiable copy of the input string
-//     char tempLine[strlen(line) + 1]; // Allocate memory for the copied string
-//     strcpy(tempLine, line); // Copy the input string to the temporary buffer
-
-//     // Now, use strtok on the temporary buffer instead of the original string
-//     char *token = strtok(tempLine, ",");
-//     int count = 0; // Count the number of segments
-
-//     // Extract the second to the last and the last parts as steer and drive values
-//     int steer = -1; // Default to -1 if not found
-//     int drive = -1; // Default to -1 if not found
-
-//     while (token!= NULL)
-//     {
-//         count++;
-
-//         // Check if we have reached the second to the last and the last parts
-//         if (count >= 3)
-//         {
-//             // Convert the token to an integer
-//             char *endptr;
-//             long val = strtol(token, &endptr, 10);
-//             if (*endptr!= '\0' && *endptr!= ',' && *endptr!= ' ')
-//             {
-//                 Serial.println("Invalid data received. Skipping...");
-//                 return; // Invalid token, skip processing this line
-//             }
-
-//             // Assign the values to steer and drive
-//             if (count == 3) // Second to the last part
-//             {
-//                 steer = (int)val;
-//             }
-//             else if (count == 4) // Last part
-//             {
-//                 drive = (int)val;
-//             }
-//         }
-
-//         token = strtok(NULL, ",");
-//     }
-
-//     // Check if we have exactly four values
-//     if (count == 4)
-//     {
-//         Serial.print("Steer: ");
-//         Serial.print(steer);
-//         Serial.print(", Drive: ");
-//         Serial.println(drive);
-
-//         // Handle the steer and drive logic
-//         switch (steer)
-//         {
-//         case -1:
-//             Serial.println("Invalid steer value. Skipping...");
-//             return;
-//         case 0:
-//             break;
-//         case 1:
-//             Serial.println("Turning right");
-//             rightTurn(); // Assuming rightTurn() is defined elsewhere
-//             return;
-//         }
-
-//         switch (drive)
-//         {
-//         case -1:
-//             Serial.println("Invalid drive value. Skipping...");
-//             return;
-//         case 0:
-//             Serial.println("Stop motors");
-//             stopMotors(); // Assuming stopMotors() is defined elsewhere
-//             break;
-//         case 1:
-//             Serial.println("Forward");
-//             forward(); // Assuming forward() is defined elsewhere
-//             break;
-//         }
-//     }
-//     else
-//     {
-//         Serial.println("Incorrect data format received. Skipping...");
-//     }
-// }
-
-// void handleReceivedData()
-// {
-//     static char lineBuffer[256];
-//     static int bufferIndex = 0;
-
-//     while (Serial.available())
-//     {
-//         char incomingByte = Serial.read();
-//         Serial.print(incomingByte); // Debugging: Print each incoming byte
-
-//         // If a newline character is detected, process the buffer
-//         if (incomingByte == '\n')
-//         {
-//             lineBuffer[bufferIndex] = '\0'; // Null-terminate the string
-//             processLine(lineBuffer);
-//             bufferIndex = 0; // Reset buffer index for the next line
-//         }
-//         else
-//         {
-//             // Store the incoming byte in the buffer
-//             if (bufferIndex < sizeof(lineBuffer) - 1)
-//             {
-//                 lineBuffer[bufferIndex++] = incomingByte;
-//             }
-//         }
-//     }
-// }
 
 void sendInfoToESP(const char *status)
 {
@@ -564,32 +416,6 @@ void readVCSELSensors()
     char *dataVCSEL = "4";
     if (heights[i] > 70 && heights[i] != 65535)
     { // greater than 70mm height from the ground (will still permit driving off ramps)
-      // switch(i){ //0 - front, 1 - rear, 2 - left, 3 - right
-      //   case 0: if(drive == 1){
-      //     stopMotors();
-      //     sendInfoToESP("4");
-      //     return true;
-      //   }
-      //   break;
-      //   case 1: if(drive == -1){
-      //     stopMotors();
-      //     sendInfoToESP("5");
-      //     return true;
-      //   }
-      //   break;
-      //   case 2: if(steer == -1){
-      //     stopMotors();
-      //     sendInfoToESP("6");
-      //     return true;
-      //   }
-      //   break;
-      //   case 3: if(steer == 1){
-      //     stopMotors();
-      //     sendInfoToESP("7");
-      //     return true;
-      //   }
-      //   break;
-      // }
       dataVCSEL[0] = (char)i + 0x34;
       Serial.print("VCSEL status code: ");
       Serial.println(dataVCSEL);
@@ -608,55 +434,48 @@ void readUltrasonicSensors()
   { // 4 ultrasonic sensors
     // Serial.print("U");
     // Serial.print(i + 9); // U9 is the first sensor;
-    if (i == 0)
-    {
-      // Serial.print(":  "); // add two spaces after U9's comma to align with rest of output
-    }
-    else
-    {
-      // Serial.print(": ");
-    }
+    // if (i == 0)
+    // {
+    // Serial.print(":  "); // add two spaces after U9's comma to align with rest of output
+    // }
+    // else
+    // {
+    // Serial.print(": ");
+    // }
     distances[i] = get74HC595DistanceHCSSR04(i + 8, i + A0); // start with bit 8 of shift register chain and Leonardo A0 = pin 18
     // Serial.print(distances[i]);
     // Serial.println(" cm");
   }
-  // bool detected = false;
+
+  stop = false;
+
   for (int i = 0; i < 4; i++)
   {
     char *dataUltrasonic = "A";
-    if (distances[i] < 5 && distances[i] != 0)
+    if (distances[i] <= 15 && distances[i] != 0)
     { // less than 5 cm distance
       dataUltrasonic[0] = (char)i + 0x41;
-      // switch(i){ //0 - front, 1 - rear, 2 - left, 3 - right
-      //   case 0: if(drive == 1){
-      //     stopMotors();
-      //     sendInfoToESP("A");
-      //     return true;
-      //   }
-      //   break;
-      //   case 1: if(drive == -1){
-      //     stopMotors();
-      //     sendInfoToESP("B");
-      //     return true;
-      //   }
-      //   break;
-      //   case 2: if(steer == -1){
-      //     stopMotors();
-      //     sendInfoToESP("C");
-      //     return true;
-      //   }
-      //   break;
-      //   case 3: if(steer == 1){
-      //     stopMotors();
-      //     sendInfoToESP("D");
-      //     return true;
-      //   }
-      //   break;
-      // }
-      // Serial.print("Ultrasonic status code: ");
-      // Serial.println(dataUltrasonic);
       sendInfoToESP(dataUltrasonic); // 0x41 = 'A', 0x42 = 'B', 0x43 = 'C', 0x44 = 'D', 0x45 = 'E', 0x46 = 'F'
       //'A' - ahead, 'B'- behind, 'C' - left, 'D' - right, 'E' - low hanging front, 'F' - low hanging rear
+
+      if (i == 0 && drive == 1)
+      { // Front sensor and moving forward
+        stopMotors();
+        drive = 0;
+        Serial.print(distances[i]);
+        Serial.println("cm");
+        sendInfoToESP("A"); // Indicate stop due to front obstacle
+        stop = true;        // Set stop flag
+      }
+      else if (i == 1 && drive == -1)
+      { // Rear sensor and moving backward
+        stopMotors();
+        Serial.print(distances[i]);
+        Serial.println("cm");
+        drive = 0;
+        sendInfoToESP("B"); // Indicate stop due to rear obstacle
+        stop = true;        // Set stop flag
+      }
     }
   }
 }
